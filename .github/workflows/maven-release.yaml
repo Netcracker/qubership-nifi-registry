@@ -5,7 +5,7 @@
     # - Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
     # - Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
 
-    name: Release And Upload Docker Image
+    name: Release And Upload Docker Images
 
     on:
       workflow_dispatch:
@@ -69,19 +69,19 @@
 
           - name: Update pom.xml
             id: config
-            uses: nookyo/qubership-workflow-hub/actions/pom-updater@main
+            uses: netcracker/qubership-workflow-hub/actions/pom-updater@main
             with:
               new_value: ${{ github.event.inputs.version }}
               file_path: '{"default": "pom.xml"}'
 
           - name: Commit Changes
-            uses: nookyo/qubership-workflow-hub/actions/commit-and-push@main
+            uses: netcracker/qubership-workflow-hub/actions/commit-and-push@main
             with:
               commit_message: "Update pom.xml version to ${{ github.event.inputs.version }}"
 
       mvn-build:
         needs: [update-pom-version]
-        uses: nookyo/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
+        uses: netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
         with:
           maven_command: "--batch-mode package"
           java_version: ${{ github.event.inputs.java_version }}
@@ -106,13 +106,13 @@
 
       tag:
         needs: [tests]
-        uses: nookyo/qubership-workflow-hub/.github/workflows/tag-creator.yml@main
+        uses: netcracker/qubership-workflow-hub/.github/workflows/tag-creator.yml@main
         with:
           tag-name: ${{ github.event.inputs.version }}
 
       docker-build-publish:
         needs: [update-pom-version, tag]
-        uses: nookyo/qubership-workflow-hub/.github/workflows/docker-publish.yml@main
+        uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@main
         with:
           ref: ${{ github.event.inputs.version }}
           artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
@@ -120,7 +120,7 @@
 
       github-release:
         needs: [tag]
-        uses: nookyo/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
+        uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
         with:
           version: ${{ github.event.inputs.version }}
           publish: false
