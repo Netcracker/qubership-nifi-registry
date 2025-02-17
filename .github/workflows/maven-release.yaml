@@ -5,7 +5,7 @@
     # - Update pom.xml: Updates the version in the pom.xml file using the extracted release version.
     # - Publish to Maven: Publishes the artifact to the Maven repository using the updated pom.xml.
 
-    name: Release And Upload to Maven Central
+    name: Release And Upload Docker Image
 
     on:
       workflow_dispatch:
