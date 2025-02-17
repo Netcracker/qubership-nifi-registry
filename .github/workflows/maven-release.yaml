@@ -116,7 +116,7 @@
         with:
           ref: ${{ github.event.inputs.version }}
           artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
-          dry-run: ${{ github.event.inputs.dry-run }}
+          dry-run: true
 
       github-release:
         needs: [tag]
