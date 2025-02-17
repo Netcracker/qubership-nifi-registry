@@ -60,6 +60,7 @@
 
       update-pom-version:
         runs-on: ubuntu-latest
+        needs: [check-tag]
         outputs:
           artifact_id: ${{ steps.config.outputs.artifact_id }}
         steps:
