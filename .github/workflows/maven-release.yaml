@@ -23,7 +23,7 @@
           dry-run:
             required: false
             type: boolean
-            default: false
+            default: true
             description: 'Dry run'
 
     jobs:
