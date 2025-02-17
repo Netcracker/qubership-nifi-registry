@@ -20,11 +20,11 @@
             type: string
             default: "21"
             description: 'Java version (e.g., 21)'
-          upload-artifact:
+          dry-run:
             required: false
             type: boolean
-            default: true
-            description: 'Upload artifact'
+            default: false
+            description: 'Dry run'
 
     jobs:
       check-tag:
@@ -115,7 +115,7 @@
         with:
           ref: ${{ github.event.inputs.version }}
           artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
-          dry-run: false
+          dry-run: ${{ github.event.inputs.dry-run }}
 
       github-release:
         needs: [tag]
