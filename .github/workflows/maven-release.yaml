@@ -72,7 +72,7 @@
             uses: nookyo/qubership-workflow-hub/actions/pom-updater@main
             with:
               new_value: ${{ github.event.inputs.version }}
-              file_path: '{"default": "pom.xml", "consul": "./qubership-consul/pom.xml"}'
+              file_path: '{"default": "pom.xml"}'
 
           - name: Commit Changes
             uses: nookyo/qubership-workflow-hub/actions/commit-and-push@main
