@@ -15,7 +15,7 @@
 
 
 info(){
-    local message="$1"
+    local message="$*"
     local script="${BASH_SOURCE[1]##*/}"
     local dfmt=""
     printf -v dfmt '%(%Y-%m-%dT%H:%M:%S.000)T' -1
@@ -23,7 +23,7 @@ info(){
 }
 
 warn(){
-    local message="$1"
+    local message="$*"
     local script="${BASH_SOURCE[1]##*/}"
     local dfmt=""
     printf -v dfmt '%(%Y-%m-%dT%H:%M:%S.000)T' -1
@@ -31,7 +31,7 @@ warn(){
 }
 
 error(){
-    local message="$1"
+    local message="$*"
     local script="${BASH_SOURCE[1]##*/}"
     local dfmt=""
     printf -v dfmt '%(%Y-%m-%dT%H:%M:%S.000)T' -1
