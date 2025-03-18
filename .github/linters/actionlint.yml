@@ -1,6 +1,8 @@
+---
 # Path-specific configurations.
 paths:
-  # Glob pattern relative to the repository root for matching files. The path separator is always '/'.
+  # Glob pattern relative to the repository root for matching files. 
+  # The path separator is always '/'.
   "**/.github/workflows/**/*.{yml,yaml}":
     # List of regular expressions to filter errors by the error messages.
     ignore:
