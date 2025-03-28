@@ -52,6 +52,6 @@ runs:
       continue-on-error: true
       run: |
         echo "Stopping and removing containers"
-        docker compose -f .github/docker/plain/docker-compose.yaml --env-file ./docker.env up down -v
+        docker compose -f .github/docker/plain/docker-compose.yaml --env-file ./docker.env down -v
         echo "Removing temporary volume data"
         rm -rf ./temp-vol/nifi-reg/
