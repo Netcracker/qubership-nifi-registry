@@ -34,6 +34,9 @@ generate_nifi_certs(){
     keytool -importkeystore -srckeystore /tmp/tls-certs/nifi-registry/truststore.jks \
       -srcstorepass "${TRUSTSTORE_PASSWORD}" -srcstoretype JKS -deststoretype PKCS12 \
       -destkeystore /tmp/tls-certs/nifi-registry/truststore.p12 -deststorepass "${TRUSTSTORE_PASSWORD}"
+    #make files available to all users:
+    chmod -R 777 /tmp/tls-certs/nifi-registry
+    chmod -R 777 /tmp/tls-certs/nifi
     return 0;
 }
 
