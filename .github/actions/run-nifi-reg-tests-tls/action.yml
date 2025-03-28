@@ -27,7 +27,7 @@ runs:
       shell: bash
       run: |
         echo "Starting containers..."
-        docker compose -f .github/docker/plain/docker-compose.yaml --env-file ./docker.env up -d
+        docker compose -f .github/docker/tls/docker-compose.yaml --env-file ./docker.env up -d
     - name: Wait for nifi-registry container to start
       shell: bash
       continue-on-error: true
