@@ -18,7 +18,9 @@ runs:
         prepare_results_dir "${{ inputs.results-dir }}"
         generate_tls_passwords
         create_docker_env_file
-        mkdir -p ./temp-vol
+        mkdir -p ./temp-vol/nifi-reg/database/
+        mkdir -p ./temp-vol/nifi-reg/flow-storage/
+        chmod -R 777 ./temp-vol
     - name: Run local nifi
       shell: bash
       run: |
