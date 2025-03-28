@@ -66,9 +66,7 @@ jobs:
       - name: Run tests for nifi-registry in plain (non-TLS mode)
         uses: ./.github/actions/run-nifi-reg-tests-plain
       - name: Run tests for nifi-registry in TLS mode
-        shell: bash
-        run: |
-          echo "TBD: tests for NiFi Registry in TLS mode..."
+        uses: ./.github/actions/run-nifi-reg-tests-tls
       - name: Run tests for nifi-registry in TLS and OIDC mode
         shell: bash
         run: |
