@@ -60,10 +60,15 @@ runs:
         else
           clientCertConfigFile=''
         fi
-        docker run --net=host --rm -v "$collectionsDir:/etc/newman" \
-          postman/newman:alpine run "${{ inputs.collection-name }}" \
+        additionalVolumes=''
+        if [ -d "./temp-vol/tls-cert" ]; then
+          echo "TLS certificate directory found at ./temp-vol/tls-cert, adding volume..."
+          additionalVolumes="-v \"./temp-vol/tls-cert:/tmp/tls-certs\""
+        fi
+        eval docker run --net=host --rm -v "$collectionsDir:/etc/newman" \
+          "$additionalVolumes" postman/newman:alpine run "${{ inputs.collection-name }}" \
           --environment="${{ inputs.env-name }}" -r cli,junit \
-          $caCertsOption $clientCertConfigOption || \
+          "$caCertsOption" "$clientCertConfigOption" || \
           echo "Collection ${{ inputs.short-name }} failed to run" > \
             "./test-results/${{ inputs.results-dir }}/failed_${{ inputs.short-name }}_at.lst"
     - name: Collect test results

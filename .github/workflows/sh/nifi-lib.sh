@@ -34,7 +34,7 @@ wait_for_service(){
         echo "Waiting for service to be available on port 8080 with timeout = $timeout"
         serviceUrl="https://$serviceHost:$servicePort$apiUrlToCheck"
         echo "Client keystore: $tlsClientKeystore (p12), ca cert = $tlsAdditionalCAs"
-        tlsArgs=" --cert $tlsClientKeystore:$tlsClientPassword --cert-type P12 --ca-cert $tlsAdditionalCAs"
+        tlsArgs=" --cert '$tlsClientKeystore:$tlsClientPassword' --cert-type P12 --cacert $tlsAdditionalCAs"
     else
         echo "Using plain mode..."
         echo "Waiting for service to be available on port 8080 with timeout = $timeout"
@@ -49,7 +49,7 @@ wait_for_service(){
         echo "Waiting for service to be available under URL = $serviceUrl, remaining time = $remainingTime"
         res=0
         resp_code=""
-        resp_code=$(curl -sS -w '%{response_code}' -o ./temp-resp.json --connect-timeout 5 --max-time 10 "$tlsArgs" "$serviceUrl") || { res="$?"; echo "Failed to call service API, continue waiting..."; }
+        resp_code=$(eval curl -sS -w '%{response_code}' -o ./temp-resp.json --connect-timeout 5 --max-time 10 "$tlsArgs" "$serviceUrl") || { res="$?"; echo "Failed to call service API, continue waiting..."; }
         if [ "$res" == "0" ]; then
             if [ "$resp_code" != '200' ]; then
                 echo "Got response with code = $resp_code and body: "
@@ -126,7 +126,7 @@ test_log_level(){
 
 prepare_sens_key(){
     echo "Generating temporary sensitive key..."
-    NIFI_SENSITIVE_KEY=$(generate_random_hex_password 14)
+    NIFI_SENSITIVE_KEY=$(generate_random_hex_password 12 4)
     export NIFI_SENSITIVE_KEY
     echo "$NIFI_SENSITIVE_KEY" > ./nifi-sens-key.tmp
 }
@@ -191,4 +191,23 @@ wait_nifi_reg_container(){
         echo "Wait failed, nifi registry not available" > "./test-results/$resultsDir/failed_nifi_registry_wait.lst"
         mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
     fi
+}
+
+generate_tls_passwords(){
+    echo "Generating passwords..."
+    TRUSTSTORE_PASSWORD=$(generate_random_hex_password 8 4)
+    KEYSTORE_PASSWORD_NIFI=$(generate_random_hex_password 8 4)
+    KEYSTORE_PASSWORD_NIFI_REG=$(generate_random_hex_password 8 4)
+    export TRUSTSTORE_PASSWORD
+    export KEYSTORE_PASSWORD_NIFI
+    export KEYSTORE_PASSWORD_NIFI_REG
+}
+
+create_docker_env_file(){
+  echo "Generating environment file for docker-compose..."
+  echo "TRUSTSTORE_PASSWORD=$TRUSTSTORE_PASSWORD" > ./docker.env
+  echo "KEYSTORE_PASSWORD_NIFI=$KEYSTORE_PASSWORD_NIFI" >> ./docker.env
+  echo "KEYSTORE_PASSWORD_NIFI_REG=$KEYSTORE_PASSWORD_NIFI_REG" >> ./docker.env
+  gitDir="$(pwd)"
+  echo "BASE_DIR=$gitDir" >> ./docker.env
 }
