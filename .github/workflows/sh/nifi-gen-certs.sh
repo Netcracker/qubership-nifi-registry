@@ -3,7 +3,7 @@
 generate_nifi_certs(){
     if [ ! -f /tmp/tls-certs/nifi/keystore.p12 ]; then
         mkdir -p /tmp/tls-certs/nifi
-        chmod 755 /tmp/tls-certs/nifi
+        chmod 777 /tmp/tls-certs/nifi
         echo 'Generating nifi certs...'
         "$NIFI_TOOLKIT_HOME"/bin/tls-toolkit.sh standalone -n "localhost" --subjectAlternativeNames "nifi" \
           -C "CN=admin, OU=NIFI" -P "${TRUSTSTORE_PASSWORD}" -S "${KEYSTORE_PASSWORD_NIFI}" -o /tmp/tls-certs/nifi
@@ -20,7 +20,7 @@ generate_nifi_certs(){
     fi
     echo "Copying CA certificates..."
     mkdir -p /tmp/tls-certs/nifi-registry
-    chmod 755 /tmp/tls-certs/nifi-registry
+    chmod 777 /tmp/tls-certs/nifi-registry
     cp /tmp/tls-certs/nifi/nifi-cert.pem /tmp/tls-certs/nifi/nifi-key.key /tmp/tls-certs/nifi-registry
     echo 'Generating nifi-registry certs...'
     "$NIFI_TOOLKIT_HOME"/bin/tls-toolkit.sh standalone -n "localhost" --subjectAlternativeNames "nifi-registry" \
