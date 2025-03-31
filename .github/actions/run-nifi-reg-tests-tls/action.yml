@@ -55,4 +55,4 @@ runs:
         echo "Stopping and removing containers"
         docker compose -f .github/docker/tls/docker-compose.yaml --env-file ./docker.env down -v
         echo "Removing temporary volume data"
-        rm -rf ./temp-vol/
+        sudo rm -rf ./temp-vol/

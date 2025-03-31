@@ -54,6 +54,4 @@ runs:
         echo "Stopping and removing containers"
         docker compose -f .github/docker/tls-db/docker-compose.yaml --env-file ./docker.env down -v
         echo "Removing temporary volume data"
-        whoami || echo "Failed"
-        ls -al ./temp-vol/ || echo "Failed"
-        rm -rf ./temp-vol/
+        sudo rm -rf ./temp-vol/
