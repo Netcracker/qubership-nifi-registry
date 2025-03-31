@@ -17,6 +17,8 @@ services:
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
+      postgresql:
+        condition: service_started
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
