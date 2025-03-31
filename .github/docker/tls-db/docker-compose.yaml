@@ -18,8 +18,6 @@ services:
       nifi-toolkit:
         condition: service_completed_successfully
     volumes:
-      - nifi-reg-db:/opt/nifi-registry/nifi-registry-current/database
-      - nifi-reg-flow:/opt/nifi-registry/nifi-registry-current/flow_storage
       - tls-cert-reg:/tmp/tls-certs
     ports:
       - 127.0.0.1:18080:18080
@@ -34,13 +32,26 @@ services:
       - TRUSTSTORE_TYPE=PKCS12
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
       - INITIAL_ADMIN_IDENTITY=CN=admin, OU=NIFI
-    container_name: local-nifi-registry-tls
+      - NIFI_REG_USE_PGDB=true
+      - dbUrl=jdbc:postgresql://postgresql:5432/postgres
+      - dbUsername=postgres
+      - dbPassword=${DB_PASSWORD}
+    container_name: local-nifi-registry-tls-db
     hostname: nifi-registry
   consul:
     image: hashicorp/consul:1.20
     ports:
       - 127.0.0.1:8500:8500
     hostname: consul
+  postgresql:
+    image: postgres:16.8
+    volumes:
+      - pg-db:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    container_name: postgresql
+    hostname: postgresql
 volumes:
   tls-scripts:
     driver: local
@@ -60,15 +71,9 @@ volumes:
       o: bind
       type: none
       device: $BASE_DIR/temp-vol/tls-cert/nifi-registry/
-  nifi-reg-db:
+  pg-db:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: $BASE_DIR/temp-vol/nifi-reg/database/
-  nifi-reg-flow:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: $BASE_DIR/temp-vol/nifi-reg/flow-storage/
+      device: $BASE_DIR/temp-vol/pg-db
