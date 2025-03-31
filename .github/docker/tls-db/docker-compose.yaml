@@ -78,4 +78,4 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: $BASE_DIR/temp-vol/pg-db
+      device: $BASE_DIR/temp-vol/pg-db/

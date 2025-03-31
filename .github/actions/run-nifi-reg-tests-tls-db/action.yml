@@ -18,7 +18,7 @@ runs:
         prepare_results_dir "${{ inputs.results-dir }}"
         generate_tls_passwords
         create_docker_env_file
-        mkdir -p ./temp-vol/pg-db
+        mkdir -p ./temp-vol/pg-db/
         mkdir -p ./temp-vol/tls-cert/
         mkdir -p ./temp-vol/tls-cert/nifi-registry/
         chmod -R 777 ./temp-vol
@@ -54,5 +54,6 @@ runs:
         echo "Stopping and removing containers"
         docker compose -f .github/docker/tls-db/docker-compose.yaml --env-file ./docker.env down -v
         echo "Removing temporary volume data"
-        chmod -R 777 ./temp-vol
+        whoami || echo "Failed"
+        ls -al ./temp-vol/ || echo "Failed"
         rm -rf ./temp-vol/
