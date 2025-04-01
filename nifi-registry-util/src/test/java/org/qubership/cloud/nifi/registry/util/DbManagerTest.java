@@ -95,7 +95,6 @@ public class DbManagerTest {
                 "d7573974-9305-418b-b1bb-7774d9a9195a", 1, 1);
     }
 
-
     //@Test
     //TODO uncomment after fixing migration to database
     public void errorMigrToDB() {

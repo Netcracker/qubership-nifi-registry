@@ -162,7 +162,7 @@ public class DbManager {
                                                 prepStmt.setBytes(contentIndex,
                                                         FileUtils.readFileToByteArray(content));
                                                 prepStmt.execute();
-                                            } catch (SQLException | IOException ex ) {
+                                            } catch (SQLException | IOException ex) {
                                                 LOG.error("Unexpected exception occurred.", ex);
                                             }
                                             });
