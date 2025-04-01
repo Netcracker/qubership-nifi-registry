@@ -1,0 +1,179 @@
+package org.qubership.cloud.nifi.registry.util;
+
+import org.junit.jupiter.api.AfterAll;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.event.Level;
+import java.io.File;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.jupiter.SystemStub;
+import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Tag("DockerBased")
+@Testcontainers
+@ExtendWith(SystemStubsExtension.class)
+@Slf4j
+public class DbManagerTest {
+
+    private static final String POSTGRES_IMAGE = "postgres:16.8";
+
+    private static final String DB_NAME = "testDb";
+    private static final String USER = "postgres";
+    private static final String PWD = "password";
+    private static String dbUrl;
+    private DbManager dbManager;
+
+    @Container
+    private static JdbcDatabaseContainer postgresContainer;
+
+    @SystemStub
+    private EnvironmentVariables environmentVariables;
+
+    static {
+        postgresContainer = new PostgreSQLContainer(POSTGRES_IMAGE)
+                .withDatabaseName(DB_NAME)
+                .withUsername(USER)
+                .withPassword(PWD);
+        postgresContainer.start();
+    }
+
+    @BeforeEach
+    public void setUp() {
+         dbUrl = "jdbc:postgresql://" + postgresContainer.getContainerIpAddress()
+                + ":" + postgresContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)
+                + "/" + DB_NAME;
+        dbManager = new DbManager();
+    }
+
+    @Test
+    public void successCreationDatabaseTest() throws SQLException, ClassNotFoundException {
+        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertTrue(runSqlStatementResult.isEmpty());
+    }
+
+    @Test
+    public void errorCreationDatabaseTest() throws SQLException, ClassNotFoundException {
+        postgresContainer.stop();
+        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertFalse(runSqlStatementResult.isEmpty());
+        postgresContainer.start();
+    }
+
+    @Test
+    public void migrToDBNoFile() {
+        Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logger.atLevel(Level.WARN);
+        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertTrue(runSqlStatementResult.isEmpty());
+    }
+
+    @Test
+    public void successMigrToDB() {
+        environmentVariables.set("NIFI_REGISTRY_HOME", "src/test/resources/success");
+        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertTrue(runSqlStatementResult.isEmpty());
+        checkDataInDb("9f36ac47-a6d4-4a9a-a824-dc4db141e8b5",
+                "d7573974-9305-418b-b1bb-7774d9a9195a", 1, 1);
+    }
+
+
+    //@Test
+    //TODO uncomment after fixing migration to database
+    public void errorMigrToDB() {
+        environmentVariables.set("NIFI_REGISTRY_HOME", "src/test/resources/error");
+        String dirName = "9f36ac47-a6d4-4a9a-a824-dc4db141e8b5-9f36ac47-a6d4-4a9a-a824";
+        String fixDirName = "40f9e387-890b-4916-9100-77048472a5c8";
+        int migrStatus = 0;
+        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertFalse(runSqlStatementResult.isEmpty());
+        //check that status not set
+        try (Connection con = dbManager.createConnection(dbUrl, USER, PWD);
+             Statement statement = con.createStatement()) {
+            ResultSet statusInfo = statement.executeQuery("select * "
+                    + "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS");
+            while (statusInfo.next()) {
+                migrStatus = statusInfo.getInt("status");
+            }
+            assertEquals(0, migrStatus);
+        } catch (ClassNotFoundException ex) {
+            log.error("Failed to find JDBC driver", ex);
+            fail("Failed to find JDBC driver" + ex.getMessage());
+        } catch (SQLException ex) {
+            log.error("Failed to create schema for NiFi Registry", ex);
+            fail("Failed to create schema for NiFi Registry" + ex.getMessage());
+        }
+
+        File dir = new File("src/test/resources/error/persistent_data/flow_storage/" + dirName);
+        File newDir = new File(dir.getParent() + "\\" + fixDirName);
+        dir.renameTo(newDir);
+        runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+        assertTrue(runSqlStatementResult.isEmpty());
+        checkDataInDb("40f9e387-890b-4916-9100-77048472a5c8",
+                "d7573974-9305-418b-b1bb-7774d9a9195a", 1, 1);
+
+        File dir2 = new File("src/test/resources/error/persistent_data/flow_storage/" + fixDirName);
+        File newDir2 = new File(dir2.getParent() + "\\" + dirName);
+        dir2.renameTo(newDir2);
+    }
+
+    public void checkDataInDb(String expBucketId, String expFlowId, int expRowNumber, int expMigrStatus) {
+        String bucketIdDb = "";
+        String flowtIdDb = "";
+        int rowNumber = 0;
+        int migrStatus = 0;
+        try (Connection con = dbManager.createConnection(dbUrl, USER, PWD);
+             Statement statement = con.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("select bucket_id, flow_id "
+                    + "from MIG_FLOW_PERSISTENCE_PROVIDER");
+            while (resultSet.next()) {
+                bucketIdDb = resultSet.getString("bucket_id");
+                flowtIdDb = resultSet.getString("flow_id");
+            }
+            assertEquals(expBucketId, bucketIdDb);
+            assertEquals(expFlowId, flowtIdDb);
+            ResultSet rowNum = statement.executeQuery("select count(*) as number "
+                    + "from MIG_FLOW_PERSISTENCE_PROVIDER");
+            while (rowNum.next()) {
+                rowNumber = rowNum.getInt("number");
+            }
+            assertEquals(expRowNumber, rowNumber);
+
+            ResultSet statusInfo = statement.executeQuery("select * "
+                    + "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS");
+            while (statusInfo.next()) {
+                migrStatus = statusInfo.getInt("status");
+            }
+            assertEquals(expMigrStatus, migrStatus);
+        } catch (ClassNotFoundException ex) {
+            log.error("Failed to find JDBC driver", ex);
+            fail("Failed to find JDBC driver" + ex.getMessage());
+        } catch (SQLException ex) {
+            log.error("Failed to create schema for NiFi Registry", ex);
+            fail("Failed to create schema for NiFi Registry" + ex.getMessage());
+        }
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        postgresContainer.stop();
+    }
+}
