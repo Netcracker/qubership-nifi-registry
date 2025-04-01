@@ -52,8 +52,7 @@
 
   <!-- https://checkstyle.org/filters/suppressionfilter.html -->
   <module name="SuppressionFilter">
-    <property name="file" value="${org.checkstyle.sun.suppressionfilter.config}"
-              default="checkstyle-suppressions.xml" />
+    <property name="file" value=".github/linters/config/suppressions.xml"/>
     <property name="optional" value="true"/>
   </module>
 
@@ -143,9 +142,7 @@
     <module name="MethodParamPad"/>
     <module name="NoWhitespaceAfter"/>
     <module name="NoWhitespaceBefore"/>
-    <module name="OperatorWrap">
-        <property name="option" value="eol"/>
-    </module>
+    <module name="OperatorWrap"/>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
     <module name="WhitespaceAfter"/>
