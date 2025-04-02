@@ -79,17 +79,19 @@ public class DbManagerTest {
     }
 
     @Test
-    public void successCreationDatabaseTest() throws SQLException, ClassNotFoundException {
-        String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
-        assertTrue(runSqlStatementResult.isEmpty());
+    public void errorCreationDatabaseTest() throws SQLException, ClassNotFoundException {
+        if (postgresContainer.isRunning()) {
+            postgresContainer.stop();
+            String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
+            assertFalse(runSqlStatementResult.isEmpty());
+            postgresContainer.start();
+        }
     }
 
     @Test
-    public void errorCreationDatabaseTest() throws SQLException, ClassNotFoundException {
-        postgresContainer.stop();
+    public void successCreationDatabaseTest() throws SQLException, ClassNotFoundException {
         String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
-        assertFalse(runSqlStatementResult.isEmpty());
-        postgresContainer.start();
+        assertTrue(runSqlStatementResult.isEmpty());
     }
 
     @Test
