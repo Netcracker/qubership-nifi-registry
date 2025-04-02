@@ -76,16 +76,16 @@ public class DbManager {
             throws RuntimeException {
         String result = "";
         String createSchema = "CREATE SCHEMA IF NOT EXISTS nifi_registry";
-        String migFlowPersistProvTable = "CREATE TABLE IF NOT EXISTS MIG_FLOW_PERSISTENCE_PROVIDER (\n"
-                + "    BUCKET_ID VARCHAR(50) NOT NULL,\n"
-                + "    FLOW_ID VARCHAR(50) NOT NULL,\n"
-                + "    VERSION INT NOT NULL,\n"
-                + "    FLOW_CONTENT BYTEA NOT NULL\n"
-                + ");\n";
-        String migFlowPersistProvStatusTable = "CREATE TABLE IF NOT EXISTS MIG_FLOW_PERSISTENCE_PROVIDER_STATUS (\n"
-                + "    MIGRATION_TS timestamptz not null,\n"
-                + "    STATUS INT NOT NULL\n"
-                + ");\n";
+        String migFlowPersistProvTable = "CREATE TABLE IF NOT EXISTS MIG_FLOW_PERSISTENCE_PROVIDER (\n" +
+                "    BUCKET_ID VARCHAR(50) NOT NULL,\n" +
+                "    FLOW_ID VARCHAR(50) NOT NULL,\n" +
+                "    VERSION INT NOT NULL,\n" +
+                "    FLOW_CONTENT BYTEA NOT NULL\n" +
+                ");\n";
+        String migFlowPersistProvStatusTable = "CREATE TABLE IF NOT EXISTS MIG_FLOW_PERSISTENCE_PROVIDER_STATUS (\n" +
+                "    MIGRATION_TS timestamptz not null,\n" +
+                "    STATUS INT NOT NULL\n" +
+                ");\n";
         try (Connection con = createConnection(url, username, password);
              Statement statement = con.createStatement()) {
             LOG.info("SQL query for schema: {}", createSchema);
@@ -97,8 +97,8 @@ public class DbManager {
             if (migrateToDB && !checkIfMigrationRanBefore(statement)) {
                 readFlowStorageAndPopulateDB(statement);
             } else {
-                LOG.info("No migration needed OR migration is found to be already completed. "
-                        + "No action needed henceforth.");
+                LOG.info("No migration needed OR migration is found to be already completed. " +
+                        "No action needed henceforth.");
             }
         } catch (ClassNotFoundException ex) {
             LOG.error("Failed to find JDBC driver", ex);
@@ -121,9 +121,9 @@ public class DbManager {
 
         int count;
         try (ResultSet rs = statement.executeQuery(
-                "SELECT COUNT(*) AS recordCount "
-                        + "from mig_flow_persistence_provider_status "
-                        + "where status = 1")) {
+                "SELECT COUNT(*) AS recordCount " +
+                        "from mig_flow_persistence_provider_status " +
+                        "where status = 1")) {
             rs.next();
             count = rs.getInt("recordCount");
         }
@@ -148,12 +148,12 @@ public class DbManager {
                             forEach(version -> {
                                 int ver = Integer.parseInt(version.getName());
                                 Arrays.stream(Objects.requireNonNull(new File(String.valueOf(version)).listFiles())).
-                                            forEach(content -> {
+                                        forEach(content -> {
                                             try (PreparedStatement prepStmt = statement.getConnection().
                                                     prepareStatement(
-                                                    "insert into mig_flow_persistence_provider"
-                                                            + "(bucket_id, flow_id, version, flow_content) "
-                                                            + "values (?,?,?,?)")) {
+                                                            "insert into mig_flow_persistence_provider" +
+                                                                    "(bucket_id, flow_id, version, flow_content) " +
+                                                                    "values (?,?,?,?)")) {
                                                 final int versionIndex = 3;
                                                 final int contentIndex = 4;
                                                 prepStmt.setString(1, bucketId);
@@ -165,7 +165,7 @@ public class DbManager {
                                             } catch (SQLException | IOException ex) {
                                                 LOG.error("Unexpected exception occurred.", ex);
                                             }
-                                            });
+                                        });
                             });
                 });
             });
@@ -188,4 +188,3 @@ public class DbManager {
         statement.execute("insert into mig_flow_persistence_provider_status values(current_timestamp, 1)");
     }
 }
-

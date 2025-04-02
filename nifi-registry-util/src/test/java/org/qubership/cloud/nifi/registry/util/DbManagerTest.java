@@ -2,11 +2,11 @@ package org.qubership.cloud.nifi.registry.util;
 
 import org.junit.jupiter.api.AfterAll;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.event.Level;
 import java.io.File;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -15,8 +15,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -40,7 +38,7 @@ public class DbManagerTest {
     private static final String USER = "postgres";
     private static final String PWD = "password";
     private static String dbUrl;
-    private DbManager dbManager;
+    private static DbManager dbManager;
 
     @Container
     private static JdbcDatabaseContainer postgresContainer;
@@ -54,14 +52,14 @@ public class DbManagerTest {
                 .withUsername(USER)
                 .withPassword(PWD);
         postgresContainer.start();
+        dbManager = new DbManager();
     }
 
     @BeforeEach
     public void setUp() {
-         dbUrl = "jdbc:postgresql://" + postgresContainer.getContainerIpAddress()
-                + ":" + postgresContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)
-                + "/" + DB_NAME;
-        dbManager = new DbManager();
+        dbUrl = "jdbc:postgresql://" + postgresContainer.getContainerIpAddress() +
+                ":" + postgresContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT) +
+                "/" + DB_NAME;
     }
 
     @Test
@@ -80,8 +78,6 @@ public class DbManagerTest {
 
     @Test
     public void migrToDBNoFile() {
-        Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        logger.atLevel(Level.WARN);
         String runSqlStatementResult = dbManager.runSqlStatement(dbUrl, USER, PWD, true);
         assertTrue(runSqlStatementResult.isEmpty());
     }
@@ -107,18 +103,22 @@ public class DbManagerTest {
         //check that status not set
         try (Connection con = dbManager.createConnection(dbUrl, USER, PWD);
              Statement statement = con.createStatement()) {
-            ResultSet statusInfo = statement.executeQuery("select * "
-                    + "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS");
-            while (statusInfo.next()) {
-                migrStatus = statusInfo.getInt("status");
+            try (ResultSet statusInfo = statement.executeQuery("select * " +
+                    "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS")) {
+                while (statusInfo.next()) {
+                    migrStatus = statusInfo.getInt("status");
+                }
+                assertEquals(0, migrStatus);
+            } catch (SQLException ex) {
+                log.error("Failed to get status from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS table", ex);
+                fail("Failed to get status from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS table" + ex.getMessage());
             }
-            assertEquals(0, migrStatus);
         } catch (ClassNotFoundException ex) {
             log.error("Failed to find JDBC driver", ex);
             fail("Failed to find JDBC driver" + ex.getMessage());
         } catch (SQLException ex) {
-            log.error("Failed to create schema for NiFi Registry", ex);
-            fail("Failed to create schema for NiFi Registry" + ex.getMessage());
+            log.error("Failed to get data from DB", ex);
+            fail("Failed to get data from DB" + ex.getMessage());
         }
 
         File dir = new File("src/test/resources/error/persistent_data/flow_storage/" + dirName);
@@ -134,40 +134,54 @@ public class DbManagerTest {
         dir2.renameTo(newDir2);
     }
 
-    public void checkDataInDb(String expBucketId, String expFlowId, int expRowNumber, int expMigrStatus) {
+    private void checkDataInDb(String expBucketId, String expFlowId, int expRowNumber, int expMigrStatus) {
         String bucketIdDb = "";
         String flowtIdDb = "";
         int rowNumber = 0;
         int migrStatus = 0;
         try (Connection con = dbManager.createConnection(dbUrl, USER, PWD);
              Statement statement = con.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("select bucket_id, flow_id "
-                    + "from MIG_FLOW_PERSISTENCE_PROVIDER");
-            while (resultSet.next()) {
-                bucketIdDb = resultSet.getString("bucket_id");
-                flowtIdDb = resultSet.getString("flow_id");
+            try (ResultSet resultSet = statement.executeQuery("select bucket_id, flow_id " +
+                    "from MIG_FLOW_PERSISTENCE_PROVIDER")) {
+                while (resultSet.next()) {
+                    bucketIdDb = resultSet.getString("bucket_id");
+                    flowtIdDb = resultSet.getString("flow_id");
+                }
+                assertEquals(expBucketId, bucketIdDb);
+                assertEquals(expFlowId, flowtIdDb);
+            } catch (SQLException ex) {
+                log.error("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER", ex);
+                fail("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER" + ex.getMessage());
             }
-            assertEquals(expBucketId, bucketIdDb);
-            assertEquals(expFlowId, flowtIdDb);
-            ResultSet rowNum = statement.executeQuery("select count(*) as number "
-                    + "from MIG_FLOW_PERSISTENCE_PROVIDER");
-            while (rowNum.next()) {
-                rowNumber = rowNum.getInt("number");
-            }
-            assertEquals(expRowNumber, rowNumber);
 
-            ResultSet statusInfo = statement.executeQuery("select * "
-                    + "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS");
-            while (statusInfo.next()) {
-                migrStatus = statusInfo.getInt("status");
+            try (ResultSet rowNum = statement.executeQuery("select count(*) as number " +
+                    "from MIG_FLOW_PERSISTENCE_PROVIDER")) {
+                while (rowNum.next()) {
+                    rowNumber = rowNum.getInt("number");
+                }
+                assertEquals(expRowNumber, rowNumber);
+            } catch (SQLException ex) {
+                log.error("Failed to get number of records from MIG_FLOW_PERSISTENCE_PROVIDER", ex);
+                fail("Failed to get number of records from MIG_FLOW_PERSISTENCE_PROVIDER" + ex.getMessage());
             }
-            assertEquals(expMigrStatus, migrStatus);
+
+            try (ResultSet statusInfo = statement.executeQuery("select * " +
+                    "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS")) {
+                while (statusInfo.next()) {
+                    migrStatus = statusInfo.getInt("status");
+                }
+                assertEquals(expMigrStatus, migrStatus);
+            } catch (SQLException ex) {
+                log.error("Failed to get status from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS", ex);
+                fail("Failed to get status from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS" + ex.getMessage());
+            }
         } catch (ClassNotFoundException ex) {
             log.error("Failed to find JDBC driver", ex);
             fail("Failed to find JDBC driver" + ex.getMessage());
         } catch (SQLException ex) {
-            log.error("Failed to create schema for NiFi Registry", ex);
-            fail("Failed to create schema for NiFi Registry" + ex.getMessage());
+            //fix message
+            log.error("Failed to get data from DB", ex);
+            fail("Failed to get data from DB" + ex.getMessage());
         }
     }
 
