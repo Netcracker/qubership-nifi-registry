@@ -31,7 +31,6 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
