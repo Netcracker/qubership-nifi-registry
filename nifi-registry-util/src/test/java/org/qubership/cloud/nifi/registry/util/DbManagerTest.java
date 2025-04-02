@@ -1,8 +1,23 @@
+/*
+ * Copyright 2020-2025 NetCracker Technology Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.qubership.cloud.nifi.registry.util;
 
 import org.junit.jupiter.api.AfterAll;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,7 +31,9 @@ import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -105,8 +122,13 @@ public class DbManagerTest {
              Statement statement = con.createStatement()) {
             try (ResultSet statusInfo = statement.executeQuery("select * " +
                     "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS")) {
-                while (statusInfo.next()) {
-                    migrStatus = statusInfo.getInt("status");
+                if (statusInfo.next()) {
+                    migrStatus = statusInfo.getInt(2);
+                    if (statusInfo.next()) {
+                        fail("Status row is duplicated!");
+                    }
+                } else {
+                    fail("Status row was not found!");
                 }
                 assertEquals(0, migrStatus);
             } catch (SQLException ex) {
@@ -141,34 +163,49 @@ public class DbManagerTest {
         int migrStatus = 0;
         try (Connection con = dbManager.createConnection(dbUrl, USER, PWD);
              Statement statement = con.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery("select bucket_id, flow_id " +
-                    "from MIG_FLOW_PERSISTENCE_PROVIDER")) {
-                while (resultSet.next()) {
-                    bucketIdDb = resultSet.getString("bucket_id");
-                    flowtIdDb = resultSet.getString("flow_id");
+            try (
+                    PreparedStatement preparedStatement = statement.getConnection().prepareStatement(
+                            "select bucket_id, flow_id from MIG_FLOW_PERSISTENCE_PROVIDER" +
+                                    " where bucket_id = ? and flow_id = ?");
+            ) {
+                preparedStatement.setString(1, expBucketId);
+                preparedStatement.setString(2, expFlowId);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        bucketIdDb = resultSet.getString("bucket_id");
+                        flowtIdDb = resultSet.getString("flow_id");
+                    }
+                    assertEquals(expBucketId, bucketIdDb);
+                    assertEquals(expFlowId, flowtIdDb);
+                } catch (SQLException ex) {
+                    log.error("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER", ex);
+                    fail("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER" + ex.getMessage());
                 }
-                assertEquals(expBucketId, bucketIdDb);
-                assertEquals(expFlowId, flowtIdDb);
             } catch (SQLException ex) {
-                log.error("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER", ex);
+                log.error("Unexpected exception occurred.", ex);
                 fail("Failed to get data from MIG_FLOW_PERSISTENCE_PROVIDER" + ex.getMessage());
             }
-
             try (ResultSet rowNum = statement.executeQuery("select count(*) as number " +
                     "from MIG_FLOW_PERSISTENCE_PROVIDER")) {
-                while (rowNum.next()) {
+                if (rowNum.next()) {
                     rowNumber = rowNum.getInt("number");
+                    assertEquals(expRowNumber, rowNumber);
+                } else {
+                    fail("No records found in table!");
                 }
-                assertEquals(expRowNumber, rowNumber);
             } catch (SQLException ex) {
                 log.error("Failed to get number of records from MIG_FLOW_PERSISTENCE_PROVIDER", ex);
                 fail("Failed to get number of records from MIG_FLOW_PERSISTENCE_PROVIDER" + ex.getMessage());
             }
-
             try (ResultSet statusInfo = statement.executeQuery("select * " +
                     "from MIG_FLOW_PERSISTENCE_PROVIDER_STATUS")) {
-                while (statusInfo.next()) {
-                    migrStatus = statusInfo.getInt("status");
+                if (statusInfo.next()) {
+                    migrStatus = statusInfo.getInt(2);
+                    if (statusInfo.next()) {
+                        fail("Status row is duplicated!");
+                    }
+                } else {
+                    fail("Status row was not found!");
                 }
                 assertEquals(expMigrStatus, migrStatus);
             } catch (SQLException ex) {
