@@ -211,6 +211,9 @@ create_docker_env_file(){
   DB_PASSWORD=$(generate_random_hex_password 8 4)
   export DB_PASSWORD
   echo "DB_PASSWORD=$DB_PASSWORD" >> ./docker.env
+  KEYCLOAK_ADMIN_PASSWORD=$(generate_random_hex_password 8 4)
+  export KEYCLOAK_ADMIN_PASSWORD
+  echo "KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD" >> ./docker.env
   gitDir="$(pwd)"
   echo "BASE_DIR=$gitDir" >> ./docker.env
 }
