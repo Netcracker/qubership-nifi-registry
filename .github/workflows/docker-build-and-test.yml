@@ -14,6 +14,8 @@ on:
       - 'nifi-scripts/**'
       - '.github/actions/**'
       - '.github/collections/**'
+      - '.github/docker/**'
+      - '.github/configuration/**'
       - '.github/workflows/sh/**'
   pull_request:
     paths:
@@ -27,6 +29,8 @@ on:
       - 'nifi-scripts/**'
       - '.github/actions/**'
       - '.github/collections/**'
+      - '.github/docker/**'
+      - '.github/configuration/**'
       - '.github/workflows/sh/**'
   workflow_dispatch:
     inputs:
