@@ -14,6 +14,7 @@ services:
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
   nifi-registry:
     image: local-nifi-registry:test
+    restart: on-failure:3
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
@@ -21,6 +22,8 @@ services:
         condition: service_started
       postgresql-init:
         condition: service_completed_successfully
+      keycloak:
+        condition: service_started
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
