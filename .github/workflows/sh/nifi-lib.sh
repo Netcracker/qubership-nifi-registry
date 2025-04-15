@@ -186,8 +186,12 @@ wait_nifi_reg_container(){
     if [ "$wait_success" == '0' ]; then
         echo "Wait failed, nifi registry not available. Last 500 lines of logs for container:"
         echo "resultsDir=$resultsDir"
+        echo "List of containers:"
+        docker ps -a
         docker logs -n 500 "$containerName" > ./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
+        echo "Keycloak logs:"
+        docker logs -n 500 oidc-keycloak-1
         echo "Wait failed, nifi registry not available" > "./test-results/$resultsDir/failed_nifi_registry_wait.lst"
         mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
     fi
