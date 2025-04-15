@@ -14,7 +14,7 @@ services:
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
   nifi-registry:
     image: local-nifi-registry:test
-    restart: on-failure:3
+    restart: on-failure:6
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
@@ -86,8 +86,8 @@ services:
     volumes:
       - keycloak-init:/opt/keycloak/data/import
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgresql:5432/keycloak
       KC_DB_USERNAME: postgres
