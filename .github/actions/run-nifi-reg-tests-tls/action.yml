@@ -1,6 +1,6 @@
 ---
 name: 'Run NiFi Registry in TLS mode and execute autotests'
-description: 'Runs NiFi Registry and Consul containers and executes autotests'
+description: 'Runs NiFi Registry and other containers and executes autotests'
 inputs:
   results-dir:
     description: 'Directory to store results'

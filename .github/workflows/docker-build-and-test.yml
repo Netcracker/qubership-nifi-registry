@@ -69,10 +69,8 @@ jobs:
         uses: ./.github/actions/run-nifi-reg-tests-tls
       - name: Run tests for nifi-registry in TLS mode with PG option
         uses: ./.github/actions/run-nifi-reg-tests-tls-db
-      - name: Run tests for nifi-registry in TLS and OIDC mode
-        shell: bash
-        run: |
-          echo "TBD: tests for NiFi Registry in TLS+OIDC mode..."
+      - name: Run tests for nifi-registry in OIDC mode
+        uses: ./.github/actions/run-nifi-reg-tests-oidc
       - name: Verify test results
         shell: bash
         run: |
