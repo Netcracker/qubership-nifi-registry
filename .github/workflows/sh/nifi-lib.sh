@@ -168,7 +168,7 @@ wait_nifi_container(){
 wait_nifi_reg_container(){
     local hostName="$1"
     local portNum="$2"
-    local containerName="$3"
+    local composeFile="$3"
     local useTls="$4"
     local initialWait="$5"
     local waitTimeout="$6"
@@ -184,14 +184,12 @@ wait_nifi_reg_container(){
     wait_for_service "$hostName" "$portNum" "$apiUrl" "$waitTimeout" "$useTls" \
       "$caCert" "$clientKeystore" "$clientPassword" || wait_success="0"
     if [ "$wait_success" == '0' ]; then
-        echo "Wait failed, nifi registry not available. Last 500 lines of logs for container:"
+        echo "Wait failed, nifi registry not available. Last 500 lines of logs for docker compose $composeFile"
         echo "resultsDir=$resultsDir"
         echo "List of containers:"
         docker ps -a
-        docker logs -n 500 "$containerName" > ./nifi_registry_log_tmp.lst
+        docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 > ./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
-        echo "Keycloak logs:"
-        docker logs -n 500 oidc-keycloak-1
         echo "Wait failed, nifi registry not available" > "./test-results/$resultsDir/failed_nifi_registry_wait.lst"
         mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
     fi

@@ -14,7 +14,7 @@ services:
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
   nifi-registry:
     image: local-nifi-registry:test
-    restart: always
+    restart: on-failure:3
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
