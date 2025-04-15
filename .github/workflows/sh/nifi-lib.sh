@@ -184,10 +184,10 @@ wait_nifi_reg_container(){
     wait_for_service "$hostName" "$portNum" "$apiUrl" "$waitTimeout" "$useTls" \
       "$caCert" "$clientKeystore" "$clientPassword" || wait_success="0"
     if [ "$wait_success" == '0' ]; then
-        echo "Wait failed, nifi registry not available. Last 500 lines of logs for docker compose $composeFile"
-        echo "resultsDir=$resultsDir"
         echo "List of containers:"
         docker ps -a
+        echo "Wait failed, nifi registry not available. Last 500 lines of logs for compose $composeFile"
+        echo "resultsDir=$resultsDir"
         docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 > ./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
         echo "Wait failed, nifi registry not available" > "./test-results/$resultsDir/failed_nifi_registry_wait.lst"
