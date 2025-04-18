@@ -1163,14 +1163,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies/{{registry.delete.buckets.id}}",
+							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies/delete/buckets",
 							"host": [
 								"{{nifi.registry.url}}"
 							],
 							"path": [
 								"nifi-registry-api",
 								"policies",
-								"{{registry.delete.buckets.id}}"
+								"delete",
+								"buckets"
 							]
 						}
 					},
@@ -1336,15 +1337,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies/delete/buckets",
+							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies/{{registry.delete.buckets.id}}",
 							"host": [
 								"{{nifi.registry.url}}"
 							],
 							"path": [
 								"nifi-registry-api",
 								"policies",
-								"delete",
-								"buckets"
+								"{{registry.delete.buckets.id}}"
 							]
 						}
 					},
