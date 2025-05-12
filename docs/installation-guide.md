@@ -1,7 +1,6 @@
 # Installation Guide
 
-qubership-nifi-registry service can be started in docker (or compatible) 
-container runtime with support of `docker compose` command.
+qubership-nifi-registry service can be started in docker (or compatible) container runtime with support of `docker compose` command.
 
 Sections below describe typical startup configurations:
 1. plain - service without any authentication with plain (HTTP) communications and file-based storage
@@ -103,11 +102,15 @@ docker compose -f dev/oidc/docker-compose.yaml --env-file dev/oidc/docker.env up
 
 ## Usage
 
-### Plain
+### Plain mode
 
 Navigate to `http://localhost:18080/nifi-registry/` to access qubership-nifi-registry.
 
-### TLS
+### TLS mode
+
+Navigate to `https://localhost:18080/nifi-registry/` to access qubership-nifi-registry.
+You'll be prompted to use client certificate for authentication.
+See sections below on certificates configuration.
 
 #### Import CA certificate
 
@@ -121,23 +124,12 @@ Password for is available in `$BASE_DIR/temp-vol/tls-cert/CN=admin_OU=NIFI.passw
 To access qubership-nifi-registry, you need to import it as Personal certificate in your browser.
 After that you may need to open new window or restart browser for changes to be applied.
 
-#### Accessing qubership-nifi-registry
+### OIDC mode
 
 Navigate to `https://localhost:18080/nifi-registry/` to access qubership-nifi-registry.
-You'll be prompted to use client certificate for authentication.
-
-### OIDC
-
-#### Import CA certificate
-
-Self-signed CA certificate is generated in `$BASE_DIR/temp-vol/tls-cert/nifi-cert.pem`.
-You can import it in your browser as trusted and then open new window or restart browser for changes to be applied.
-
-#### Accessing qubership-nifi-registry
-
-Navigate to `https://localhost:18080/nifi-registry/` to access qubership-nifi-registry.
-Click on Login link to log in via keycloak. 
-In this example, keycloak has preconfigured user `nifi-test-user` with temporary password = `changeit`. 
+Click on Login link to log in via keycloak.
+In this example, keycloak has preconfigured user `nifi-test-user` with temporary password = `changeit`.
 On the first login, you'll be requested to change password.
 
-You can also use client certificate for authentication (see previous section).
+You can also use client certificate for authentication (see section on TLS mode).
+See *Import CA certificate* section on certificates configuration.
