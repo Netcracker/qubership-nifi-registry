@@ -27,6 +27,7 @@
         <module>nifi-registry-migration-util</module>
         <module>nifi-registry-db-util</module>
         <module>nifi-registry-assembly</module>
+        <module>qubership-db-access-policy-provider</module>
     </modules>
 
     <parent>

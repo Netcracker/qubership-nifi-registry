@@ -298,7 +298,7 @@
     <!-- To enable the database-access-policy-provider remove 2 lines. This is 1 of 2.-->
     <accessPolicyProvider>
         <identifier>database-access-policy-provider</identifier>
-        <class>org.apache.nifi.registry.security.authorization.database.DatabaseAccessPolicyProvider</class>
+        <class>org.qubership.cloud.nifi.registry.security.authorization.database.CachedDatabaseAccessPolicyProvider</class>
         <property name="User Group Provider">database-user-group-provider</property>
         <property name="Initial Admin Identity"></property>
         <property name="NiFi Identity 1"></property>

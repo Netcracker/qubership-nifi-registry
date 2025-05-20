@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine/java:21-jdk as base
+FROM alpine/java:21-jdk AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
@@ -20,7 +20,7 @@ USER root
 RUN apk add --no-cache \
     jq=1.7.1-r0 \
     bash=5.2.26-r0
-    
+
 ENV NIFI_REGISTRY_BASE_DIR /opt/nifi-registry
 ENV NIFI_REGISTRY_HOME $NIFI_REGISTRY_BASE_DIR/nifi-registry-current
 ENV NIFI_TOOLKIT_HOME ${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
@@ -28,7 +28,7 @@ ENV HOME=${NIFI_REGISTRY_HOME}
 
 USER 10001
 
-FROM apache/nifi-registry:1.28.1 as nifi-reg2
+FROM apache/nifi-registry:1.28.1 AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
@@ -73,6 +73,19 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/testng*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/zookeeper*.jar
 
+USER root
+RUN apt-get update && apt-get install zip
+USER 1000
+
+COPY --chown=1000:1000 qubership-db-access-policy-provider/target/qubership-db-access-policy-provider-*.jar ${NIFI_REGISTRY_HOME}/lib/
+COPY --chown=1000:1000 qubership-db-access-policy-provider/target/lib/*.jar ${NIFI_REGISTRY_HOME}/lib/
+
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib \
+    && mv ${NIFI_REGISTRY_HOME}/lib/qubership-db-access-policy-provider-*.jar ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib/ \
+    && cd ${NIFI_REGISTRY_HOME}/lib \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/*.jar \
+    && rm -rf ${NIFI_REGISTRY_HOME}/lib/WEB-INF
+
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"
 
@@ -84,7 +97,7 @@ COPY --chown=10001:0 --from=nifi-reg2 $NIFI_REGISTRY_BASE_DIR/nifi-registry-curr
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/db_schema_gen
 COPY nifi-registry-util/target/nifi-registry-util-*.jar $NIFI_REGISTRY_HOME/db_schema_gen/nifi-registry-util.jar
-COPY nifi-registry-migration-util/target/nifi-registry-migration-util-*.jar  ${NIFI_REGISTRY_HOME}/lib/nifi-registry-migration-util.jar
+COPY nifi-registry-migration-util/target/nifi-registry-migration-util-*.jar ${NIFI_REGISTRY_HOME}/lib/nifi-registry-migration-util.jar
 
 COPY nifi-registry-db-util/target/lib/postgresql-*.jar ${NIFI_REGISTRY_HOME}/lib/
 
