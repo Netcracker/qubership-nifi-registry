@@ -15,15 +15,17 @@
 FROM alpine/java:21-jdk AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
+ARG NIFI_REGISTRY_VERSION=1.28.1
+
 USER root
 #add jq:
 RUN apk add --no-cache \
     jq=1.7.1-r0 \
     bash=5.2.26-r0
 
-ENV NIFI_REGISTRY_BASE_DIR /opt/nifi-registry
-ENV NIFI_REGISTRY_HOME $NIFI_REGISTRY_BASE_DIR/nifi-registry-current
-ENV NIFI_TOOLKIT_HOME ${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
+ENV NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
+ENV NIFI_REGISTRY_HOME=$NIFI_REGISTRY_BASE_DIR/nifi-registry-current
+ENV NIFI_TOOLKIT_HOME=${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
 
 USER 10001
@@ -74,16 +76,17 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/zookeeper*.jar
 
 USER root
-RUN apt-get update && apt-get install zip
+RUN apt-get update && apt-get -y install --no-install-recommends zip=3.0-12
 USER 1000
 
 COPY --chown=1000:1000 qubership-db-access-policy-provider/target/qubership-db-access-policy-provider-*.jar ${NIFI_REGISTRY_HOME}/lib/
 COPY --chown=1000:1000 qubership-db-access-policy-provider/target/lib/*.jar ${NIFI_REGISTRY_HOME}/lib/
 
+WORKDIR ${NIFI_REGISTRY_HOME}/lib
+
 RUN mkdir -p ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib \
     && mv ${NIFI_REGISTRY_HOME}/lib/qubership-db-access-policy-provider-*.jar ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib/ \
-    && cd ${NIFI_REGISTRY_HOME}/lib \
-    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/*.jar \
+    && zip nifi-registry-web-api-${NIFI_REGISTRY_VERSION}.war WEB-INF/lib/*.jar \
     && rm -rf ${NIFI_REGISTRY_HOME}/lib/WEB-INF
 
 FROM base
