@@ -15,8 +15,6 @@
 FROM alpine/java:21-jdk AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
-ARG NIFI_REGISTRY_VERSION=1.28.1
-
 USER root
 #add jq:
 RUN apk add --no-cache \
@@ -86,7 +84,7 @@ WORKDIR ${NIFI_REGISTRY_HOME}/lib
 
 RUN mkdir -p ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib \
     && mv ${NIFI_REGISTRY_HOME}/lib/qubership-db-access-policy-provider-*.jar ${NIFI_REGISTRY_HOME}/lib/WEB-INF/lib/ \
-    && zip nifi-registry-web-api-${NIFI_REGISTRY_VERSION}.war WEB-INF/lib/*.jar \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/*.jar \
     && rm -rf ${NIFI_REGISTRY_HOME}/lib/WEB-INF
 
 FROM base
