@@ -200,9 +200,11 @@ generate_tls_passwords(){
     TRUSTSTORE_PASSWORD=$(generate_random_hex_password 8 4)
     KEYSTORE_PASSWORD_NIFI=$(generate_random_hex_password 8 4)
     KEYSTORE_PASSWORD_NIFI_REG=$(generate_random_hex_password 8 4)
+    KEYCLOAK_TLS_PASS=$(generate_random_hex_password 8 4)
     export TRUSTSTORE_PASSWORD
     export KEYSTORE_PASSWORD_NIFI
     export KEYSTORE_PASSWORD_NIFI_REG
+    export KEYCLOAK_TLS_PASS
 }
 
 create_docker_env_file(){
@@ -218,4 +220,20 @@ create_docker_env_file(){
   echo "KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD" >> ./docker.env
   gitDir="$(pwd)"
   echo "BASE_DIR=$gitDir" >> ./docker.env
+  echo "KEYCLOAK_TLS_PASS=$KEYCLOAK_TLS_PASS" >>./docker.env
+}
+
+generate_add_certs() {
+    keytool -genkeypair -alias keycloakCA -keypass "$KEYCLOAK_TLS_PASS" -keystore ./temp-vol/tls-cert/keycloak.p12 -storetype PKCS12 \
+        -storepass "$KEYCLOAK_TLS_PASS" -keyalg RSA -dname "CN=keycloakCA" -ext bc:c
+    keytool -genkeypair -alias keycloakServer -keypass "$KEYCLOAK_TLS_PASS" -keystore ./temp-vol/tls-cert/keycloak.p12 -storetype PKCS12 \
+        -storepass "$KEYCLOAK_TLS_PASS" -keyalg RSA -dname "CN=keycloak" -signer keycloakCA -signerkeypass \
+        "$KEYCLOAK_TLS_PASS" -ext SAN=dns:keycloak,dns:localhost
+    keytool -importkeystore -srckeystore ./temp-vol/tls-cert/keycloak.p12 -destkeystore ./temp-vol/tls-cert/keycloak-server.p12 -srcstoretype PKCS12 \
+        -deststoretype PKCS12 -srcstorepass "$KEYCLOAK_TLS_PASS" -deststorepass "$KEYCLOAK_TLS_PASS" -srcalias \
+        keycloakServer -destalias keycloakServer -srckeypass "$KEYCLOAK_TLS_PASS" -destkeypass "$KEYCLOAK_TLS_PASS"
+    keytool -exportcert -keystore ./temp-vol/tls-cert/keycloak.p12 -storetype PKCS12 -storepass "$KEYCLOAK_TLS_PASS" -alias keycloakCA -rfc \
+        -file ./temp-vol/tls-cert/ca/keycloak-ca.cer
+    keytool -importcert -keystore ./temp-vol/tls-cert/keycloak-server.p12 -storetype PKCS12 -storepass "$KEYCLOAK_TLS_PASS" \
+        -file ./temp-vol/tls-cert/ca/keycloak-ca.cer -alias keycloak-ca-cer -noprompt
 }
