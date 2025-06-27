@@ -32,7 +32,7 @@ prop_replace 'nifi.registry.security.identity.mapping.value.dn' "\$1"
     echo ""
     echo "nifi.registry.security.identity.mapping.pattern.dn2=^CN=(.*?), .*$"
     echo "nifi.registry.security.identity.mapping.value.dn2=$1"
-} >> "${NIFI_REGISTRY_HOME}"/conf/nifi-registry.properties
+} >>"${NIFI_REGISTRY_HOME}"/conf/nifi-registry.properties
 
 
 #Change the location of the users.xml file and authorizations.xml
