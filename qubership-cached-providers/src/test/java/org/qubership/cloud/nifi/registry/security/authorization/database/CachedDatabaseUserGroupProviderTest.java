@@ -66,10 +66,6 @@ public class CachedDatabaseUserGroupProviderTest {
         dataSource = new HikariDataSource(hikariConfig);
     }
 
-    @BeforeAll
-    public static void setUpForAll() {
-    }
-
     @AfterAll
     public static void tearDown() {
         postgresContainer.stop();
