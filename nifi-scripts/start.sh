@@ -44,11 +44,11 @@ fi
 
 if [ -n "${NIFI_REG_XSS}" ] && [ "${NIFI_REG_XSS}" != "${ENV_NIFI_REG_XSS}" ]; then
     {
-      echo ""
-      echo ""
-      echo "#Thread stack size"
-      echo "java.arg.7=-Xss${NIFI_REG_XSS}"
-      echo ""
+        echo ""
+        echo ""
+        echo "#Thread stack size"
+        echo "java.arg.7=-Xss${NIFI_REG_XSS}"
+        echo ""
     } >> "${NIFI_REGISTRY_HOME}"/conf/bootstrap.conf
 fi
 
@@ -156,9 +156,9 @@ if [ "$NIFI_REG_USE_PGDB" = 'true' ]; then
 
     #add new extension directory:
     {
-      echo ""
-      echo ""
-      echo "nifi.registry.extension.dir.cached-providers=./ext-cached"
+        echo ""
+        echo ""
+        echo "nifi.registry.extension.dir.cached-providers=./ext-cached"
     } >> "${NIFI_REGISTRY_HOME}"/conf/nifi-registry.properties
 fi
 
