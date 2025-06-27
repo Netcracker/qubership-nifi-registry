@@ -20,11 +20,20 @@ USER root
 RUN apk add --no-cache \
     jq=1.7.1-r0 \
     bash=5.2.26-r0
-    
+
 ENV NIFI_REGISTRY_BASE_DIR /opt/nifi-registry
 ENV NIFI_REGISTRY_HOME $NIFI_REGISTRY_BASE_DIR/nifi-registry-current
 ENV NIFI_TOOLKIT_HOME ${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
+
+RUN chmod 664 /opt/java/openjdk/lib/security/cacerts \
+    && adduser --disabled-password \
+        --gecos "" \
+        --home "${NIFI_REGISTRY_HOME}" \
+        --ingroup "root" \
+        --no-create-home \
+        --uid 10001 \
+        nifi-registry
 
 USER 10001
 
@@ -76,7 +85,7 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"
 
-USER 10001:10001
+USER 10001:0
 WORKDIR $NIFI_REGISTRY_HOME
 
 COPY --chown=10001:0 --from=nifi-reg2 $NIFI_REGISTRY_BASE_DIR/ $NIFI_REGISTRY_BASE_DIR/
