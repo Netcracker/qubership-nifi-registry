@@ -48,7 +48,7 @@ then
 
     info "Importing certificates from /tmp/cert directory..."
     find /tmp/cert -print | grep -E '\.cer|\.pem' | grep -v '\.\.' | sed -E 's|/tmp/cert/(.*)|/tmp/cert/\1 \1|g' | xargs -n 2 --no-run-if-empty bash -c  \
-        "echo -file $1 -alias $2 ; keytool -keystore ${CERTIFICATE_KEYSTORE_LOCATION} -importcert -file $1 -alias $2  -storepass ${CERTIFICATE_FILE_PASSWORD} -noprompt" argv0 || warn "Failed to import certificate"
+        'echo -file "$1" -alias "$2" ; keytool -keystore ${CERTIFICATE_KEYSTORE_LOCATION} -importcert -file "$1" -alias "$2"  -storepass ${CERTIFICATE_FILE_PASSWORD} -noprompt' argv0 || warn "Failed to import certificate"
 else
     info "Directory /tmp/cert doesn't exist, skipping import."
 fi
