@@ -73,10 +73,10 @@ wait_for_service() {
 
 generate_random_hex_password() {
     #args -- letters, numbers
-    echo "$(tr -dc A-F < /dev/urandom | head -c "$1")""$(tr -dc 0-9 < /dev/urandom | head -c "$2")" | fold -w 1 | shuf | tr -d '\n'
+    echo "$(tr -dc A-F </dev/urandom | head -c "$1")""$(tr -dc 0-9 </dev/urandom | head -c "$2")" | fold -w 1 | shuf | tr -d '\n'
 }
 
-configure_log_level(){
+configure_log_level() {
     local targetPkg="$1"
     local targetLevel="$2"
     local consulUrl="$3"
@@ -100,7 +100,7 @@ configure_log_level(){
     else
         echo "Failed to set log level in Consul. Response code = $respCode. Error message:"
         cat ./consul-put-resp.txt
-        return 1;
+        return 1
     fi
 }
 
@@ -112,7 +112,7 @@ test_log_level() {
     echo "Testing Consul logging parameters configuration for package = $targetPkg, level = $targetLevel"
     echo "Results path = $resultsPath"
     configure_log_level "$targetPkg" "$targetLevel" ||
-       echo "Consul config failed" >"$resultsPath/failed_consul_config.lst"
+         echo "Consul config failed" >"$resultsPath/failed_consul_config.lst"
     echo "Waiting 20 seconds..."
     sleep 20
     echo "Copying logback.xml..."
@@ -210,19 +210,19 @@ generate_tls_passwords() {
     export KEYCLOAK_TLS_PASS
 }
 
-create_docker_env_file(){
+create_docker_env_file() {
     echo "Generating environment file for docker-compose..."
-    echo "TRUSTSTORE_PASSWORD=$TRUSTSTORE_PASSWORD" > ./docker.env
-    echo "KEYSTORE_PASSWORD_NIFI=$KEYSTORE_PASSWORD_NIFI" >> ./docker.env
-    echo "KEYSTORE_PASSWORD_NIFI_REG=$KEYSTORE_PASSWORD_NIFI_REG" >> ./docker.env
+    echo "TRUSTSTORE_PASSWORD=$TRUSTSTORE_PASSWORD" >./docker.env
+    echo "KEYSTORE_PASSWORD_NIFI=$KEYSTORE_PASSWORD_NIFI" >>./docker.env
+    echo "KEYSTORE_PASSWORD_NIFI_REG=$KEYSTORE_PASSWORD_NIFI_REG" >>./docker.env
     DB_PASSWORD=$(generate_random_hex_password 8 4)
     export DB_PASSWORD
-    echo "DB_PASSWORD=$DB_PASSWORD" >> ./docker.env
+    echo "DB_PASSWORD=$DB_PASSWORD" >>./docker.env
     KEYCLOAK_ADMIN_PASSWORD=$(generate_random_hex_password 8 4)
     export KEYCLOAK_ADMIN_PASSWORD
-    echo "KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD" >> ./docker.env
+    echo "KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD" >>./docker.env
     gitDir="$(pwd)"
-    echo "BASE_DIR=$gitDir" >> ./docker.env
+    echo "BASE_DIR=$gitDir" >>./docker.env
     echo "KEYCLOAK_TLS_PASS=$KEYCLOAK_TLS_PASS" >>./docker.env
 }
 
