@@ -132,13 +132,34 @@ if [ "$NIFI_REG_USE_PGDB" = 'true' ]; then
     . "${scripts_dir}/connect_to_db.sh"
     info "Configuring providers and authorizers to use Database"
     cp ${scripts_dir}/DbFlowProviders.xml "${NIFI_REGISTRY_HOME}"/conf/providers.xml
-    cp ${scripts_dir}/DbFlowAuthorizers.xml "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
+    # set up authorizers:
+    if [ "$NIFI_REG_DB_FLOW_AUTHORIZERS" = 'cached' ]; then
+        # by default, use cached providers:
+        cp ${scripts_dir}/CachedDbFlowAuthorizers.xml "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
+    elif [ "$NIFI_REG_DB_FLOW_AUTHORIZERS" = 'standard' ]; then
+        # if set, use standard DB providers:
+        cp ${scripts_dir}/DbFlowAuthorizers.xml "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
+    elif [ -z "$NIFI_REG_DB_FLOW_AUTHORIZERS" ]; then
+        # by default, use cached
+        cp ${scripts_dir}/CachedDbFlowAuthorizers.xml "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
+    else
+        # by default, use cached
+        cp ${scripts_dir}/CachedDbFlowAuthorizers.xml "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
+    fi
+
     sed -i -E "s|^(.*)<property name=\"Initial User Identity 1\"></property>(.*)|\1<property name=\"Initial User Identity 1\">${INITIAL_ADMIN_IDENTITY}</property>\2|" "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
     sed -i -E "s|^(.*)<property name=\"Initial Admin Identity\"></property>(.*)|\1<property name=\"Initial Admin Identity\">${INITIAL_ADMIN_IDENTITY}</property>\2|" "${NIFI_REGISTRY_HOME}"/conf/authorizers.xml
-    
+
     if [ "$NIFI_REG_MIGRATE_TO_DB" = 'true' ]; then
         [ -f "${NIFI_REGISTRY_HOME}/persistent_data/database/nifi-registry-primary.mv.db" ] && cp "${NIFI_REGISTRY_HOME}"/persistent_data/database/nifi-registry-primary.mv.db "${NIFI_REGISTRY_HOME}"/persistent_data/database/nifi-registry.mv.db
     fi
+
+    #add new extension directory:
+    {
+      echo ""
+      echo ""
+      echo "nifi.registry.extension.dir.cached-providers=./ext-cached"
+    } >> "${NIFI_REGISTRY_HOME}"/conf/nifi-registry.properties
 fi
 
 # Do after replacement of DbFlowProviders.xml:
