@@ -112,7 +112,7 @@ test_log_level() {
     echo "Testing Consul logging parameters configuration for package = $targetPkg, level = $targetLevel"
     echo "Results path = $resultsPath"
     configure_log_level "$targetPkg" "$targetLevel" ||
-         echo "Consul config failed" >"$resultsPath/failed_consul_config.lst"
+        echo "Consul config failed" >"$resultsPath/failed_consul_config.lst"
     echo "Waiting 20 seconds..."
     sleep 20
     echo "Copying logback.xml..."
