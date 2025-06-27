@@ -17,7 +17,6 @@ import org.apache.nifi.registry.util.PropertyValue;
 import org.apache.nifi.registry.util.StandardPropertyValue;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
