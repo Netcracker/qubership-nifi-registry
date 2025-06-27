@@ -129,7 +129,7 @@ volumes:
       type: none
       device: $BASE_DIR/temp-vol/tls-cert/nifi-registry/
   tls-cert-ca:
-    driver: localAdd commentMore actions
+    driver: local
     driver_opts:
       o: bind
       type: none
