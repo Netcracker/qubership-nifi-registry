@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.qubership.cloud.nifi.registry.security.authorization.database.mappers.MapperUtils;
 import org.qubership.cloud.nifi.registry.security.authorization.database.model.PolicyKey;
+import org.springframework.dao.DuplicateKeyException;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -528,6 +529,54 @@ public class CachedDatabaseAccessPolicyProviderTest {
         AccessPolicy apGet = provider.getAccessPolicy(apReturned.getIdentifier());
         Assertions.assertEquals(ap.getIdentifier(), apGet.getIdentifier());
         checkAccessPolicyInDB(ap, Set.of(user1.getIdentifier(), user2.getIdentifier()), Collections.emptySet());
+    }
+
+    @Test
+    public void addNewPolicyTwice() {
+        configureUserGroupProvider("admin", "user1", "user2");
+        User user1 = userGroupProvider.getUserByIdentity("user1");
+        User user2 = userGroupProvider.getUserByIdentity("user2");
+        configureProvider("admin", null);
+        AccessPolicy ap = new AccessPolicy.Builder().
+                identifierGenerateRandom().
+                resource("/test-resource1").
+                action(RequestAction.READ).
+                addUser(user1.getIdentifier()).
+                addUser(user2.getIdentifier()).
+                build();
+        //create ap:
+        AccessPolicy apReturned = provider.addAccessPolicy(ap);
+        Assertions.assertEquals(ap.getIdentifier(), apReturned.getIdentifier());
+        //DuplicateKeyException on 2nd creation of ap:
+        Assertions.assertThrows(DuplicateKeyException.class, () -> provider.addAccessPolicy(ap));
+    }
+
+    @Test
+    public void addDuplicatePolicy() {
+        configureUserGroupProvider("admin", "user1", "user2");
+        User user1 = userGroupProvider.getUserByIdentity("user1");
+        User user2 = userGroupProvider.getUserByIdentity("user2");
+        configureProvider("admin", null);
+        AccessPolicy ap = new AccessPolicy.Builder().
+                identifierGenerateRandom().
+                resource("/test-resource1").
+                action(RequestAction.READ).
+                addUser(user1.getIdentifier()).
+                addUser(user2.getIdentifier()).
+                build();
+        //create ap:
+        AccessPolicy apReturned = provider.addAccessPolicy(ap);
+        Assertions.assertEquals(ap.getIdentifier(), apReturned.getIdentifier());
+        //create duplicate policy with identical resource and action, but different identifier:
+        AccessPolicy duplicatePolicy = new AccessPolicy.Builder().
+                identifierGenerateRandom().
+                resource("/test-resource1").
+                action(RequestAction.READ).
+                addUser(user1.getIdentifier()).
+                addUser(user2.getIdentifier()).
+                build();
+        //DuplicateKeyException on duplicate creation:
+        Assertions.assertThrows(DuplicateKeyException.class, () -> provider.addAccessPolicy(duplicatePolicy));
     }
 
     @Test

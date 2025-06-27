@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "41c9f2de-510e-4cd4-be75-6ad1bf6775ff",
+		"_postman_id": "9089b8ea-0e65-489f-96bd-981b9eb33651",
 		"name": "NiFi_Registry_Policy_API_Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -874,6 +874,50 @@
 					"request": {
 						"method": "GET",
 						"header": [],
+						"url": {
+							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies",
+							"host": [
+								"{{nifi.registry.url}}"
+							],
+							"path": [
+								"nifi-registry-api",
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create duplicate policy read-proxy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"pm.test(\"Response is text and contains error message\", function () {\r",
+									"    var textData = pm.response.text();\r",
+									"    pm.expect(textData).to.eql(\"Found multiple policies for '/proxy' with 'read'.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"read\",\r\n    \"resource\": \"/proxy\",\r\n    \"revision\": {\r\n        \"version\": 0\r\n    },\r\n    \"userGroups\": [\r\n        {\r\n            \"identifier\": \"{{registry.group.id}}\"\r\n        }\r\n    ],\r\n    \"users\": [\r\n        {\r\n            \"identifier\": \"{{registry.default.admin.id}}\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{nifi.registry.url}}/nifi-registry-api/policies",
 							"host": [
