@@ -187,11 +187,11 @@ public class CachedDatabaseAccessPolicyProviderTest {
     }
 
     private void configureProvider(String initialAdminIdentity, String nifiGroupName, String... nifiIdentities) {
-        final Map<String,String> configProperties = new HashMap<>();
+        final Map<String, String> configProperties = new HashMap<>();
 
-        for (int i=0; i < nifiIdentities.length; i++) {
+        for (int i = 0; i < nifiIdentities.length; i++) {
             final String nifiIdentity = nifiIdentities[i];
-            configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_NIFI_IDENTITY_PREFIX + (i+1),
+            configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_NIFI_IDENTITY_PREFIX + (i + 1),
                     nifiIdentity);
         }
         configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_USER_GROUP_PROVIDER,
