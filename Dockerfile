@@ -82,6 +82,9 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/testng*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/zookeeper*.jar
 
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached
+COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
+
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"
 
