@@ -43,13 +43,13 @@ if [ -n "${NIFI_REG_JVM_HEAP_MAX}" ] && [ "${NIFI_REG_JVM_HEAP_MAX}" != "${ENV_N
 fi
 
 if [ -n "${NIFI_REG_XSS}" ] && [ "${NIFI_REG_XSS}" != "${ENV_NIFI_REG_XSS}" ]; then
-	{
-	  echo ""
-	  echo ""
-	  echo "#Thread stack size"
-	  echo "java.arg.7=-Xss${NIFI_REG_XSS}"
-	  echo ""
-	} >> "${NIFI_REGISTRY_HOME}"/conf/bootstrap.conf
+    {
+      echo ""
+      echo ""
+      echo "#Thread stack size"
+      echo "java.arg.7=-Xss${NIFI_REG_XSS}"
+      echo ""
+    } >> "${NIFI_REGISTRY_HOME}"/conf/bootstrap.conf
 fi
 
 #Temp enable native memory tracking:
