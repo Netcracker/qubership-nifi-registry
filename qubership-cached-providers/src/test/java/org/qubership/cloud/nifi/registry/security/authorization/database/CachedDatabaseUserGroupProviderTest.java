@@ -99,11 +99,11 @@ public class CachedDatabaseUserGroupProviderTest {
     }
 
     private void configureProvider(String... initialUserIdentities) {
-        final Map<String,String> configProperties = new HashMap<>();
+        final Map<String, String> configProperties = new HashMap<>();
 
-        for (int i=0; i < initialUserIdentities.length; i++) {
+        for (int i = 0; i < initialUserIdentities.length; i++) {
             final String initialUserIdentity = initialUserIdentities[i];
-            configProperties.put(CachedDatabaseUserGroupProvider.PROP_INITIAL_USER_IDENTITY_PREFIX + (i+1),
+            configProperties.put(CachedDatabaseUserGroupProvider.PROP_INITIAL_USER_IDENTITY_PREFIX + (i + 1),
                     initialUserIdentity);
         }
         configProperties.put("TestProperty 1", "Value 1");
@@ -700,7 +700,8 @@ public class CachedDatabaseUserGroupProviderTest {
             }
             for (String userId : userIds) {
                 try (PreparedStatement prSt = con.
-                        prepareStatement("insert into ugp_user_group (group_identifier, user_identifier) values (?, ?)")) {
+                        prepareStatement(
+                                "insert into ugp_user_group (group_identifier, user_identifier) values (?, ?)")) {
                     prSt.setString(1, group.getIdentifier());
                     prSt.setString(2, userId);
                     prSt.executeUpdate();

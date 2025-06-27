@@ -133,11 +133,11 @@ public class CachedDatabaseAccessPolicyProviderTest {
     }
 
     private void configureUserGroupProvider(String... initialUserIdentities) {
-        final Map<String,String> configProperties = new HashMap<>();
+        final Map<String, String> configProperties = new HashMap<>();
 
-        for (int i=0; i < initialUserIdentities.length; i++) {
+        for (int i = 0; i < initialUserIdentities.length; i++) {
             final String initialUserIdentity = initialUserIdentities[i];
-            configProperties.put(CachedDatabaseUserGroupProvider.PROP_INITIAL_USER_IDENTITY_PREFIX + (i+1),
+            configProperties.put(CachedDatabaseUserGroupProvider.PROP_INITIAL_USER_IDENTITY_PREFIX + (i + 1),
                     initialUserIdentity);
         }
 
@@ -148,14 +148,15 @@ public class CachedDatabaseAccessPolicyProviderTest {
     }
 
     private void configureInvalidProvider(String initialAdminIdentity, String nifiGroupName, String... nifiIdentities) {
-        final Map<String,String> configProperties = new HashMap<>();
+        final Map<String, String> configProperties = new HashMap<>();
 
-        for (int i=0; i < nifiIdentities.length; i++) {
+        for (int i = 0; i < nifiIdentities.length; i++) {
             final String nifiIdentity = nifiIdentities[i];
-            configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_NIFI_IDENTITY_PREFIX + (i+1),
+            configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_NIFI_IDENTITY_PREFIX + (i + 1),
                     nifiIdentity);
         }
-        configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_USER_GROUP_PROVIDER, "database-user-group-provider1");
+        configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_USER_GROUP_PROVIDER,
+                "database-user-group-provider1");
         PropertyValue ugp = new StandardPropertyValue("database-user-group-provider1");
         configProperties.put("TestProperty 1", "Value 1");
         configProperties.put("TestProperty 2", "Value 2");
@@ -178,8 +179,10 @@ public class CachedDatabaseAccessPolicyProviderTest {
         final AuthorizerConfigurationContext configurationContext = mock(AuthorizerConfigurationContext.class);
         when(configurationContext.getProperties()).thenReturn(configProperties);
         when(configurationContext.getProperty("User Group Provider")).thenReturn(ugp);
-        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_NIFI_GROUP_NAME)).thenReturn(nifiGroupNameProp);
-        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_INITIAL_ADMIN_IDENTITY)).thenReturn(initialAdminProp);
+        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_NIFI_GROUP_NAME)).
+                thenReturn(nifiGroupNameProp);
+        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_INITIAL_ADMIN_IDENTITY)).
+                thenReturn(initialAdminProp);
         provider.onConfigured(configurationContext);
     }
 
@@ -191,7 +194,8 @@ public class CachedDatabaseAccessPolicyProviderTest {
             configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_NIFI_IDENTITY_PREFIX + (i+1),
                     nifiIdentity);
         }
-        configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_USER_GROUP_PROVIDER, "database-user-group-provider");
+        configProperties.put(CachedDatabaseAccessPolicyProvider.PROP_USER_GROUP_PROVIDER,
+                "database-user-group-provider");
         PropertyValue ugp = new StandardPropertyValue("database-user-group-provider");
         configProperties.put("TestProperty 1", "Value 1");
         configProperties.put("TestProperty 2", "Value 2");
@@ -214,8 +218,10 @@ public class CachedDatabaseAccessPolicyProviderTest {
         final AuthorizerConfigurationContext configurationContext = mock(AuthorizerConfigurationContext.class);
         when(configurationContext.getProperties()).thenReturn(configProperties);
         when(configurationContext.getProperty("User Group Provider")).thenReturn(ugp);
-        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_NIFI_GROUP_NAME)).thenReturn(nifiGroupNameProp);
-        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_INITIAL_ADMIN_IDENTITY)).thenReturn(initialAdminProp);
+        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_NIFI_GROUP_NAME)).
+                thenReturn(nifiGroupNameProp);
+        when(configurationContext.getProperty(CachedDatabaseAccessPolicyProvider.PROP_INITIAL_ADMIN_IDENTITY)).
+                thenReturn(initialAdminProp);
         provider.onConfigured(configurationContext);
     }
 
@@ -315,7 +321,8 @@ public class CachedDatabaseAccessPolicyProviderTest {
             }
             for (String userId : userIds) {
                 try (PreparedStatement prSt = con.
-                        prepareStatement("insert into app_policy_user (policy_identifier, user_identifier) values (?, ?)")) {
+                        prepareStatement(
+                            "insert into app_policy_user (policy_identifier, user_identifier) values (?, ?)")) {
                     prSt.setString(1, ap.getIdentifier());
                     prSt.setString(2, userId);
                     prSt.executeUpdate();
@@ -323,7 +330,8 @@ public class CachedDatabaseAccessPolicyProviderTest {
             }
             for (String groupId : groupIds) {
                 try (PreparedStatement prSt = con.
-                        prepareStatement("insert into app_policy_group (policy_identifier, group_identifier) values (?, ?)")) {
+                        prepareStatement(
+                            "insert into app_policy_group (policy_identifier, group_identifier) values (?, ?)")) {
                     prSt.setString(1, ap.getIdentifier());
                     prSt.setString(2, groupId);
                     prSt.executeUpdate();
@@ -539,7 +547,8 @@ public class CachedDatabaseAccessPolicyProviderTest {
         //get ap:
         AccessPolicy apGet = provider.getAccessPolicy(apReturned.getIdentifier());
         Assertions.assertEquals(modifiedPolicy.getIdentifier(), apGet.getIdentifier());
-        checkAccessPolicyInDB(modifiedPolicy, Set.of(user1.getIdentifier(), user2.getIdentifier()), Collections.emptySet());
+        checkAccessPolicyInDB(modifiedPolicy, Set.of(user1.getIdentifier(), user2.getIdentifier()),
+                Collections.emptySet());
     }
 
     @Test
