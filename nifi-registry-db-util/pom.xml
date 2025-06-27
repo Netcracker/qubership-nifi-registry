@@ -29,12 +29,12 @@
     <artifactId>nifi-registry-db-util</artifactId>
 
     <dependencies>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <version>${postgresql.jdbc.version}</version>
-		</dependency>
-	</dependencies>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
