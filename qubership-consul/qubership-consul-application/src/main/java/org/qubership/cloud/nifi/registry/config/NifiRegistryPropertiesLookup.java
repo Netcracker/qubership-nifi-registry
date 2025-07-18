@@ -35,6 +35,9 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     @Value("${config.notify-completion.path}")
     private String path;
 
+    /**
+     * Run qubership-consul application.
+     */
     public static void main(String[] args) {
         SpringApplication.run(NifiRegistryPropertiesLookup.class, args);
     }

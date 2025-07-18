@@ -29,23 +29,25 @@ scripts_dir='/opt/nifi-registry/scripts'
 cp "${NIFI_REGISTRY_HOME}"/conf-template/* "${NIFI_REGISTRY_HOME}"/conf/
 cp "${NIFI_REGISTRY_HOME}"/conf-template-custom/* "${NIFI_REGISTRY_HOME}"/conf/
 
-#Prepare nifi-registry.properties:
-#Prepare logging config:
-. "${scripts_dir}/start_consul_app.sh"
+if [ "${CONSUL_ENABLED}" = 'true' ]; then
+    #Prepare nifi-registry.properties:
+    #Prepare logging config:
+    . "${scripts_dir}/start_consul_app.sh"
 
-while true; do
-    if ! test -d /proc/"${consul_pid}"; then
-        error "ERROR: Consul app java process has terminated prematurely. See logs for details..."
-        exit 1
-    fi
+    while true; do
+        if ! test -d /proc/"${consul_pid}"; then
+            error "ERROR: Consul app java process has terminated prematurely. See logs for details..."
+            exit 1
+        fi
 
-    info "Checking if consul app main execution completed"
-    if [ -e "/tmp/initial-config-completed.txt" ]; then
-        info "Completion file exists. Consul App main execution completed."
-        break
-    fi
-    sleep 1
-done
+        info "Checking if consul app main execution completed"
+        if [ -e "/tmp/initial-config-completed.txt" ]; then
+            info "Completion file exists. Consul App main execution completed."
+            break
+        fi
+        sleep 1
+    done
+fi
 
 # Establish baseline properties
 prop_replace 'nifi.registry.web.http.port'      "${NIFI_REGISTRY_WEB_HTTP_PORT:-18080}"
