@@ -56,14 +56,8 @@ public class PropertiesManagerTest {
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
             res = consul.execInContainer(
                     "consul", "kv", "put",
-                    "config/local/application/logger.org.apache.nifi.registry.bootstrap", "DEBUG");
-            LOG.debug("Result for put config/local/application/logger.org.apache.nifi.registry.bootstrap = {}",
-                    res.getStdout());
-            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
-            res = consul.execInContainer(
-                    "consul", "kv", "put",
-                    "config/local/application/nifi.registry.db.maxConnections", "10");
-            LOG.debug("Result for put config/local/application/nifi.registry.db.maxConnections = {}",
+                    "config/local/application/logger.org.apache.nifi.registry.bootstrap", "INFO");
+            LOG.debug("Result for put config/local/application/logger.org.apache.nifi.registry.StdErr = {}",
                     res.getStdout());
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
         } catch (IOException | InterruptedException e) {
@@ -88,17 +82,8 @@ public class PropertiesManagerTest {
         pm.generateNifiRegistryProperties();
         File logbackConfig = new File("./conf/logback.xml");
         Assertions.assertTrue(logbackConfig.exists());
-        File customPropsConfig = new File("./conf/custom.properties");
-        Assertions.assertTrue(customPropsConfig.exists());
         File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
         Assertions.assertTrue(nifiRegistryPropsConfig.exists());
-        Properties customProps = new Properties();
-        try (InputStream in = new BufferedInputStream(new FileInputStream(customPropsConfig))) {
-            customProps.load(in);
-            Assertions.assertEquals("10", customProps.getProperty("nifi.registry.db.maxConnections"));
-        } catch (IOException e) {
-            Assertions.fail("Failed to read custom.properties", e);
-        }
         Properties nifiRegistryProps = new Properties();
         try (InputStream in = new BufferedInputStream(new FileInputStream(nifiRegistryPropsConfig))) {
             nifiRegistryProps.load(in);

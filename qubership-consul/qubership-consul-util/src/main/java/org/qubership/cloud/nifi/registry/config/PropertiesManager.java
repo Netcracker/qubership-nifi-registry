@@ -77,11 +77,17 @@ public class PropertiesManager {
         SKIPPED_CUSTOM_PROPERTIES.add("nifi.registry.db.maxConnections");
     }
 
+    /**
+     * Generates nifi-registry.properties file.
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     * @throws SAXException
+     */
     public void generateNifiRegistryProperties() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
         readConsulProperties();
         buildPropertiesFile();
-        buildCustomPropertiesFile();
         buildLogbackXMLFile();
         LOG.info("nifi registry properties files generated");
     }
@@ -192,6 +198,11 @@ public class PropertiesManager {
         LOG.debug("consulPropertiesMap map: {}", consulPropertiesMap);
     }
 
+    //reserve for future development
+    /**
+     * Builds custom.properties file for qubership-nifi-registry.
+     * @throws IOException
+     */
     public void buildCustomPropertiesFile() throws IOException {
         String fileName = path + "custom.properties";
 
@@ -215,50 +226,54 @@ public class PropertiesManager {
         LOG.info("Custom Properties file created : {}", fileName);
     }
 
+    /**
+     * Builds nifi-registry.properties file.
+     * @throws IOException
+     */
     public void buildPropertiesFile() throws IOException {
         String fileName = path + "nifi-registry.properties";
 
-        //we have to build combinedNifiProperties properties map. copy nifiDefaultProps as is without order change
-        Map<String, String> combinedNifiProperties = getOrderedProperties(defaultPropertiesFile);
+        //we have to build combinedNifiRegistryProperties properties map. copy nifiDefaultProps as is without order change
+        Map<String, String> combinedNifiRegistryProperties = getOrderedProperties(defaultPropertiesFile);
 
         //consul
         for (String consulKey : consulPropertiesMap.keySet()) {
-            // if it starts with "nifi.*" and not in the custom list then, add in nifiProperties
-            if (consulKey.toLowerCase().startsWith("nifi.")
+            // if it starts with "nifi-registry.*" and not in the custom list then, add in nifiProperties
+            if (consulKey.toLowerCase().startsWith("nifi-registry.")
                     && !SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
-                combinedNifiProperties.put(consulKey, consulPropertiesMap.get(consulKey));
+                combinedNifiRegistryProperties.put(consulKey, consulPropertiesMap.get(consulKey));
             }
         }
 
         //nifi_internal properties should be placed as is, in same order
-        Map<String, String> nifiInternalProps = getOrderedProperties(internalPropertiesFile);
-        for (String s : nifiInternalProps.keySet()) {
-            combinedNifiProperties.put(s, nifiInternalProps.get(s));
+        Map<String, String> nifiRegistryInternalProps = getOrderedProperties(internalPropertiesFile);
+        for (String s : nifiRegistryInternalProps.keySet()) {
+            combinedNifiRegistryProperties.put(s, nifiRegistryInternalProps.get(s));
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("combined nifi Properties: {}", combinedNifiProperties);
+            LOG.debug("combined nifi registry Properties: {}", combinedNifiRegistryProperties);
         }
 
-        // remove properties from combinedNifiProperties map that are present on nifi_internal_comments.properties
-        Set<String> readOnlyNifiProps = new HashSet<>();
-        readOnlyNifiProps.add("nifi.security.identity.mapping.pattern.dn");
-        readOnlyNifiProps.add("nifi.security.identity.mapping.value.dn");
-        readOnlyNifiProps.add("nifi.security.identity.mapping.transform.dn");
-        for (String s : readOnlyNifiProps) {
-            combinedNifiProperties.remove(s);
+        // remove properties from combinedNifiRegistryProperties map that are present on nifi_internal_comments.properties
+        Set<String> readOnlyNifiRegistryProps = new HashSet<>();
+        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.pattern.dn");
+        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.value.dn");
+        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.transform.dn");
+        for (String s : readOnlyNifiRegistryProps) {
+            combinedNifiRegistryProperties.remove(s);
         }
 
         //write nifiProperties to properties file
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(fileName)); BufferedReader reader =
                 new BufferedReader(new InputStreamReader(internalPropertiesCommentsFile.getInputStream()))) {
             //Storing the map in properties file in order
-            for (String s : combinedNifiProperties.keySet()) {
+            for (String s : combinedNifiRegistryProperties.keySet()) {
                 pw.print(s);
                 pw.print("=");
-                pw.println(combinedNifiProperties.get(s));
+                pw.println(combinedNifiRegistryProperties.get(s));
             }
 
-            // store all commented properties from nifi_internal_comments.properties in file
+            // store all commented properties from nifi_registry_internal_comments.properties in file
             String line = reader.readLine();
             while (line != null) {
                 pw.println(line);
@@ -269,6 +284,12 @@ public class PropertiesManager {
         LOG.info("Nifi Registry Properties file created : {}", fileName);
     }
 
+    /**
+     * Gets ordered properties map.
+     * @param rs consul data
+     * @return ordered properties map
+     * @throws IOException
+     */
     public Map<String, String> getOrderedProperties(Resource rs) throws IOException {
         Map<String, String> mp = new LinkedHashMap<>();
         try (InputStream in = rs.getInputStream()) {
@@ -281,6 +302,10 @@ public class PropertiesManager {
         return mp;
     }
 
+    /**
+     * Handles environment change event: generates updated logback.xml to support dynamic logging level changes.
+     * @param event environment change event
+     */
     @EventListener
     public void handleChangeEvent(EnvironmentChangeEvent event) {
         LOG.debug("Change event received for keys: {}", event.getKeys());
