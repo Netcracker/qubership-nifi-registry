@@ -20,7 +20,7 @@ import java.util.Date;
 
 @Component
 public class XmlConfigValidator {
-    private static final Logger log = LoggerFactory.getLogger(XmlConfigValidator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlConfigValidator.class);
 
     @Value("${config.file.path}")
     private String path;
@@ -35,7 +35,7 @@ public class XmlConfigValidator {
 
     public void validate() throws IOException, ParserConfigurationException {
 
-        log.info("Restore directory path: {}",restoreDirectoryPath);
+        LOG.info("Restore directory path: {}", restoreDirectoryPath);
 
         mainAuthorizationsFilePath =  mainConfigDirectoryPath + "authorizations.xml";
         mainUsersFilePath =  mainConfigDirectoryPath + "users.xml";
@@ -61,8 +61,8 @@ public class XmlConfigValidator {
         Boolean isAuthorizationsFileValid = checkIfXmlIsValid(mainAuthorizationsFilePath, builder);
         Boolean isUsersFileValid = checkIfXmlIsValid(mainUsersFilePath, builder);
 
-        if(isAuthorizationsFileValid && isUsersFileValid) {
-            log.info("Deleting config from restore directory, as main config's are valid");
+        if (isAuthorizationsFileValid && isUsersFileValid) {
+            LOG.info("Deleting config from restore directory, as main config's are valid");
             deleteRestoreConfig();
             return;
         }
@@ -104,7 +104,7 @@ public class XmlConfigValidator {
         try {
             builder.parse(new InputSource(xmlFilePath));
         } catch (SAXException ex) {
-            log.error("Error when parsing xml: " + xmlFilePath, ex);
+            LOG.error("Error when parsing xml: " + xmlFilePath, ex);
             return false;
         }
         return true;
@@ -116,28 +116,28 @@ public class XmlConfigValidator {
     }
     private void deleteFile(String filePath) {
         File fileToDelete = new File(filePath);
-        log.info("Deleting file {} ", filePath);
+        LOG.info("Deleting file {} ", filePath);
         fileToDelete.delete();
     }
 
-    private void renameFile(String sourcePath, String destPath){
+    private void renameFile(String sourcePath, String destPath) {
         File oldFile = new File(sourcePath);
         File newFile = new File(destPath);
-        log.info("Renaming file {} to {} ", sourcePath, destPath);
+        LOG.info("Renaming file {} to {} ", sourcePath, destPath);
         oldFile.renameTo(newFile);
     }
 
     private void copyRestoreConfigToMain() throws IOException {
         File srcAuth = new File(restoreDirectoryPath + "authorizations.xml");
         File srcUser = new File(restoreDirectoryPath + "users.xml");
-        if(srcAuth.exists() && srcUser.exists()) {
+        if (srcAuth.exists() && srcUser.exists()) {
             File destAuth = new File(mainAuthorizationsFilePath);
-            log.info("Copying file {} to {} ", srcAuth.getAbsolutePath(), destAuth.getAbsolutePath());
-            Files.copy(srcAuth.toPath(),destAuth.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            LOG.info("Copying file {} to {} ", srcAuth.getAbsolutePath(), destAuth.getAbsolutePath());
+            Files.copy(srcAuth.toPath(), destAuth.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             File destUser = new File(mainUsersFilePath);
-            log.info("Copying file {} to {} ", srcUser.getAbsolutePath(), destUser.getAbsolutePath());
-            Files.copy(srcUser.toPath(),destUser.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            LOG.info("Copying file {} to {} ", srcUser.getAbsolutePath(), destUser.getAbsolutePath());
+            Files.copy(srcUser.toPath(), destUser.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 }

@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "org.qubership.cloud.nifi.registry.config")
 public class NifiRegistryPropertiesLookup implements CommandLineRunner {
-    private static final Logger log = LoggerFactory.getLogger(NifiRegistryPropertiesLookup.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NifiRegistryPropertiesLookup.class);
 
     @Autowired
     private PropertiesManager propertiesManager;
@@ -40,7 +40,8 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws IOException, ParserConfigurationException, TransformerException, SAXException {
+    public void run(String... args) throws IOException, ParserConfigurationException, TransformerException,
+            SAXException {
         propertiesManager.generateNifiRegistryProperties();
         xmlConfigValidator.validate();
         notifyCompletionToStartScript();
@@ -51,9 +52,9 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             Path fPath = Paths.get(path + "initial-config-completed.txt");
             Files.write(fPath, timestamp.getBytes());
-            log.info("Consul App completion file created:{} ", fPath.toAbsolutePath());
+            LOG.info("Consul App completion file created:{} ", fPath.toAbsolutePath());
         } catch (Exception e) {
-            log.error("Error while creating completion file for consul app",e);
+            LOG.error("Error while creating completion file for consul app", e);
         }
     }
 
