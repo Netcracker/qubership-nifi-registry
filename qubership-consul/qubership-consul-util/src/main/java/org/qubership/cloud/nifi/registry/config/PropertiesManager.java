@@ -233,14 +233,15 @@ public class PropertiesManager {
     public void buildPropertiesFile() throws IOException {
         String fileName = path + "nifi-registry.properties";
 
-        //we have to build combinedNifiRegistryProperties properties map. copy nifiDefaultProps as is without order change
+        //we have to build combinedNifiRegistryProperties properties map. copy nifiRegistryDefaultProps
+        // as is without order change
         Map<String, String> combinedNifiRegistryProperties = getOrderedProperties(defaultPropertiesFile);
 
         //consul
         for (String consulKey : consulPropertiesMap.keySet()) {
             // if it starts with "nifi-registry.*" and not in the custom list then, add in nifiProperties
-            if (consulKey.toLowerCase().startsWith("nifi-registry.")
-                    && !SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
+            if (consulKey.toLowerCase().startsWith("nifi-registry.") &&
+                    !SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
                 combinedNifiRegistryProperties.put(consulKey, consulPropertiesMap.get(consulKey));
             }
         }
@@ -254,7 +255,8 @@ public class PropertiesManager {
             LOG.debug("combined nifi registry Properties: {}", combinedNifiRegistryProperties);
         }
 
-        // remove properties from combinedNifiRegistryProperties map that are present on nifi_internal_comments.properties
+        // remove properties from combinedNifiRegistryProperties map
+        // that are present on nifi_internal_comments.properties
         Set<String> readOnlyNifiRegistryProps = new HashSet<>();
         readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.pattern.dn");
         readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.value.dn");

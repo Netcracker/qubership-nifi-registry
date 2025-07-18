@@ -39,6 +39,13 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
         SpringApplication.run(NifiRegistryPropertiesLookup.class, args);
     }
 
+    /**
+     * Generating a property file.
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     * @throws SAXException
+     */
     @Override
     public void run(String... args) throws IOException, ParserConfigurationException, TransformerException,
             SAXException {

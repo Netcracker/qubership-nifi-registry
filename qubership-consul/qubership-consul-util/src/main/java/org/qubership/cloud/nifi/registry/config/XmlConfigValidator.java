@@ -33,6 +33,11 @@ public class XmlConfigValidator {
 
     private String mainUsersFilePath;
 
+    /**
+     * Validation of authorizations.xml and users.xml configurations.
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
     public void validate() throws IOException, ParserConfigurationException {
 
         LOG.info("Restore directory path: {}", restoreDirectoryPath);
