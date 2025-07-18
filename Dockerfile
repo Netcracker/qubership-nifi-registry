@@ -42,6 +42,7 @@ FROM apache/nifi-registry:1.28.1 as nifi-reg2
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/database \
+    && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/conf-restore \
     && chown nifi:nifi -R $NIFI_REGISTRY_HOME/persistent_data \
     && chmod 774 -R $NIFI_REGISTRY_HOME/persistent_data \
     && rm -rf $NIFI_REGISTRY_HOME/ext/aws \
@@ -83,7 +84,9 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/zookeeper*.jar
 
 RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/utility-lib
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
+COPY --chown=1000:1000 qubership-consul/qubership-consul-application/target/qubership-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-consul-application.jar
 
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"
