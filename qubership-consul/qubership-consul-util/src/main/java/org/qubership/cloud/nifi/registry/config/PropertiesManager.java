@@ -71,9 +71,6 @@ public class PropertiesManager {
 
     private static final Set<String> SKIPPED_CUSTOM_PROPERTIES = new HashSet<>();
 
-    //reserve for future development
-    static {}
-
     /**
      * Generates nifi-registry.properties file.
      * @throws IOException
@@ -177,10 +174,10 @@ public class PropertiesManager {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("allNames array: {}", List.of(allNames));
                     }
-                    //fetch only properties starting with logger.* and nifi.*
+                    //fetch only properties starting with logger.* and nifi.registry.*
                     for (String name : allNames) {
                         String lowercaseName = name.toLowerCase();
-                        if (lowercaseName.startsWith("logger") || lowercaseName.startsWith("nifi")) {
+                        if (lowercaseName.startsWith("logger") || lowercaseName.startsWith("nifi.registry")) {
                             allPropertyNames.add(name);
                         }
                     }
@@ -194,32 +191,6 @@ public class PropertiesManager {
         }
         LOG.debug("consulPropertiesMap map: {}", consulPropertiesMap);
     }
-
-    //reserve for future development
-    /*
-    public void buildCustomPropertiesFile() throws IOException {
-        String fileName = path + "custom.properties";
-
-        Map<String, String> combinedNifiProperties = getOrderedProperties(defaultCustomPropertiesFile);
-        //consul
-        for (String consulKey : consulPropertiesMap.keySet()) {
-            // if it's in the custom list, add it
-            if (SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
-                combinedNifiProperties.put(consulKey, consulPropertiesMap.get(consulKey));
-            }
-        }
-        //write nifiProperties to properties file
-        try (PrintWriter pw = new PrintWriter(new FileOutputStream(fileName))) {
-            //Storing the map in properties file in order
-            for (String s : combinedNifiProperties.keySet()) {
-                pw.print(s);
-                pw.print("=");
-                pw.println(combinedNifiProperties.get(s));
-            }
-        }
-        LOG.info("Custom Properties file created : {}", fileName);
-    }
-    */
 
     /**
      * Builds nifi-registry.properties file.
@@ -235,7 +206,7 @@ public class PropertiesManager {
         //consul
         for (String consulKey : consulPropertiesMap.keySet()) {
             // if it starts with "nifi-registry.*" and not in the custom list then, add in nifiProperties
-            if (consulKey.toLowerCase().startsWith("nifi-registry.") &&
+            if (consulKey.toLowerCase().startsWith("nifi.registry.") &&
                     !SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
                 combinedNifiRegistryProperties.put(consulKey, consulPropertiesMap.get(consulKey));
             }

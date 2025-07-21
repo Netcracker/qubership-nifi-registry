@@ -2,6 +2,9 @@
 services:
   nifi-toolkit:
     image: apache/nifi-toolkit:1.28.1
+    depends_on:
+      consul:
+        condition: service_started
     container_name: nifi-toolkit
     entrypoint: /bin/bash
     command: /tmp/tls-scripts/nifi-gen-certs.sh
