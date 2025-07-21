@@ -54,8 +54,6 @@ logging:
 config:
   file:
     path: ./conf/
-  restore:
-    path: ./persistent_data/conf-restore/
   main:
     path: ./persistent_data/conf/
   notify-completion:

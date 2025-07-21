@@ -10,7 +10,7 @@
     <version>1.0.3</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>qubership-nifi-registry is a fork of Apache NiFi, containing additional NARs and various configuration features</description>
+    <description>qubership-nifi-registry is a service built on top of Apache NiFi Registry</description>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <licenses>
         <license>
@@ -29,7 +29,7 @@
     <scm>
         <connection>scm:git:git://github.com/Netcracker/qubership-nifi.git</connection>
         <developerConnection>scm:git:ssh://github.com:Netcracker/qubership-nifi.git</developerConnection>
-        <url>https://github.com/Netcracker/qubership-nifi/tree/main</url>
+        <url>https://github.com/Netcracker/qubership-nifi-registry/tree/main</url>
     </scm>
 
     <modules>

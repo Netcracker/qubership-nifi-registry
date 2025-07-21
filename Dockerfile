@@ -42,7 +42,6 @@ FROM apache/nifi-registry:1.28.1 as nifi-reg2
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/database \
-    && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/conf-restore \
     && chown nifi:nifi -R $NIFI_REGISTRY_HOME/persistent_data \
     && chmod 774 -R $NIFI_REGISTRY_HOME/persistent_data \
     && rm -rf $NIFI_REGISTRY_HOME/ext/aws \

@@ -56,8 +56,6 @@ public class PropertiesManager {
     private Resource sourceXmlFile;
     @Value("classpath:nifi_registry_default.properties")
     private Resource defaultPropertiesFile;
-    @Value("classpath:custom.properties")
-    private Resource defaultCustomPropertiesFile;
     @Value("classpath:nifi_registry_internal.properties")
     private Resource internalPropertiesFile;
     @Value("classpath:nifi_registry_internal_comments.properties")
@@ -73,9 +71,8 @@ public class PropertiesManager {
 
     private static final Set<String> SKIPPED_CUSTOM_PROPERTIES = new HashSet<>();
 
-    static {
-        SKIPPED_CUSTOM_PROPERTIES.add("nifi.registry.db.maxConnections");
-    }
+    //reserve for future development
+    static {}
 
     /**
      * Generates nifi-registry.properties file.
@@ -199,10 +196,7 @@ public class PropertiesManager {
     }
 
     //reserve for future development
-    /**
-     * Builds custom.properties file for qubership-nifi-registry.
-     * @throws IOException
-     */
+    /*
     public void buildCustomPropertiesFile() throws IOException {
         String fileName = path + "custom.properties";
 
@@ -225,6 +219,7 @@ public class PropertiesManager {
         }
         LOG.info("Custom Properties file created : {}", fileName);
     }
+    */
 
     /**
      * Builds nifi-registry.properties file.

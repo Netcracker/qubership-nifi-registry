@@ -29,14 +29,13 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     @Autowired
     private PropertiesManager propertiesManager;
 
-    @Autowired
-    private XmlConfigValidator xmlConfigValidator;
-
     @Value("${config.notify-completion.path}")
     private String path;
 
     /**
-     * Run qubership-consul application.
+     * Main application entrypoint.
+     *
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         SpringApplication.run(NifiRegistryPropertiesLookup.class, args);
@@ -53,7 +52,6 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     public void run(String... args) throws IOException, ParserConfigurationException, TransformerException,
             SAXException {
         propertiesManager.generateNifiRegistryProperties();
-        xmlConfigValidator.validate();
         notifyCompletionToStartScript();
     }
 

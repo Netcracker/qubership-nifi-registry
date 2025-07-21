@@ -42,8 +42,6 @@ logging:
 config:
   file:
     path: ${NIFI_REGISTRY_HOME}/conf/
-  restore:
-    path: ${NIFI_REGISTRY_HOME}/persistent_data/conf-restore/
   main:
     path: ${NIFI_REGISTRY_HOME}/persistent_data/conf/
   notify-completion:

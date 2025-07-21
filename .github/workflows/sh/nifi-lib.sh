@@ -257,6 +257,63 @@ generate_add_certs() {
         -file ./temp-vol/tls-cert/ca/keycloak-ca.cer -alias keycloak-ca-cer -noprompt
 }
 
+configure_log_level() {
+    local targetPkg="$1"
+    local targetLevel="$2"
+    local secretId="$3"
+    local consulUrl="$4"
+    local ns="$5"
+    if [ -z "$consulUrl" ]; then
+        consulUrl='http://localhost:8500'
+    fi
+    if [ -z "$ns" ]; then
+        ns='local'
+    fi
+    echo "Configuring log level = $targetLevel for $targetPkg..."
+    targetPath=$(echo "logger.$targetPkg" | sed 's|\.|/|g')
+    echo "Consul URL = $consulUrl, namespace = $ns, targetPath = $targetPath"
+    rm -rf ./consul-put-resp.txt
+    respCode=$(curl -X PUT -sS --data "$targetLevel" -w '%{response_code}' -o ./consul-put-resp.txt --header "X-Consul-Token: ${secretId}" \
+        "$consulUrl/v1/kv/config/$ns/application/$targetPath")
+    echo "Response code = $respCode"
+    if [ "$respCode" == "200" ]; then
+        echo "Successfully set log level in consul"
+        rm -rf ./consul-put-resp.txt
+    else
+        echo "Failed to set log level in Consul. Response code = $respCode. Error message:"
+        cat ./consul-put-resp.txt
+        return 1
+    fi
+}
+
+test_log_level() {
+    local targetPkg="$1"
+    local targetLevel="$2"
+    local resultsDir="$3"
+    local containerName="$4"
+    local secretId="$5"
+    resultsPath="./test-results/$resultsDir"
+    echo "Testing Consul logging parameters configuration for package = $targetPkg, level = $targetLevel"
+    echo "Results path = $resultsPath"
+    configure_log_level "$targetPkg" "$targetLevel" "$secretId" ||
+        echo "Consul config failed" >"$resultsPath/failed_consul_config.lst"
+    echo "Waiting 20 seconds..."
+    sleep 20
+    echo "Copying logback.xml..."
+    docker cp "$containerName":/opt/nifi/nifi-current/conf/logback.xml "$resultsPath/logback.xml"
+    res="0"
+    grep "$targetPkg" "$resultsPath/logback.xml" | grep 'logger' | grep "$targetLevel" || res="1"
+    summaryFileName=$(get_next_summary_file_name "$resultsDir")
+    if [ "$res" == "0" ]; then
+        echo "Logback configuration successfully applied"
+        echo "| Logging levels configuration                   | Success :white_check_mark: |" >"$resultsPath/$summaryFileName"
+    else
+        echo "Logback configuration failed to apply"
+        echo "NiFi logger config update failed" >"$resultsPath/failed_log_config.lst"
+        echo "| Logging levels configuration                   | Failed :x:                 |" >"$resultsPath/$summaryFileName"
+    fi
+}
+
 setup_env_before_tests() {
     local runMode="$1"
     prepare_results_dir "$runMode"

@@ -97,7 +97,6 @@ public class PropertiesManagerTest {
     public static void tearDown() {
         consul.stop();
         try {
-            Files.deleteIfExists(Paths.get(".", "conf", "custom.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
             Files.deleteIfExists(Paths.get(".", "conf"));
