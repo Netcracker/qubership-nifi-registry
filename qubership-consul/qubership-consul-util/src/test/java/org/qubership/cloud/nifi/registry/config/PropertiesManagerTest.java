@@ -56,7 +56,7 @@ public class PropertiesManagerTest {
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
             res = consul.execInContainer(
                     "consul", "kv", "put",
-                    "config/local/application/logger.org.apache.nifi.registry.bootstrap", "INFO");
+                    "config/local/application/logger.org.apache.nifi.registry.StdErr", "INFO");
             LOG.debug("Result for put config/local/application/logger.org.apache.nifi.registry.StdErr = {}",
                     res.getStdout());
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
