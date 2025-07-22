@@ -67,6 +67,14 @@ The table below provides a list of volumes and directories and their description
 | Configuration data         | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains metadata database and flow storage, if NIFI_REG_USE_PGDB != `true`.                                                                                             |
 | Cached providers extension | Directory | /opt/nifi-registry/nifi-registry-current/ext-cached      | Extension for cached access policy and user group providers. See also environment property `NIFI_REG_DB_FLOW_AUTHORIZERS` and section below dedicated to this extension. |
 
+## Changing logging levels
+
+You can modify logging levels by:
+1. Setting `ROOT_LOG_LEVEL` environment variable. Be mindful that this variable allows you to set only root logging level;
+2. Setting logging level for specific package in Consul. Consul property name must start with "logger." followed by package name. Value should be one of logging level supported by Logback: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF. Property should be located in one of two locations:
+    1. config/${NAMESPACE}/application
+       where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
+
 ## Migration from file storage
 
 To migrate data from file-based storage to PostgreSQL DB one needs to:
