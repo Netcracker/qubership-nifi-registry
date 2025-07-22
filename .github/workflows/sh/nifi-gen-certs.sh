@@ -49,9 +49,9 @@ create_newman_cert_config(){
     jq -c '' > ./newman-tls-config.json
     echo '[]' | jq --arg clientCert '/tmp/tls-certs/nifi/CN=admin_OU=NIFI.p12' --arg clientPass "$NIFI_CLIENT_PASSWORD" -c \
     '. += [{"name":"localhost-nifi","matches":["https://localhost:8080/*"],
-              "pfx":{"src":$clientCert},"passphrase":$clientPass},
+            "pfx":{"src":$clientCert},"passphrase":$clientPass},
            {"name":"localhost-nifi-registry","matches":["https://localhost:18080/*"],
-              "pfx":{"src":$clientCert},"passphrase":$clientPass}
+            "pfx":{"src":$clientCert},"passphrase":$clientPass}
             ]' > /tmp/tls-certs/newman-tls-config.json
 }
 
