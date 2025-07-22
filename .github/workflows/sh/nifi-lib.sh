@@ -82,6 +82,11 @@ generate_random_password() {
 $(tr -dc '!@#%^&*()-+{}=`~,<>./?' </dev/urandom | head -c "$3")" | fold -w 1 | shuf | tr -d '\n'
 }
 
+generate_uuid() {
+    head=$(head -c 16 /dev/urandom | od -An -t x1 | tr -d ' ')
+    echo "${head:0:8}-${head:8:4}-${head:12:4}-${head:16:4}-${head:20:12}"
+}
+
 get_next_summary_file_name() {
     current_steps_count=$(find "./test-results/$1" -name "summary_*.txt" | wc -l)
     echo "summary_step$(printf %03d $((current_steps_count + 1))).txt"
