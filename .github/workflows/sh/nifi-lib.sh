@@ -246,6 +246,10 @@ create_docker_env_file() {
     gitDir="$(pwd)"
     echo "BASE_DIR=$gitDir" >>./docker.env
     echo "KEYCLOAK_TLS_PASS=$KEYCLOAK_TLS_PASS" >>./docker.env
+    CONSUL_TOKEN=$(generate_uuid)
+    echo "$CONSUL_TOKEN" >./consul-acl-token.tmp
+    export CONSUL_TOKEN
+    echo "CONSUL_TOKEN=$CONSUL_TOKEN" >>./docker.env
 }
 
 generate_add_certs() {

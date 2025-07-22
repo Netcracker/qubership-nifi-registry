@@ -69,8 +69,6 @@ public class PropertiesManager {
     @Autowired
     private Environment appEnv;
 
-    private static final Set<String> SKIPPED_CUSTOM_PROPERTIES = new HashSet<>();
-
     /**
      * Generates nifi-registry.properties file.
      * @throws IOException
@@ -202,15 +200,6 @@ public class PropertiesManager {
         //we have to build combinedNifiRegistryProperties properties map. copy nifiRegistryDefaultProps
         // as is without order change
         Map<String, String> combinedNifiRegistryProperties = getOrderedProperties(defaultPropertiesFile);
-
-        //consul
-        for (String consulKey : consulPropertiesMap.keySet()) {
-            // if it starts with "nifi-registry.*" and not in the custom list then, add in nifiProperties
-            if (consulKey.toLowerCase().startsWith("nifi.registry.") &&
-                    !SKIPPED_CUSTOM_PROPERTIES.contains(consulKey)) {
-                combinedNifiRegistryProperties.put(consulKey, consulPropertiesMap.get(consulKey));
-            }
-        }
 
         //nifi_internal properties should be placed as is, in same order
         Map<String, String> nifiRegistryInternalProps = getOrderedProperties(internalPropertiesFile);
