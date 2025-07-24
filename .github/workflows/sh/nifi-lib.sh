@@ -144,7 +144,7 @@ test_log_level() {
         echo "| Logging levels configuration                   | Success :white_check_mark: |" >"$resultsPath/$summaryFileName"
     else
         echo "Logback configuration failed to apply"
-        echo "NiFi logger config update failed" >"$resultsPath/failed_log_config.lst"
+        echo "NiFi Registry logger config update failed" >"$resultsPath/failed_log_config.lst"
         echo "| Logging levels configuration                   | Failed :x:                 |" >"$resultsPath/$summaryFileName"
     fi
 }

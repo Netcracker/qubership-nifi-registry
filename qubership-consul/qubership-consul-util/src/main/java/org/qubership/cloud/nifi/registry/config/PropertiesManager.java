@@ -69,6 +69,14 @@ public class PropertiesManager {
     @Autowired
     private Environment appEnv;
 
+    private static final Set<String> READ_ONLY_NIFI_REGISTRY_PROPS = new HashSet<>();
+
+    static {
+        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.pattern.dn");
+        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.value.dn");
+        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.transform.dn");
+    }
+
     /**
      * Generates nifi-registry.properties file.
      * @throws IOException
@@ -212,11 +220,7 @@ public class PropertiesManager {
 
         // remove properties from combinedNifiRegistryProperties map
         // that are present on nifi_internal_comments.properties
-        Set<String> readOnlyNifiRegistryProps = new HashSet<>();
-        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.pattern.dn");
-        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.value.dn");
-        readOnlyNifiRegistryProps.add("nifi.registry.security.identity.mapping.transform.dn");
-        for (String s : readOnlyNifiRegistryProps) {
+        for (String s : READ_ONLY_NIFI_REGISTRY_PROPS) {
             combinedNifiRegistryProperties.remove(s);
         }
 
