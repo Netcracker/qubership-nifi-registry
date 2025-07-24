@@ -87,7 +87,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/netcracker/qubership-nifi</url>
+                    <url>https://maven.pkg.github.com/netcracker/qubership-nifi-registry</url>
                 </repository>
             </distributionManagement>
         </profile>
