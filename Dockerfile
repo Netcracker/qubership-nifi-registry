@@ -83,8 +83,8 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/zookeeper*.jar \
     && rm -rf $NIFI_REGISTRY_HOME/lib/spp/json-smart-*.jar
 
-RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached
-RUN mkdir -p ${NIFI_REGISTRY_HOME}/utility-lib
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached \
+    && mkdir -p ${NIFI_REGISTRY_HOME}/utility-lib
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
 COPY --chown=1000:1000 qubership-consul/qubership-consul-application/target/qubership-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-consul-application.jar
 COPY --chown=1000:1000 qubership-nifi-registry-deps/target/lib/json-smart-*.jar ${NIFI_REGISTRY_HOME}/lib/spp/json-smart-2.5.2.jar
@@ -103,9 +103,8 @@ RUN mkdir -p /tmp-upd/WEB-INF/lib/
 
 COPY --chown=10001:0 --from=nifi-reg2 /opt/nifi-registry/nifi-registry-current/lib/nifi-registry-web-api-1.28.1.war /tmp-upd/
 COPY --chown=1000:1000 qubership-nifi-registry-deps/target/lib/json-smart-*.jar /tmp-upd/WEB-INF/lib/
-
-RUN cd /tmp-upd/ \
-    && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
+WORKDIR /tmp-upd
+RUN jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.1.jar \
     && rm -rf WEB-INF/lib/json-smart-2.5.2.jar
 
