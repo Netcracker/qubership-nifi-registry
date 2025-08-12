@@ -49,13 +49,15 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * The {@code PropertiesManager} is responsible for managing configuration properties and logging settings for the Qubership NiFi Registry application.
+ * The {@code PropertiesManager} is responsible for managing configuration properties
+ * and logging settings for the Qubership NiFi Registry application.
  * <p>
  * <b>Responsibilities:</b>
  * <ul>
  *   <li>Accesses Consul to retrieve dynamic configuration properties.</li>
  *   <li>Generates {@code nifi-registry.properties} and {@code logback.xml} files before application startup.</li>
- *   <li>Watches for configuration changes and periodically updates {@code logback.xml} to support dynamic logging level changes.</li>
+ *   <li>Watches for configuration changes and periodically updates {@code logback.xml}
+ *   to support dynamic logging level changes.</li>
  * </ul>
  * <p>
  * This class is a Spring component with refresh scope, allowing it to respond to configuration changes at runtime.
@@ -97,7 +99,8 @@ public class PropertiesManager {
     }
 
     /**
-     * Generates the {@code nifi-registry.properties} and {@code logback.xml} files using Consul data and default values.
+     * Generates the {@code nifi-registry.properties} and {@code logback.xml}
+     * files using Consul data and default values.
      * <p>
      * This method performs the following steps:
      * <ol>
@@ -226,7 +229,8 @@ public class PropertiesManager {
     }
 
     /**
-     * Builds the {@code nifi-registry.properties} file by combining default, internal (unchangeable), and Consul-provided properties.
+     * Builds the {@code nifi-registry.properties} file by combining default,
+     * internal (unchangeable), and Consul-provided properties.
      * @throws IOException if an I/O error occurs while writing the properties file
      */
     public void buildPropertiesFile() throws IOException {
@@ -273,7 +277,8 @@ public class PropertiesManager {
     }
 
     /**
-     * Loads properties from the given resource (file) and returns them as an ordered map, preserving the order of the properties.
+     * Loads properties from the given resource (file) and returns them as an ordered map,
+     * preserving the order of the properties.
      *
      * @param rs the resource containing properties data
      * @return a {@code LinkedHashMap} of property names and values, in file order
@@ -292,7 +297,8 @@ public class PropertiesManager {
     }
 
     /**
-     * Handles environment change events by regenerating the {@code logback.xml} file to support dynamic logging level changes.
+     * Handles environment change events by regenerating the {@code logback.xml} file
+     * to support dynamic logging level changes.
      * <p>
      * This method is triggered automatically by Spring when configuration changes are detected in the environment.
      *
