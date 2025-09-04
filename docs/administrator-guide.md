@@ -72,9 +72,36 @@ The table below provides a list of volumes and directories and their description
 You can modify logging levels by:
 1. Setting `ROOT_LOG_LEVEL` environment variable. Be mindful that this variable allows you to set only root logging level;
 2. Setting logging level for specific package in Consul. Consul property name must start with "logger." followed by package name. Value should be one of logging level supported by Logback: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF. Property should be located in one of two locations:
-    1. config/${NAMESPACE}/application
-       where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
-    2. config/${NAMESPACE}/${MICROSERVICE_NAME} or qubership-nifi-registry, if MICROSERVICE_NAME not set.
+    1. `config/${NAMESPACE}/application`, where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
+    2. `config/${NAMESPACE}/${MICROSERVICE_NAME}` or `config/${NAMESPACE}/qubership-nifi-registry`, if `MICROSERVICE_NAME` not set.
+
+## Changing NiFi Registry configuration properties
+
+NiFi Registry configuration properties could be set up in Consul:
+1. Property name must start with `nifi.registry.`
+2. Property should be located in one of two locations:
+    1. `config/${NAMESPACE}/application`, where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
+    2. `config/${NAMESPACE}/${MICROSERVICE_NAME}` or `config/${NAMESPACE}/qubership-nifi-registry`, if `MICROSERVICE_NAME` not set.
+
+To change NiFi Registry properties:
+1. Change the NiFi Registry properties in Consul as per your requirements.
+2. Restart qubership-nifi-registry container.
+
+The list of properties that can be configured via Consul:
+- nifi.registry.web.https.application.protocols
+- nifi.registry.web.jetty.threads
+- nifi.registry.web.should.send.server.version
+- nifi.registry.db.maxConnections
+- nifi.registry.db.sql.debug
+- nifi.registry.security.user.oidc.connect.timeout
+- nifi.registry.security.user.oidc.read.timeout
+- nifi.registry.revisions.enabled
+- nifi.registry.kerberos.krb5.file
+- nifi.registry.kerberos.spnego.principal
+- nifi.registry.kerberos.spnego.keytab.location
+- nifi.registry.kerberos.spnego.authentication.expiration
+
+The detailed description of all supported NiFi Registry properties is available in the Apache NiFi Registry System [Administrator's Guide](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html).
 
 ## Migration from file storage
 
