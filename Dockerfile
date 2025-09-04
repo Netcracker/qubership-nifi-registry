@@ -53,7 +53,7 @@ COPY --chown=10001:0 --from=apache/nifi-registry:1.28.1 /opt/nifi-registry/nifi-
 COPY --chown=10001:0 --from=apache/nifi-registry:1.28.1 /opt/nifi-registry/nifi-registry-current/lib/nifi-registry-web-api-1.28.1.war /tmp-upd/
 COPY --chown=1000:1000 qubership-nifi-registry-deps/target/lib/json-smart-*.jar /tmp-upd/WEB-INF/lib/
 WORKDIR /tmp-upd
-RUN zip -d spring-web-5.3.39.jar org/springframework/remoting/httpinvoker/ \
+RUN zip -d spring-web-5.3.39.jar 'org/springframework/remoting/httpinvoker/*' \
     && mv spring-web-5.3.39.jar WEB-INF/lib/spring-web-5.3.39-fix-cve-2016-1000027.jar \
     && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39-fix-cve-2016-1000027.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39.jar \
