@@ -67,13 +67,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Input parameters
+        env:
+          JAVA_VERSION: ${{ github.event.inputs.java-version || '21' }}
         run: |
-          echo "Java version: ${{ github.event.inputs.java-version || '21' }}" >> $GITHUB_STEP_SUMMARY
+          echo "Java version: ${JAVA_VERSION}" >> $GITHUB_STEP_SUMMARY
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
+          persist-credentials: false
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
