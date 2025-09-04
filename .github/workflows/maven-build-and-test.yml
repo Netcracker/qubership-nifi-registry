@@ -98,12 +98,16 @@ jobs:
         run: >
           mvn --batch-mode package
           -Dgpg.skip=true
-          org.sonarsource.scanner.maven:sonar-maven-plugin:${{ vars.SONAR_PLUGIN_VERSION }}:sonar
-          -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-          -Dsonar.host.url=${{ vars.SONAR_HOST_URL }}
+          org.sonarsource.scanner.maven:sonar-maven-plugin:${SONAR_PLUGIN_VERSION}:sonar
+          -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.organization=${SONAR_ORGANIZATION}
+          -Dsonar.host.url=${SONAR_HOST_URL}
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PLUGIN_VERSION: ${{ vars.SONAR_PLUGIN_VERSION }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
       - name: Run local maven build w/o sonar
         if: ${{ inputs.skip-sonar }}
         run: >
