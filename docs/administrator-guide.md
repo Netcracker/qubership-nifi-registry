@@ -24,24 +24,24 @@ The table below describes environment variables supported by qubership-nifi-regi
 | NIFI_REGISTRY_WEB_HTTP_HOST  | N                                 |         | The HTTP host. It is blank by default.                                                                                                                                                                                                                 |
 | NIFI_REG_JVM_HEAP_INIT       | N                                 | 512m    | Initial heap memory reserved by JVM. Defines value for Xms JVM startup argument.                                                                                                                                                                       |
 | NIFI_REG_JVM_HEAP_MAX        | N                                 | 512m    | Maximum heap memory reserved by JVM. Defines value for Xmx JVM startup argument.                                                                                                                                                                       |
-| NIFI_REG_XSS                 | N                                 |         | Thread stack size. Defines value for Xss JVM startup argument.                                                                                                                                                                                         |
+| NIFI_REG_XSS                 | N                                 |         | Thread stack size. Defines value for JVM startup argument.                                                                                                                                                                                             |
 | NIFI_DEBUG_NATIVE_MEMORY     | N                                 |         | Enables Native Memory Tracking feature in JVM, if set to non-empty value. Adds `-XX:NativeMemoryTracking=detail` to Java startup arguments.                                                                                                            |
-| NIFI_REG_ADDITIONAL_JVM_ARGS | N                                 |         | A list of additional java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
+| NIFI_REG_ADDITIONAL_JVM_ARGS | N                                 |         | A list of additional Java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
 | NIFI_REG_USE_PGDB            | N                                 |         | If set to `true`, forces to use PostgreSQL database for storage. Connection parameters for DB are defined by environment variables (NIFI_REG_DB_URL, NIFI_REG_DB_USERNAME, NIFI_REG_DB_PASSWORD) or via script `GetDBConnectionDetails.sh`.            |
 | NIFI_REG_DB_FLOW_AUTHORIZERS | N                                 | cached  | Sets types of UserGroupProvider and AccessPolicyProvider to use for accessing DB. Allowed values: cached (providers accessing DB and caching data in-memory), standard (OOB Apache NiFi providers without caches). Default: cached.                    |
 | NIFI_REG_DB_URL              | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines Database connection URL. URL must be compliant with PostgreSQL JDBC driver.                                                                                                                                                                    |
 | NIFI_REG_DB_USERNAME         | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines username for DB connection.                                                                                                                                                                                                                    |
 | NIFI_REG_DB_PASSWORD         | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines password for DB connection.                                                                                                                                                                                                                    |
 | NIFI_REG_MIGRATE_TO_DB       | N                                 |         | If set to `true` and NIFI_REG_USE_PGDB = true, then qubership-nifi-registry will migrate data from file-storage to PostgreSQL DB, if it's empty. If DB was previously migrated, then migration will be skipped.                                        |
-| X_JAVA_ARGS                  | N                                 |         | A list of additional java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
+| X_JAVA_ARGS                  | N                                 |         | A list of additional Java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
 | CONSUL_ENABLED               | N                                 | false   | Defines, if Consul integration is enabled (`true`) or not (`false`)                                                                                                                                                                                    |
 | CONSUL_URL                   | Y (if CONSUL_ENABLED = true)      |         | URL to access Consul service. Must be in format: `<hostname>:<port>`.                                                                                                                                                                                  |
-| CONSUL_CONFIG_JAVA_OPTIONS   | N                                 |         | A list of additional java startup arguments for auxiliary application used for Consul integration.                                                                                                                                                     |
+| CONSUL_CONFIG_JAVA_OPTIONS   | N                                 |         | A list of additional Java startup arguments for auxiliary application used for Consul integration.                                                                                                                                                     |
 | CONSUL_ACL_TOKEN             | N                                 |         | An access token that is used in Consul to manage permissions and security for interactions between NiFi-Registry and Consul.                                                                                                                           |
 
 ## Extension points
 
-Qubership-nifi-registry docker image has several predefined extension points that could be used to customize its
+Qubership-nifi-registry Docker image has several predefined extension points that could be used to customize its
 behavior without significant changes to other parts of the image.
 The table below provides a list of such extension points and their description.
 
@@ -49,11 +49,11 @@ The table below provides a list of such extension points and their description.
 |------------------------|------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | GetDBConnectionDetails | /opt/nifi-registry/scripts/GetDBConnectionDetails.sh | Shell script to dynamically set up DB connection details during startup. This script must set `dbUrl`, `dbUsername` and `dbPassword` environment variables to provide connection details.                             |
 | Before Start           | /opt/nifi-registry/scripts/before_start.sh           | Shell script to execute any operations before qubership-nifi-registry startup.                                                                                                                                        |
-| Start Extensions       | /opt/nifi-registry/scripts/start_ext.sh              | Shell script, which customizes several aspects via functions: before_args_processing (executed X_JAVA_ARGS environment variable is processed), after_java_end (executed after java process is stopped or terminated). |
+| Start Extensions       | /opt/nifi-registry/scripts/start_ext.sh              | Shell script, which customizes several aspects via functions: before_args_processing (executed X_JAVA_ARGS environment variable is processed), after_java_end (executed after Java process is stopped or terminated). |
 
 ## Volumes and directories
 
-Qubership-nifi-registry docker image has several volumes that are used for storing data
+Qubership-nifi-registry Docker image has several volumes that are used for storing data
 and several directories that used for storing or injecting data.
 The table below provides a list of volumes and directories and their description.
 
@@ -109,7 +109,7 @@ To migrate data from file-based storage to PostgreSQL DB one needs to:
 1. enable DB usage for storage in environment variables: set NIFI_REG_USE_PGDB = `true`
 2. set up DB connection details:
    - either via environment variables (NIFI_REG_DB_URL, NIFI_REG_DB_USERNAME, NIFI_REG_DB_PASSWORD)
-   - or by extending docker image and adding script `GetDBConnectionDetails.sh` to dynamically get connection details during startup.
+   - or by extending Docker image and adding script `GetDBConnectionDetails.sh` to dynamically get connection details during startup.
 3. enable data migration: set NIFI_REG_MIGRATE_TO_DB = `true`.
 
 Once qubership-nifi-registry successfully starts, NIFI_REG_MIGRATE_TO_DB may be removed or set to `false`.
