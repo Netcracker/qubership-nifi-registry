@@ -69,8 +69,10 @@ public class PropertiesManagerTest {
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
             //nifi.registry.security.user.oidc.connect.timeout -- w/o default value
             res = consul.execInContainer(
-                    "consul", "kv", "put", "config/local/application/nifi/registry/security/user/oidc/connect/timeout", "10 secs");
-            LOG.debug("Result for put config/local/application/nifi/registry/security/user/oidc/connect/timeout = {}", res.getStdout());
+                    "consul", "kv", "put",
+                    "config/local/application/nifi/registry/security/user/oidc/connect/timeout", "10 secs");
+            LOG.debug("Result for put config/local/application/nifi/registry/security/user/oidc/connect/timeout = {}",
+                    res.getStdout());
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
         } catch (IOException | InterruptedException e) {
             if (res != null) {
