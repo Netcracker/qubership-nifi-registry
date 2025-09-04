@@ -33,8 +33,10 @@ services:
       - TRUSTSTORE_PATH=/tmp/tls-certs/truststore.p12
       - TRUSTSTORE_TYPE=PKCS12
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
-      - INITIAL_ADMIN_IDENTITY=CN=admin, OU=NIFI
-    container_name: local-nifi-registry-tls
+      - INITIAL_ADMIN_IDENTITY=admin
+      - CONSUL_ENABLED=true
+      - CONSUL_URL=consul:8500
+    container_name: local-nifi-registry
     hostname: nifi-registry
   consul:
     image: hashicorp/consul:1.20

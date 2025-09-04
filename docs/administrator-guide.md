@@ -28,11 +28,16 @@ The table below describes environment variables supported by qubership-nifi-regi
 | NIFI_DEBUG_NATIVE_MEMORY     | N                                 |         | Enables Native Memory Tracking feature in JVM, if set to non-empty value. Adds `-XX:NativeMemoryTracking=detail` to Java startup arguments.                                                                                                            |
 | NIFI_REG_ADDITIONAL_JVM_ARGS | N                                 |         | A list of additional java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
 | NIFI_REG_USE_PGDB            | N                                 |         | If set to `true`, forces to use PostgreSQL database for storage. Connection parameters for DB are defined by environment variables (NIFI_REG_DB_URL, NIFI_REG_DB_USERNAME, NIFI_REG_DB_PASSWORD) or via script `GetDBConnectionDetails.sh`.            |
+| NIFI_REG_DB_FLOW_AUTHORIZERS | N                                 | cached  | Sets types of UserGroupProvider and AccessPolicyProvider to use for accessing DB. Allowed values: cached (providers accessing DB and caching data in-memory), standard (OOB Apache NiFi providers without caches). Default: cached.                    |
 | NIFI_REG_DB_URL              | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines Database connection URL. URL must be compliant with PostgreSQL JDBC driver.                                                                                                                                                                    |
 | NIFI_REG_DB_USERNAME         | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines username for DB connection.                                                                                                                                                                                                                    |
 | NIFI_REG_DB_PASSWORD         | Y (if NIFI_REG_USE_PGDB = true)   |         | Defines password for DB connection.                                                                                                                                                                                                                    |
 | NIFI_REG_MIGRATE_TO_DB       | N                                 |         | If set to `true` and NIFI_REG_USE_PGDB = true, then qubership-nifi-registry will migrate data from file-storage to PostgreSQL DB, if it's empty. If DB was previously migrated, then migration will be skipped.                                        |
 | X_JAVA_ARGS                  | N                                 |         | A list of additional java startup arguments. Must be valid list of arguments separated by spaces just like in command-line.                                                                                                                            |
+| CONSUL_ENABLED               | N                                 | false   | Defines, if Consul integration is enabled (`true`) or not (`false`)                                                                                                                                                                                    |
+| CONSUL_URL                   | Y (if CONSUL_ENABLED = true)      |         | URL to access Consul service. Must be in format: `<hostname>:<port>`.                                                                                                                                                                                  |
+| CONSUL_CONFIG_JAVA_OPTIONS   | N                                 |         | A list of additional java startup arguments for auxiliary application used for Consul integration.                                                                                                                                                     |
+| CONSUL_ACL_TOKEN             | N                                 |         | An access token that is used in Consul to manage permissions and security for interactions between NiFi-Registry and Consul.                                                                                                                           |
 
 ## Extension points
 
@@ -52,14 +57,24 @@ Qubership-nifi-registry docker image has several volumes that are used for stori
 and several directories that used for storing or injecting data.
 The table below provides a list of volumes and directories and their description.
 
-| Name                  | Type      | Path                                                     | Description                                                                                                             |
-|-----------------------|-----------|----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Service configuration | Volume    | /opt/nifi-registry/nifi-registry-current/conf            | Contains configuration files for qubership-nifi-registry startup.                                                       |
-| Logs                  | Volume    | /opt/nifi-registry/nifi-registry-current/logs            | Contains log files.                                                                                                     |
-| Run                   | Volume    | /opt/nifi-registry/nifi-registry-current/run             | Contains current nifi registry pid and status file.                                                                     |
-| Work                  | Volume    | /opt/nifi-registry/nifi-registry-current/work            | Contains some data used by nifi registry in runtime.                                                                    |
-| TLS certificates      | Directory | /tmp/tls-certs                                           | Contains TLS keystore (keystore.p12) and truststore (truststore.p12). Required for startup with AUTH = oidc, tls, ldap. |
-| Configuration data    | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains metadata database and flow storage, if NIFI_REG_USE_PGDB != `true`.                                            |
+| Name                       | Type      | Path                                                     | Description                                                                                                                                                              |
+|----------------------------|-----------|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Service configuration      | Volume    | /opt/nifi-registry/nifi-registry-current/conf            | Contains configuration files for qubership-nifi-registry startup.                                                                                                        |
+| Logs                       | Volume    | /opt/nifi-registry/nifi-registry-current/logs            | Contains log files.                                                                                                                                                      |
+| Run                        | Volume    | /opt/nifi-registry/nifi-registry-current/run             | Contains current nifi registry pid and status file.                                                                                                                      |
+| Work                       | Volume    | /opt/nifi-registry/nifi-registry-current/work            | Contains some data used by nifi registry in runtime.                                                                                                                     |
+| TLS certificates           | Directory | /tmp/tls-certs                                           | Contains TLS keystore (keystore.p12) and truststore (truststore.p12). Required for startup with AUTH = oidc, tls, ldap.                                                  |
+| Configuration data         | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains metadata database and flow storage, if NIFI_REG_USE_PGDB != `true`.                                                                                             |
+| Cached providers extension | Directory | /opt/nifi-registry/nifi-registry-current/ext-cached      | Extension for cached access policy and user group providers. See also environment property `NIFI_REG_DB_FLOW_AUTHORIZERS` and section below dedicated to this extension. |
+
+## Changing logging levels
+
+You can modify logging levels by:
+1. Setting `ROOT_LOG_LEVEL` environment variable. Be mindful that this variable allows you to set only root logging level;
+2. Setting logging level for specific package in Consul. Consul property name must start with "logger." followed by package name. Value should be one of logging level supported by Logback: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF. Property should be located in one of two locations:
+    1. config/${NAMESPACE}/application
+       where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
+    2. config/${NAMESPACE}/${MICROSERVICE_NAME} or qubership-nifi-registry, if MICROSERVICE_NAME not set.
 
 ## Migration from file storage
 
@@ -72,3 +87,19 @@ To migrate data from file-based storage to PostgreSQL DB one needs to:
 
 Once qubership-nifi-registry successfully starts, NIFI_REG_MIGRATE_TO_DB may be removed or set to `false`.
 After that data that was stored on disk can be removed.
+
+## Cached providers extension
+
+This extension contains libraries for PostgreSQL DB-based access policy (CachedDatabaseAccessPolicyProvider) and user group (CachedDatabaseUserGroupProvider) providers with in-memory caches.
+
+Functionality of these providers is identical to standard DatabaseAccessPolicyProvider and DatabaseUserGroupProvider.
+Configuration parameters are the same as for standard DatabaseAccessPolicyProvider and DatabaseUserGroupProvider.
+The differences are:
+1. only PostgreSQL Database is supported
+2. cached providers load in-memory cache for all entities, if bulk method (e.g. getPolicies or getUsers) is called, or only accessed entities (if single gets are used).
+3. cache is hold until the next restart. The assumption is that all changes to DB are done via provider, so it can properly update the cache.
+4. cached providers rely on PostgreSQL-specific SQL syntax to reduce number of SQL calls, compared with more generic approach in original Apache NiFi Registry providers.
+
+Due to these differences cached providers may have higher performance, especially if lots of users are created in Apache NiFi Registry.
+
+Environment variable `NIFI_REG_DB_FLOW_AUTHORIZERS` can be used to enable/disable usage of cached providers.
