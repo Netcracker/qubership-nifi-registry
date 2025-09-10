@@ -122,6 +122,8 @@ jobs:
       dockerfile_exists: ${{ steps.check_dockerfile.outputs.df_exists }}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: "Check Dockerfile existence"
         id: check_dockerfile
         shell: bash
@@ -149,8 +151,8 @@ jobs:
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
-          download-artifact-path: '.'
-          debug: true
+          download-artifact-path: ${{ github.workspace }}
+          debug:  true
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
