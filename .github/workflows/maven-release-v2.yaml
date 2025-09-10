@@ -149,6 +149,7 @@ jobs:
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
+          download-artifact-path: '.'
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
