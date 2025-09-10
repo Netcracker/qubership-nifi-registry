@@ -180,10 +180,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  github-release:
-    needs: [deploy]
-    if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.5
-    with:
-      version: ${{ needs.deploy.outputs.release-version }}
-      publish: true
+  # github-release:
+  #   needs: [deploy]
+  #   if: ${{ needs.deploy.result == 'success' }}
+  #   uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.5
+  #   with:
+  #     version: ${{ needs.deploy.outputs.release-version }}
+  #     publish: true
