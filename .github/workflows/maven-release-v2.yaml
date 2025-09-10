@@ -82,6 +82,7 @@ jobs:
       - name: Upload all Maven target directories
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
+          name: ${{ github.event.repository.name }}
           path: '**/target'
   deploy:
     needs: dry-run-build
@@ -148,36 +149,35 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-dockerfile, deploy]
     steps:
-      - name: Dowload artifacts from previous stages
-        uses: actions/download-artifact@v4
-        with:
-          path: ${{ github.workspace }}
-      - name: Flatten artifact folder
-        run: |
-          shopt -s dotglob
-          mv artifact/* .
-          rmdir artifact
+      # - name: Dowload artifacts from previous stages
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     path: ${{ github.workspace }}
+      # - name: Flatten artifact folder
+      #   run: |
+      #     shopt -s dotglob
+      #     mv artifact/* .
+      #     rmdir artifact
 
-      - name: Debug ls
-        shell: bash
-        env:
-          WORK_SPACE: ${{ github.workspace }}
-          CONTEXT_DIR: ${{ steps.parse_component.outputs.ctx }}
-        run: |
-          echo "🔍 Current directory:"
-          pwd
-          echo "📁 Listing current directory:"
-          ls -la
+      # - name: Debug ls
+      #   shell: bash
+      #   env:
+      #     WORK_SPACE: ${{ github.workspace }}
+      #     CONTEXT_DIR: ${{ steps.parse_component.outputs.ctx }}
+      #   run: |
+      #     echo "🔍 Current directory:"
+      #     pwd
+      #     echo "📁 Listing current directory:"
+      #     ls -la
 
-          echo "📁 Listing parent directory:"
-          ls -la ..
+      #     echo "📁 Listing parent directory:"
+      #     ls -la ..
 
-          echo "📁 Listing artifact directory:"
-          ls -la qubership-nifi-registry
+      #     echo "📁 Listing artifact directory:"
+      #     ls -la qubership-nifi-registry
 
-          echo "📁 Listing artifact directory:"
-          ls -la qubership-nifi-registry
-
+      #     echo "📁 Listing artifact directory:"
+      #     ls -la qubership-nifi-registry
 
       - name: "Docker Build"
         id: docker_build
@@ -185,7 +185,9 @@ jobs:
         with:
           ref: ${{ github.ref }}
           download-artifact: true
-          debug:  true
+          custom-image-name: ${{ github.event.repository.name }}
+          download-artifact-path: ${{ github.workspace }}
+          debug: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
