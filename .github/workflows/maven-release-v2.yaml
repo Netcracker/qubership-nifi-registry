@@ -112,7 +112,6 @@ jobs:
       - name: Upload all Maven target directories
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: ${{ github.event.repository.name }}
           path: '**/target'
   check-dockerfile:
     if: ${{ github.event.inputs.build-docker == 'true' }}
