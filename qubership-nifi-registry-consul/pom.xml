@@ -5,7 +5,7 @@
     <groupId>org.qubership.nifi</groupId>
     <artifactId>qubership-nifi-registry-consul</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.9-SNAPSHOT</version>
+    <version>1.0.9</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
@@ -31,7 +31,7 @@
         <connection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</developerConnection>
         <url>https://github.com/Netcracker/qubership-nifi-registry/tree/main/qubership-nifi-registry-consul</url>
-      <tag>HEAD</tag>
+      <tag>v1.0.9</tag>
   </scm>
 
     <modules>
