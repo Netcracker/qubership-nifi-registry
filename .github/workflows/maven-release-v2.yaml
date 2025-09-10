@@ -79,6 +79,10 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: 'true'
+      - name: Upload all Maven target directories
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          path: '**/target'
   deploy:
     needs: dry-run-build
     if: ${{ needs.dry-run-build.result == 'success' }}
@@ -93,26 +97,26 @@ jobs:
         with:
           app-id: ${{ vars.GH_BUMP_VERSION_APP_ID }}
           private-key: ${{ secrets.GH_BUMP_VERSION_APP_KEY }}
-      - name: "Build and Publish"
-        id: build-and-publish
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.5
-        with:
-          version-type: ${{ github.event.inputs.version-type }}
-          ref: ${{ github.ref }}
-          module: ${{ github.event.repository.name }}
-          maven-args: ${{ inputs.mvn-args }}
-          profile: ${{ inputs.profile }}
-          server-id: ${{ inputs.profile }}
-          token: ${{ steps.app-token.outputs.token }} # It can be ${{ secrets.GITHUB_TOKEN }} if default branch isn't protected
-          maven-user: ${{ inputs.profile == 'github' && github.actor || secrets.MAVEN_USER }}
-          maven-password: ${{ inputs.profile == 'github' && secrets.GITHUB_TOKEN || secrets.MAVEN_PASSWORD }}
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          dry-run: 'false'
-      - name: Upload all Maven target directories
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          path: '**/target'
+      # - name: "Build and Publish"
+      #   id: build-and-publish
+      #   uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.5
+      #   with:
+      #     version-type: ${{ github.event.inputs.version-type }}
+      #     ref: ${{ github.ref }}
+      #     module: ${{ github.event.repository.name }}
+      #     maven-args: ${{ inputs.mvn-args }}
+      #     profile: ${{ inputs.profile }}
+      #     server-id: ${{ inputs.profile }}
+      #     token: ${{ steps.app-token.outputs.token }} # It can be ${{ secrets.GITHUB_TOKEN }} if default branch isn't protected
+      #     maven-user: ${{ inputs.profile == 'github' && github.actor || secrets.MAVEN_USER }}
+      #     maven-password: ${{ inputs.profile == 'github' && secrets.GITHUB_TOKEN || secrets.MAVEN_PASSWORD }}
+      #     gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+      #     gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      #     dry-run: 'false'
+      # - name: Upload all Maven target directories
+      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      #   with:
+      #     path: '**/target'
   check-dockerfile:
     if: ${{ github.event.inputs.build-docker == 'true' }}
     runs-on: ubuntu-latest
