@@ -184,7 +184,7 @@ jobs:
         uses: netcracker/qubership-workflow-hub/actions/docker-action@main
         with:
           ref: ${{ github.ref }}
-          download-artifact: false
+          download-artifact: true
           debug:  true
         env:
           GITHUB_TOKEN: ${{ github.token }}
