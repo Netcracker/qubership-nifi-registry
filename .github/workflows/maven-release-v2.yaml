@@ -168,7 +168,11 @@ jobs:
           ls -la ..
 
           echo "📁 Listing artifact directory:"
-          ls -la artifact
+          ls -la qubership-nifi-registry
+
+          echo "📁 Listing artifact directory:"
+          ls -la qubership-nifi-registry
+
 
       - name: "Docker Build"
         id: docker_build
