@@ -1,4 +1,5 @@
 ---
+
 # This workflow is used to build and publish a Maven project to a Maven repository (GitHub packages or Maven Central).
 # It has a dry run stage to check the build process without actually publishing the artifacts.
 # The workflow is triggered manually and allows the user to specify the version type (major, minor, patch), Maven profile, and additional Maven arguments.
@@ -28,29 +29,29 @@ on:
   workflow_dispatch:
     inputs:
       version-type:
-        description: "Version type to release"
+        description: 'Version type to release'
         type: choice
         options:
-          - "major"
-          - "minor"
-          - "patch"
+          - 'major'
+          - 'minor'
+          - 'patch'
         required: true
-        default: "patch"
+        default: 'patch'
       profile:
-        description: "Maven profile to use"
+        description: 'Maven profile to use'
         type: choice
         options:
-          - "github"
-          - "central"
+          - 'github'
+          - 'central'
         required: false
-        default: "github"
+        default: 'github'
       mvn-args:
-        description: "Additional maven arguments to pass (e.g. -DskipTests=true -Dmaven.javadoc.skip=true)"
+        description: 'Additional maven arguments to pass (e.g. -DskipTests=true -Dmaven.javadoc.skip=true)'
         required: false
-        default: ""
+        default: ''
         type: string
       build-docker:
-        description: "Build Docker image"
+        description: 'Build Docker image'
         required: false
         default: false
         type: boolean
@@ -77,14 +78,12 @@ jobs:
           maven-password: ${{ inputs.profile == 'github' && secrets.GITHUB_TOKEN || secrets.MAVEN_PASSWORD }}
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          dry-run: "true"
+          dry-run: 'true'
       - name: Upload all Maven target directories
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ github.event.repository.name }}
-          path: |
-            **/target/**
-          include-hidden-files: true
+          path: qubership-nifi-registry-deps/target
   deploy:
     needs: dry-run-build
     if: ${{ needs.dry-run-build.result == 'success' }}
