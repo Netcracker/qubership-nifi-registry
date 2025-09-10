@@ -150,6 +150,7 @@ jobs:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
           download-artifact-path: '.'
+          debug: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
