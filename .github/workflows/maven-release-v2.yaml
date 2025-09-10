@@ -152,6 +152,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ${{ github.workspace }}
+      - name: Flatten artifact folder
+        run: |
+          shopt -s dotglob
+          mv artifact/* .
+          rmdir artifact
+
       - name: Debug ls
         shell: bash
         env:
