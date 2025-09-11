@@ -83,8 +83,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ github.event.repository.name }}
-          path: |
-            **/target/**
+          path: '**/target'
           include-hidden-files: true
   deploy:
     needs: dry-run-build
@@ -188,7 +187,7 @@ jobs:
           ref: ${{ github.ref }}
           download-artifact: true
           custom-image-name: ${{ github.event.repository.name }}
-          download-artifact-path: ${{ github.workspace }}
+          download-artifact-path: '.'
           debug: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
