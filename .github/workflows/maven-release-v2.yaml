@@ -193,7 +193,7 @@ jobs:
           download-artifact: true
           download-artifact-path: '.'
           debug: true
-          chekout-path: ${{ github.event.repository.name }}
+          checkout-path: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
