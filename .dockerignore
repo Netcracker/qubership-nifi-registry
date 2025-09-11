@@ -1,0 +1,7 @@
+**
+
+!Dockerfile
+
+!nifi-scripts/**
+
+!qubership-nifi-registry-deps/target/lib/**/*.jar
