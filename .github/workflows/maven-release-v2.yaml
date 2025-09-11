@@ -183,7 +183,7 @@ jobs:
 
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@main
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@dowload
         with:
           ref: ${{ github.ref }}
           download-artifact: true
