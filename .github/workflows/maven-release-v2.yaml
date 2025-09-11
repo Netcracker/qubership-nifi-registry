@@ -186,7 +186,6 @@ jobs:
         with:
           ref: ${{ github.ref }}
           download-artifact: true
-          custom-image-name: ${{ github.event.repository.name }}
           download-artifact-path: '.'
           debug: true
         env:
