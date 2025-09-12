@@ -69,7 +69,7 @@ jobs:
         with:
           version-type: ${{ github.event.inputs.version-type }}
           ref: ${{ github.ref }}
-          module: ${{ github.event.repository.name }}
+          module: '.'
           maven-args: ${{ inputs.mvn-args }}
           profile: ${{ inputs.profile }}
           server-id: ${{ inputs.profile }}
@@ -80,19 +80,6 @@ jobs:
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: 'true'
 
-      - name: CD
-        run: |
-          cd  ${{ github.event.repository.name }}
-
-      - name: Flatten module folder before upload
-        run: |
-          MODULE="${{ github.event.repository.name }}"
-          if [ -d "$MODULE" ]; then
-            echo "📦 Flattening $MODULE into workspace..."
-            shopt -s dotglob
-            mv "$MODULE"/* .
-            rm -rf "$MODULE"
-          fi
       - name: Upload all Maven target directories
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -200,9 +187,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
           download-artifact: true
-          download-artifact-path: '.'
           debug: true
-          # checkout-path: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
