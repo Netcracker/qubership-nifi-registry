@@ -62,6 +62,7 @@ jobs:
   dry-run-build:
     permissions:
       contents: read
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: "Build and Publish current SNAPSHOT (dry run)"
@@ -154,7 +155,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@de43c4115d6d3b1547060e7ef2a137aa9ab60fc1 #v1.0.5
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@b3bf0caa5f3a96a979d0913c04d7aa59cdc11775 #v1.0.6
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
