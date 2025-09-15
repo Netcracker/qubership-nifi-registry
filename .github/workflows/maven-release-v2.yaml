@@ -56,11 +56,12 @@ on:
         type: boolean
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
   dry-run-build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: "Build and Publish current SNAPSHOT (dry run)"
@@ -79,11 +80,14 @@ jobs:
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: "true"
   deploy:
-    needs: dry-run-build
     if: ${{ needs.dry-run-build.result == 'success' }}
+    permissions:
+      contents: write
+      packages: write
+    needs: dry-run-build
+    runs-on: ubuntu-latest
     outputs:
       release-version: ${{ steps.build-and-publish.outputs.release-version }}
-    runs-on: ubuntu-latest
     steps:
       # This step is needed if there is a GitHub App used for authentication to bypass the protected branch rule
       - name: "Prepare app token"
@@ -117,6 +121,8 @@ jobs:
 
   check-dockerfile:
     if: ${{ github.event.inputs.build-docker == 'true' }}
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     needs: [deploy]
     outputs:
@@ -141,7 +147,7 @@ jobs:
   docker-build:
     if: ${{ github.event.inputs.build-docker == 'true' && needs.check-dockerfile.outputs.dockerfile_exists == 'exists' }}
     permissions:
-      contents: write
+      contents: read
       packages: write
     runs-on: ubuntu-latest
     needs: [check-dockerfile, deploy]
@@ -157,8 +163,10 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
   github-release:
-    needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
+    permissions:
+      contents: write
+    needs: [deploy]
     uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.5
     with:
       version: ${{ needs.deploy.outputs.release-version }}
