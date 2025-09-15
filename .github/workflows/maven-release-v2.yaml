@@ -109,14 +109,13 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: 'false'
-      - name: Move all artifacts to working directory
-        run: |
-          mv ${{ github.event.repository.name }}/* ./
+
       - name: Upload all Maven target directories
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ github.event.repository.name }}
-          path: '**/target'
+          path: '${{ github.event.repository.name }}/**/target'
+
   check-dockerfile:
     if: ${{ github.event.inputs.build-docker == 'true' }}
     runs-on: ubuntu-latest
