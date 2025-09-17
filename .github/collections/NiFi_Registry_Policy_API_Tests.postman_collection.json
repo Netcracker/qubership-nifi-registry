@@ -1,6 +1,6 @@
 {
     "info": {
-        "_postman_id": "9089b8ea-0e65-489f-96bd-981b9eb33651",
+        "_postman_id": "a31cfd8b-76da-4b15-b92a-eb015b6d5816",
         "name": "NiFi_Registry_Policy_API_Tests",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
@@ -23,7 +23,13 @@
                                     "    pm.expect(jsonData.length).to.eql(1);\r",
                                     "    pm.expect(jsonData[0].identity).to.eql(\"admin\");\r",
                                     "    pm.environment.set(\"registry.default.admin.id\", jsonData[0].identifier);\r",
-                                    "});"
+                                    "});\r",
+                                    "\r",
+                                    "//Add token header for CSRF check:\r",
+                                    "var token=pm.cookies.get('__Secure-Request-Token');\r",
+                                    "if (token) {\r",
+                                    "    pm.environment.set(\"request.token\", token);\r",
+                                    "}"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -865,7 +871,13 @@
                                     "pm.test(\"Response is JSON and contains some data\", function () {\r",
                                     "    var jsonData = pm.response.json();\r",
                                     "    pm.expect(jsonData.length > 0).to.eql(true);\r",
-                                    "});"
+                                    "});\r",
+                                    "\r",
+                                    "//Add token header for CSRF check:\r",
+                                    "var token=pm.cookies.get('__Secure-Request-Token');\r",
+                                    "if (token) {\r",
+                                    "    pm.environment.set(\"request.token\", token);\r",
+                                    "}"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -1574,6 +1586,33 @@
                     "response": []
                 }
             ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "var token = pm.environment.get('request.token');",
+                    "//Add token header for CSRF check:",
+                    "if (token) {",
+                    "    pm.request.headers.add({",
+                    "        key: 'Request-Token',",
+                    "        value: token",
+                    "    });",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
         }
     ]
 }
