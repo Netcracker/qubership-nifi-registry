@@ -21,5 +21,7 @@ respCode=$(curl -s -k --connect-timeout 2 --max-time 5 -o "$respFile" --write-ou
 echo "Response code = $respCode (expected 401)"
 if [ "$respCode" != "401" ]; then
     cat "$respFile"
+    rm -rf "$respFile"
     exit 22;
 fi
+rm -rf "$respFile"
