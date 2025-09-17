@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# shellcheck disable=SC2153
+
 port="$NIFI_REGISTRY_WEB_HTTPS_PORT"
 schema='https'
 if [ -z "$NIFI_REGISTRY_WEB_HTTPS_PORT" ]; then
@@ -16,7 +18,7 @@ fi
 echo "Host=$host, port = $port, schema=$schema, calling /nifi-registry-api/actuator/health"
 respFile=$(mktemp)
 respCode=$(curl -s -k --connect-timeout 2 --max-time 5 -o "$respFile" --write-out "%{http_code}" \
-    $schema://$host:$port/nifi-registry-api/actuator/health)
+    "$schema://$host:$port/nifi-registry-api/actuator/health")
 
 echo "Response code = $respCode (expected 401)"
 if [ "$respCode" != "401" ]; then
