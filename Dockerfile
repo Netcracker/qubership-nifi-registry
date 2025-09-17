@@ -19,7 +19,8 @@ USER root
 #add jq:
 RUN apk add --no-cache \
     jq=1.7.1-r0 \
-    bash=5.2.26-r0
+    bash=5.2.26-r0 \
+    curl=8.12.1-r0
 
 ENV NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
 ENV NIFI_REGISTRY_HOME=$NIFI_REGISTRY_BASE_DIR/nifi-registry-current

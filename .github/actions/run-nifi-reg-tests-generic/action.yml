@@ -28,7 +28,7 @@ runs:
       run: |
         . .github/workflows/sh/nifi-lib.sh
         wait_nifi_reg_container "localhost" "18080" ".github/docker/plain/docker-compose.yaml" "false" \
-          "5" "40" "${{ inputs.run-mode }}"
+          "5" "60" "${{ inputs.run-mode }}"
     - name: Wait for nifi-registry container to start (TLS)
       if: ${{ inputs.run-mode != 'plain' }}
       shell: bash
