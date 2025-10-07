@@ -47,6 +47,10 @@ if [ "${CONSUL_ENABLED}" = 'true' ]; then
         fi
         sleep 1
     done
+
+    # once nifi-registry.properties are loaded from Consul,
+    # handle conflicts between environment variables and consul values:
+    . "${scripts_dir}/handle_env_consul_conflict.sh"
 fi
 
 # Establish baseline properties
