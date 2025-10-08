@@ -1,7 +1,7 @@
 ---
 services:
   nifi-registry:
-    image: local-nifi-registry:test
+    image: ${NIFI_REG_IMAGE:-local-nifi-registry}:${NIFI_REG_IMAGE_TAG:-test}
     volumes:
       - nifi-reg-db:/opt/nifi-registry/nifi-registry-current/database
       - nifi-reg-flow:/opt/nifi-registry/nifi-registry-current/flow_storage

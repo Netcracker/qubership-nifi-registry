@@ -1,0 +1,539 @@
+{
+    "info": {
+        "_postman_id": "bc416082-0715-4f7f-81d1-d651fef6f616",
+        "name": "NiFi_Registry_After_Upgrade_API_Tests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Buckets",
+            "item": [
+                {
+                    "name": "Get buckets",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains two created buckets\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    bucketId1 = null;\r",
+                                    "    bucketId2 = null;\r",
+                                    "    for (var i = 0; i < jsonData.length; i++) {\r",
+                                    "        var bucket = jsonData[i]\r",
+                                    "        if (bucket.name == \"TestBucket1001\") {\r",
+                                    "            bucketId1 = bucket.identifier;\r",
+                                    "        }\r",
+                                    "        if (bucket.name == \"TestBucket1002\") {\r",
+                                    "            bucketId2 = bucket.identifier;\r",
+                                    "        }\r",
+                                    "        if (bucket.name == \"TestBucket1003\") {\r",
+                                    "            bucketId3 = bucket.identifier;\r",
+                                    "        }\r",
+                                    "    }\r",
+                                    "    pm.expect(bucketId1 != null).to.eql(true);\r",
+                                    "    pm.expect(bucketId2 != null).to.eql(true);\r",
+                                    "    pm.expect(bucketId2 != null).to.eql(true);\r",
+                                    "    pm.environment.set(\"registry.bucket11.id\", bucketId1);\r",
+                                    "    pm.environment.set(\"registry.bucket12.id\", bucketId2);\r",
+                                    "    pm.environment.set(\"registry.bucket13.id\", bucketId3);\r",
+                                    "});\r",
+                                    "\r",
+                                    "\r",
+                                    "//Add token header for CSRF check:\r",
+                                    "var token=pm.cookies.get('__Secure-Request-Token');\r",
+                                    "if (token) {\r",
+                                    "    pm.environment.set(\"request.token\", token);\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Flows",
+            "item": [
+                {
+                    "name": "Get flows bucket1",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains 3 created flows\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    flowId1 = null;\r",
+                                    "    flowId2 = null;\r",
+                                    "    flowId3 = null;\r",
+                                    "    flowId4 = null;\r",
+                                    "    for (var i = 0; i < jsonData.length; i++) {\r",
+                                    "        var flow = jsonData[i]\r",
+                                    "        if (flow.name == \"TestFlow1001\") {\r",
+                                    "            flowId1 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1002\") {\r",
+                                    "            flowId2 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1003\") {\r",
+                                    "            flowId3 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1004\") {\r",
+                                    "            flowId4 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1005\") {\r",
+                                    "            flowId5 = flow.identifier;\r",
+                                    "        }\r",
+                                    "    }\r",
+                                    "    pm.expect(flowId1 != null).to.eql(true);\r",
+                                    "    pm.expect(flowId2 != null).to.eql(true);\r",
+                                    "    pm.expect(flowId3 != null).to.eql(true);\r",
+                                    "    pm.expect(flowId4 != null).to.eql(false);\r",
+                                    "    pm.expect(flowId5 != null).to.eql(true);\r",
+                                    "    pm.expect(jsonData.length).to.eql(4);\r",
+                                    "    \r",
+                                    "    pm.environment.set(\"registry.flow11.id\", flowId1);\r",
+                                    "    pm.environment.set(\"registry.flow12.id\", flowId2);\r",
+                                    "    pm.environment.set(\"registry.flow13.id\", flowId3);\r",
+                                    "    pm.environment.set(\"registry.flow15.id\", flowId5);\r",
+                                    "});\r",
+                                    "\r",
+                                    "\r",
+                                    "//Add token header for CSRF check:\r",
+                                    "var token=pm.cookies.get('__Secure-Request-Token');\r",
+                                    "if (token) {\r",
+                                    "    pm.environment.set(\"request.token\", token);\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flows bucket2",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains 1 created flow\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    flowId1 = null;\r",
+                                    "    flowId2 = null;\r",
+                                    "    flowId3 = null;\r",
+                                    "    flowId4 = null;\r",
+                                    "    for (var i = 0; i < jsonData.length; i++) {\r",
+                                    "        var flow = jsonData[i]\r",
+                                    "        if (flow.name == \"TestFlow1001\") {\r",
+                                    "            flowId1 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1002\") {\r",
+                                    "            flowId2 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1003\") {\r",
+                                    "            flowId3 = flow.identifier;\r",
+                                    "        }\r",
+                                    "        if (flow.name == \"TestFlow1004\") {\r",
+                                    "            flowId4 = flow.identifier;\r",
+                                    "        }\r",
+                                    "    }\r",
+                                    "    pm.expect(flowId1 != null).to.eql(false);\r",
+                                    "    pm.expect(flowId2 != null).to.eql(false);\r",
+                                    "    pm.expect(flowId3 != null).to.eql(false);\r",
+                                    "    pm.expect(flowId4 != null).to.eql(true);\r",
+                                    "    pm.expect(jsonData.length).to.eql(1);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket12.id}}/flows",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket12.id}}",
+                                "flows"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Flow Versions",
+            "item": [
+                {
+                    "name": "Export flow5 version1",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains some data\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.snapshotMetadata.version).to.eql(1);\r",
+                                    "});\r",
+                                    "\r",
+                                    "\r",
+                                    "//Add token header for CSRF check:\r",
+                                    "var token=pm.cookies.get('__Secure-Request-Token');\r",
+                                    "if (token) {\r",
+                                    "    pm.environment.set(\"request.token\", token);\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions/1/export",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions",
+                                "1",
+                                "export"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 version1",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains some data\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.flow.name).to.eql(\"TestFlow1005\");\r",
+                                    "    pm.expect(jsonData.snapshotMetadata.version).to.eql(1);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions/1",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 version2",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains some data\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.flow.name).to.eql(\"TestFlow1005\");\r",
+                                    "    pm.expect(jsonData.snapshotMetadata.version).to.eql(2);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions/2",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 diff v1-v2",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains some diff data\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.componentDifferenceGroups.length).to.eql(3);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/diff/1/2",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "diff",
+                                "1",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 versions",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains 4 versions\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.length).to.eql(4);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 latest version",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains version 4\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.snapshotMetadata.version).to.eql(4);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions/latest",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions",
+                                "latest"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get flow5 latest version metadata",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {\r",
+                                    "    pm.response.to.have.status(200);\r",
+                                    "});\r",
+                                    "pm.test(\"Response is JSON and contains version 4\", function () {\r",
+                                    "    var jsonData = pm.response.json();\r",
+                                    "    pm.expect(jsonData.version).to.eql(4);\r",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{nifi.registry.url}}/nifi-registry-api/buckets/{{registry.bucket11.id}}/flows/{{registry.flow15.id}}/versions/latest/metadata",
+                            "host": [
+                                "{{nifi.registry.url}}"
+                            ],
+                            "path": [
+                                "nifi-registry-api",
+                                "buckets",
+                                "{{registry.bucket11.id}}",
+                                "flows",
+                                "{{registry.flow15.id}}",
+                                "versions",
+                                "latest",
+                                "metadata"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "var token = pm.environment.get('request.token');",
+                    "//Add token header for CSRF check:",
+                    "if (token) {",
+                    "    pm.request.headers.add({",
+                    "        key: 'Request-Token',",
+                    "        value: token",
+                    "    });",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

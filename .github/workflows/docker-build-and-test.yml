@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        run-mode: [ 'plain', 'tls', 'tls-db', 'tls-db-std', 'oidc' ]
+        run-mode: [ 'plain', 'tls', 'tls-db', 'tls-db-std', 'oidc', 'upgrade-plain', 'upgrade-tls-db', 'upgrade-tls-db-std' ]
     needs: [ mvn ]
     runs-on: ubuntu-latest
     steps:
@@ -77,7 +77,13 @@ jobs:
           name: 'qubership-nifi-registry-local-build'
       - name: Run local docker build
         run: docker build -t local-nifi-registry:test .
+      - name: Run upgrade tests with mode = ${{ matrix.run-mode }}
+        if: ${{ startsWith(matrix.run-mode, 'upgrade-') }}
+        uses: ./.github/actions/run-nifi-reg-upgrade-tests
+        with:
+          run-mode: '${{ matrix.run-mode }}'
       - name: Run tests with mode = ${{ matrix.run-mode }}
+        if: "${{ !startsWith(matrix.run-mode, 'upgrade-') }}"
         uses: ./.github/actions/run-nifi-reg-tests-generic
         with:
           run-mode: '${{ matrix.run-mode }}'
