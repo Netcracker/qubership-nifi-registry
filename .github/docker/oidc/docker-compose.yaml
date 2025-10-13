@@ -49,8 +49,20 @@ services:
       - OIDC_CLIENT_SECRET=frontend
       - "OIDC_DISCOVERY_URL_NEW=https://keycloak:8443/realms/nifi-test-realm/.well-known/openid-configuration"
       - NIFI_REG_DB_FLOW_AUTHORIZERS=cached
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry
     hostname: nifi-registry
+    labels:
+      - "autoheal=true" # Label for autoheal to monitor
+    healthcheck:
+      interval: 15s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
   consul:
     image: hashicorp/consul:1.20
     ports:
@@ -110,6 +122,13 @@ services:
       - "https://localhost:28443"
       - "--hostname-backchannel-dynamic"
       - "true"
+  autoheal:
+    restart: always
+    image: willfarrell/autoheal:latest
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 volumes:
   tls-scripts:
     driver: local

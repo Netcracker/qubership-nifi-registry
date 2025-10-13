@@ -19,7 +19,7 @@ services:
       - CONSUL_HOSTNAME=consul
       - CONSUL_TOKEN=${CONSUL_TOKEN}
   nifi-registry:
-    image: local-nifi-registry:test
+    image: ${NIFI_REG_IMAGE:-local-nifi-registry}:${NIFI_REG_IMAGE_TAG:-test}
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
