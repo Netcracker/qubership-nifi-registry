@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine/java:21-jdk as base
+FROM alpine/java:21-jre as base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
