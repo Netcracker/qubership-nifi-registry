@@ -83,8 +83,13 @@ public class PropertiesManager {
     private ConfigurableEnvironment env;
     private Environment appEnv;
 
+    /**
+     * Default constructor for Spring.
+     * @param configEnv ConfigurableEnvironment instance to use
+     * @param applicationEnv application Environment instance to use
+     */
     @Autowired
-    public PropertiesManager(ConfigurableEnvironment configEnv, Environment applicationEnv) {
+    public PropertiesManager(final ConfigurableEnvironment configEnv, final Environment applicationEnv) {
         this.env = configEnv;
         this.appEnv = applicationEnv;
     }
@@ -98,10 +103,10 @@ public class PropertiesManager {
     }
 
     /**
-     * Default constructor for Spring.
+     * Default constructor.
      */
     public PropertiesManager() {
-        // Default constructor for Spring
+        // Default constructor
     }
 
     /**

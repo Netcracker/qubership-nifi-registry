@@ -27,8 +27,12 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     private static final Logger LOG = LoggerFactory.getLogger(NifiRegistryPropertiesLookup.class);
     private PropertiesManager propertiesManager;
 
+    /**
+     * Default constructor for Spring.
+     * @param propsManager instance of PropertiesManager to use
+     */
     @Autowired
-    public NifiRegistryPropertiesLookup(PropertiesManager propsManager) {
+    public NifiRegistryPropertiesLookup(final PropertiesManager propsManager) {
         this.propertiesManager = propsManager;
     }
 
