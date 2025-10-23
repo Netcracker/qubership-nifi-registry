@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine/java:21-jre AS base
+FROM alpine/java:21-jre@sha256:a0433ecc16a0a9e389e216753019cc97f69f0973aecfadaf357d31838078bab5 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
@@ -38,7 +38,7 @@ RUN chmod 664 /opt/java/openjdk/lib/security/cacerts \
 
 USER 10001
 
-FROM apache/nifi-registry:2.5.0 AS nifi-reg2
+FROM apache/nifi-registry:2.5.0@sha256:09cad060b42e6b18930d46a2ab7c05b6d72fb6588858244538eca30285777812 AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
@@ -85,6 +85,11 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
 
 RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached \
     && mkdir -p ${NIFI_REGISTRY_HOME}/utility-lib
+
+# Temporarily add docs directory with empty file.
+# This directory can be removed, once Apache NiFi Registry stop using it.
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/docs \
+    && touch ${NIFI_REGISTRY_HOME}/docs/readme.txt
 
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
 COPY --chown=1000:1000 qubership-nifi-registry-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
