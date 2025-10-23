@@ -269,7 +269,7 @@ public class PropertiesManager {
         }
 
         // remove properties from combinedNifiRegistryProperties map
-        // that are present on nifi_internal_comments.properties
+        // that are present in nifi_internal_comments.properties
         for (String s : READ_ONLY_NIFI_REGISTRY_PROPS) {
             combinedNifiRegistryProperties.remove(s);
         }
