@@ -66,6 +66,9 @@ import java.util.Set;
 @RefreshScope
 public class PropertiesManager {
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManager.class);
+    private static final String LOGGER_TAG = "logger";
+    private static final String LOGGER_PREFIX = LOGGER_TAG + ".";
+    private static final int LOGGER_PREFIX_LENGTH = LOGGER_PREFIX.length();
     @Value("classpath:logback-template.xml")
     private Resource sourceXmlFile;
     @Value("classpath:nifi_registry_default.properties")
@@ -75,13 +78,16 @@ public class PropertiesManager {
     @Value("classpath:nifi_registry_internal_comments.properties")
     private Resource internalPropertiesCommentsFile;
     private Map<String, String> consulPropertiesMap = new HashMap<>();
-    private Properties props;
     @Value("${config.file.path}")
     private String path;
-    @Autowired
     private ConfigurableEnvironment env;
-    @Autowired
     private Environment appEnv;
+
+    @Autowired
+    public PropertiesManager(ConfigurableEnvironment configEnv, Environment applicationEnv) {
+        this.env = configEnv;
+        this.appEnv = applicationEnv;
+    }
 
     private static final Set<String> READ_ONLY_NIFI_REGISTRY_PROPS = new HashSet<>();
 
@@ -122,8 +128,6 @@ public class PropertiesManager {
         LOG.info("nifi registry properties files generated");
     }
 
-    private static final int LOGGER_PREFIX_LENGTH = "logger.".length();
-
     private void buildLogbackXMLFile()
             throws ParserConfigurationException, IOException, SAXException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -142,38 +146,16 @@ public class PropertiesManager {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Root element: {}", doc.getDocumentElement().getNodeName());
         }
-        NodeList nodeList = doc.getElementsByTagName("logger");
+        NodeList loggersList = doc.getElementsByTagName(LOGGER_TAG);
 
-        for (String consulKey : consulPropertiesMap.keySet()) {
-            boolean loggerElementFound = false;
+        for (Map.Entry<String, String> consulEntry : consulPropertiesMap.entrySet()) {
             // if it starts with "logger.*" then, check element in logback.xml
-            if (consulKey.toLowerCase().startsWith("logger.")) {
-                String xmlKey = consulKey.substring(LOGGER_PREFIX_LENGTH);
+            if (consulEntry.getKey().toLowerCase().startsWith(LOGGER_PREFIX)) {
+                String xmlKey = consulEntry.getKey().substring(LOGGER_PREFIX_LENGTH);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("current xmlKey: {}", xmlKey);
                 }
-                for (int i = 0; i < nodeList.getLength(); i++) {
-                    Node prop = nodeList.item(i);
-                    NamedNodeMap attr = prop.getAttributes();
-                    if (attr != null) {
-                        Node loggerKey = attr.getNamedItem("name");
-                        if (xmlKey.equalsIgnoreCase(loggerKey.getNodeValue())) {
-                            //key found then update element in xml file
-                            attr.getNamedItem("level").setTextContent(consulPropertiesMap.get(consulKey));
-                            loggerElementFound = true;
-                            break;
-                        }
-                    }
-                }
-                if (!loggerElementFound) {
-                    // add new element to xml file
-                    Element newLogger = doc.createElement("logger");
-                    newLogger.setAttribute("name", xmlKey);
-                    newLogger.setAttribute("level", consulPropertiesMap.get(consulKey));
-                    Node firstLogNode = doc.getElementsByTagName("logger").item(0);
-                    //insert before first node with tag=logger
-                    doc.getDocumentElement().insertBefore(newLogger, firstLogNode);
-                }
+                addOrUpdateLogger(xmlKey, consulEntry.getValue(), loggersList, doc);
             }
         }
         try (OutputStream output = new BufferedOutputStream(new FileOutputStream(path + "logback.xml"))) {
@@ -181,6 +163,32 @@ public class PropertiesManager {
             writeXml(doc, output);
         }
         LOG.info("logback.xml file created at path: {}", path);
+    }
+
+    private void addOrUpdateLogger(String loggerName, String loggerLevel, NodeList loggersList, Document doc) {
+        boolean loggerElementFound = false;
+        for (int i = 0; i < loggersList.getLength(); i++) {
+            Node prop = loggersList.item(i);
+            NamedNodeMap attr = prop.getAttributes();
+            if (attr != null) {
+                Node loggerKey = attr.getNamedItem("name");
+                if (loggerName.equalsIgnoreCase(loggerKey.getNodeValue())) {
+                    //key found then update element in xml file
+                    attr.getNamedItem("level").setTextContent(loggerLevel);
+                    loggerElementFound = true;
+                    break;
+                }
+            }
+        }
+        if (!loggerElementFound) {
+            // add new element to xml file
+            Element newLogger = doc.createElement(LOGGER_TAG);
+            newLogger.setAttribute("name", loggerName);
+            newLogger.setAttribute("level", loggerLevel);
+            Node firstLogNode = doc.getElementsByTagName(LOGGER_TAG).item(0);
+            //insert before first node with tag=logger
+            doc.getDocumentElement().insertBefore(newLogger, firstLogNode);
+        }
     }
 
     private void writeXml(Document doc, OutputStream output) throws TransformerException {
@@ -201,31 +209,31 @@ public class PropertiesManager {
     private void readConsulProperties() {
         MutablePropertySources srcs = env.getPropertySources();
         Set<String> allPropertyNames = new HashSet<>();
-        for (PropertySource src1 : srcs) {
-
+        for (PropertySource<?> src1 : srcs) {
             // get properties for ConsulPropertySource
             if (ConsulPropertySource.class.isAssignableFrom(src1.getClass())) {
                 String[] allNames = ((ConsulPropertySource) src1).getPropertyNames();
-                if (allNames != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("allNames array: {}", List.of(allNames));
-                    }
-                    //fetch only properties starting with logger.* and nifi.registry.*
-                    for (String name : allNames) {
-                        String lowercaseName = name.toLowerCase();
-                        if (lowercaseName.startsWith("logger") || lowercaseName.startsWith("nifi.registry")) {
-                            allPropertyNames.add(name);
-                        }
-                    }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("allNames array: {}", List.of(allNames));
                 }
+                addMatchingPropertyNames(allNames, allPropertyNames);
             }
-
         }
         LOG.debug("All property names = {}", allPropertyNames);
         for (String property : allPropertyNames) {
             consulPropertiesMap.put(property, appEnv.getProperty(property));
         }
         LOG.debug("consulPropertiesMap map: {}", consulPropertiesMap);
+    }
+
+    private static void addMatchingPropertyNames(String[] propertyNamesFromSource, Set<String> allPropertyNames) {
+        for (String name : propertyNamesFromSource) {
+            String lowercaseName = name.toLowerCase();
+            //fetch only properties starting with logger.* and nifi.registry.*
+            if (lowercaseName.startsWith(LOGGER_TAG) || lowercaseName.startsWith("nifi.registry")) {
+                allPropertyNames.add(name);
+            }
+        }
     }
 
     /**
@@ -241,18 +249,16 @@ public class PropertiesManager {
         Map<String, String> combinedNifiRegistryProperties = getOrderedProperties(defaultPropertiesFile);
 
         //consul
-        for (String consulKey : consulPropertiesMap.keySet()) {
+        for (Map.Entry<String, String> consulEntry: consulPropertiesMap.entrySet()) {
             // if it starts with "nifi.registry.*", add in nifiRegistryProperties
-            if (consulKey.toLowerCase().startsWith("nifi.registry.")) {
-                combinedNifiRegistryProperties.put(consulKey, consulPropertiesMap.get(consulKey));
+            if (consulEntry.getKey().toLowerCase().startsWith("nifi.registry.")) {
+                combinedNifiRegistryProperties.put(consulEntry.getKey(), consulEntry.getValue());
             }
         }
 
-        //nifi_registry_internal properties should be placed as is, in same order
+        //nifi_registry_internal properties should be placed as is, in the same order
         Map<String, String> nifiRegistryInternalProps = getOrderedProperties(internalPropertiesFile);
-        for (String s : nifiRegistryInternalProps.keySet()) {
-            combinedNifiRegistryProperties.put(s, nifiRegistryInternalProps.get(s));
-        }
+        combinedNifiRegistryProperties.putAll(nifiRegistryInternalProps);
         if (LOG.isDebugEnabled()) {
             LOG.debug("combined nifi registry Properties: {}", combinedNifiRegistryProperties);
         }
@@ -267,10 +273,10 @@ public class PropertiesManager {
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(fileName)); BufferedReader reader =
                 new BufferedReader(new InputStreamReader(internalPropertiesCommentsFile.getInputStream()))) {
             //Storing the map in properties file in order
-            for (String s : combinedNifiRegistryProperties.keySet()) {
-                pw.print(s);
+            for (Map.Entry<String, String> entry : combinedNifiRegistryProperties.entrySet()) {
+                pw.print(entry.getKey());
                 pw.print("=");
-                pw.println(combinedNifiRegistryProperties.get(s));
+                pw.println(entry.getValue());
             }
 
             // store all commented properties from nifi_registry_internal_comments.properties in file
@@ -296,6 +302,7 @@ public class PropertiesManager {
         Map<String, String> mp = new LinkedHashMap<>();
         try (InputStream in = rs.getInputStream()) {
             (new Properties() {
+                @Override
                 public synchronized Object put(Object key, Object value) {
                     return mp.put((String) key, (String) value);
                 }
