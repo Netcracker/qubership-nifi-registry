@@ -38,7 +38,7 @@ RUN chmod 664 /opt/java/openjdk/lib/security/cacerts \
 
 USER 10001
 
-FROM apache/nifi-registry:2.5.0@sha256:09cad060b42e6b18930d46a2ab7c05b6d72fb6588858244538eca30285777812 AS nifi-reg2
+FROM apache/nifi-registry:2.6.0@sha256:ddf611ca4488c8d9aa310591b9ede0bd3d1e847cd65bcbb0928b9fe7529fb93b AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
