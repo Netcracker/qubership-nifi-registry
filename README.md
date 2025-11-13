@@ -8,12 +8,12 @@ Compared with Apache NiFi Registry it supports:
 4. AccessPolicyProvider and UserGroupProvider for PostgreSQL with in-memory cache.
 
 ## Status
-![Unit tests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build-and-test.yml/badge.svg)
-![Autotests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml/badge.svg)
-![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=coverage)
-![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=ncloc)
-![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=alert_status)
-![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=vulnerabilities)
+[![Build status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml)
+[![Autotests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=coverage)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=ncloc)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
 
 ## Overview
 
