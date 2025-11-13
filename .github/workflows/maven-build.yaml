@@ -4,7 +4,7 @@ name: maven-build-and-test
 on:
   push:
     paths:
-      - '.github/workflows/maven-build-and-test.yml'
+      - '.github/workflows/maven-build.yaml'
       - 'nifi-registry-db-util/**'
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
@@ -13,7 +13,7 @@ on:
       - 'pom.xml'
   pull_request:
     paths:
-      - '.github/workflows/maven-build-and-test.yml'
+      - '.github/workflows/maven-build.yaml'
       - 'nifi-registry-db-util/**'
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
