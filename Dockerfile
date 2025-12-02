@@ -12,29 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine/java:21-jre@sha256:a0433ecc16a0a9e389e216753019cc97f69f0973aecfadaf357d31838078bab5 AS base
+FROM ghcr.io/netcracker/qubership/java-base:21-alpine-2.0.0@sha256:ed729fb9f33a1a904978f657397bc6925f241567f6ff48a3666e52aee5ebd6b5 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
 #add jq:
 RUN apk add --no-cache \
-    jq=1.7.1-r0 \
-    bash=5.2.26-r0 \
-    curl=8.14.1-r2
+    jq=1.8.1-r0
 
 ENV NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
 ENV NIFI_REGISTRY_HOME=$NIFI_REGISTRY_BASE_DIR/nifi-registry-current
 ENV NIFI_TOOLKIT_HOME=${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
 
-RUN chmod 664 /opt/java/openjdk/lib/security/cacerts \
-    && adduser --disabled-password \
-        --gecos "" \
-        --home "${NIFI_REGISTRY_HOME}" \
-        --ingroup "root" \
-        --no-create-home \
-        --uid 10001 \
-        nifi-registry
+RUN mkdir -p /opt/java/openjdk/lib/security \
+    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts
 
 USER 10001
 
