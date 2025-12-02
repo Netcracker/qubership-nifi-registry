@@ -26,7 +26,15 @@ ENV NIFI_TOOLKIT_HOME=${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
 
 RUN mkdir -p /opt/java/openjdk/lib/security \
-    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts
+    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts \
+    #add appuser (10001:0):
+    && adduser --disabled-password \
+        --gecos "" \
+        --home "${NIFI_REGISTRY_HOME}" \
+        --ingroup "root" \
+        --no-create-home \
+        --uid 10001 \
+        $USER_NAME
 
 USER 10001
 
