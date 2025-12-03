@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ghcr.io/netcracker/qubership/java-base:21-alpine-2.0.0@sha256:ed729fb9f33a1a904978f657397bc6925f241567f6ff48a3666e52aee5ebd6b5 AS base
+FROM ghcr.io/netcracker/qubership-java-base:21-alpine-2.0.2@sha256:028b335259ba14a32c91c11657ebff5f3c7172fd5edb26cb612fc7ec82f9c698 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
