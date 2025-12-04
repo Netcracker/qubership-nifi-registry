@@ -240,11 +240,18 @@ generate_tls_passwords() {
 }
 
 create_docker_env_file() {
+    local runMode="$1"
     echo "Generating environment file for docker-compose..."
     echo "TRUSTSTORE_PASSWORD=$TRUSTSTORE_PASSWORD" >./docker.env
     echo "KEYSTORE_PASSWORD_NIFI=$KEYSTORE_PASSWORD_NIFI" >>./docker.env
     echo "KEYSTORE_PASSWORD_NIFI_REG=$KEYSTORE_PASSWORD_NIFI_REG" >>./docker.env
-    DB_PASSWORD=$(generate_random_password 8 4 3)
+    if [[ "$runMode" == "upgrade-"* ]]; then
+        #in case of upgrade scenarios, use simple password w/o special characters:
+        DB_PASSWORD=$(generate_random_hex_password 8 4)
+    else
+        #in case of main scenarios, use password with special characters:
+        DB_PASSWORD=$(generate_random_password 8 4 3)
+    fi
     export DB_PASSWORD
     echo "DB_PASSWORD=$DB_PASSWORD" >>./docker.env
     KEYCLOAK_ADMIN_PASSWORD=$(generate_random_hex_password 8 4)
@@ -278,7 +285,7 @@ setup_env_before_tests() {
     local runMode="$1"
     prepare_results_dir "$runMode"
     generate_tls_passwords
-    create_docker_env_file
+    create_docker_env_file "$runMode"
     if [[ "$runMode" == "plain" ]] || [[ "$runMode" == "tls" ]]; then
         mkdir -p ./temp-vol/nifi-reg/database/
         mkdir -p ./temp-vol/nifi-reg/flow-storage/
