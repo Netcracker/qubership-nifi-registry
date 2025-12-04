@@ -42,7 +42,7 @@ services:
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
       - INITIAL_ADMIN_IDENTITY=admin
       - NIFI_REG_USE_PGDB=true
-      - NIFI_REG_DB_URL=jdbc:postgresql://postgresql:5432/postgres
+      - NIFI_REG_DB_URL=jdbc:postgresql://postgresql:5432/postgres?sslResponseTimeout=5000&ssl=false
       - NIFI_REG_DB_USERNAME=postgres
       - NIFI_REG_DB_PASSWORD=${DB_PASSWORD}
       - OIDC_CLIENT_ID=frontend
