@@ -20,6 +20,8 @@ runs:
         newRunMode="${origRunMode/upgrade-/}"
         echo "Original run-mode = $origRunMode, modified run mode = $newRunMode"
         setup_env_before_tests "$newRunMode"
+        #regenerate docker env file with original run mode to avoid issue due to new fixes:
+        create_docker_env_file "$origRunMode"
         #prepare both new run mode and original run mode, only the latter must be used
         prepare_results_dir "$origRunMode"
         echo "RUN_MODE=$newRunMode" >> $GITHUB_OUTPUT
