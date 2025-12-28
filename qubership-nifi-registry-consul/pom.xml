@@ -60,6 +60,7 @@
         <testcontainers.version>1.20.4</testcontainers.version>
         <nifi.version>1.28.1</nifi.version>
         <spring-framework.version>6.2.11</spring-framework.version>
+        <logback.version>1.5.19</logback.version>
     </properties>
 
     <profiles>
