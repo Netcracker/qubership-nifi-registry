@@ -115,7 +115,7 @@ jobs:
     uses: netcracker/qubership-workflow-hub/.github/workflows/re-security-scan.yml@9538833017019ab6bbc2138d3034778dfe3a5d1f #v2.0.5
     with:
       target: ${{ inputs.target || 'docker' }}
-      image: ${{ inputs.image || format('{0}:{1}', inputs.image, inputs.tag || 'latest') }}
+      image: ${{ inputs.image }}
       only-high-critical: ${{ inputs.only-high-critical || true }}
       trivy-scan: ${{ inputs.trivy-scan || true }}
       grype-scan: ${{ inputs.grype-scan || true }}
