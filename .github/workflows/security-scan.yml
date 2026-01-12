@@ -59,6 +59,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Get Configuration File
         uses: netcracker/qubership-workflow-hub/actions/docker-config-resolver@9538833017019ab6bbc2138d3034778dfe3a5d1f #v2.0.6
