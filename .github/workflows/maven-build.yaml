@@ -94,7 +94,7 @@ jobs:
           gpg-private-key: ${{ secrets.gpg-private-key }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Run local maven build with sonar
-        if: ${{ !inputs.skip-sonar }}
+        if: ${{ !inputs.skip-sonar && vars.SONAR_HOST_URL }}
         run: >
           mvn --batch-mode package
           -Dgpg.skip=true
@@ -109,7 +109,7 @@ jobs:
           SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
       - name: Run local maven build w/o sonar
-        if: ${{ inputs.skip-sonar }}
+        if: ${{ inputs.skip-sonar || !vars.SONAR_HOST_URL }}
         run: >
           mvn --batch-mode package
         env:
