@@ -38,7 +38,7 @@ RUN mkdir -p /opt/java/openjdk/lib/security \
 
 USER 10001
 
-FROM apache/nifi-registry:2.6.0@sha256:ddf611ca4488c8d9aa310591b9ede0bd3d1e847cd65bcbb0928b9fe7529fb93b AS nifi-reg2
+FROM apache/nifi-registry:2.7.2@sha256:a44cce96f8e0f3230107da7782fc1041787cfbdf84c2252441b8b78a0db7a71d AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
