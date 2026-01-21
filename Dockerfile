@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ghcr.io/netcracker/qubership-java-base:21-alpine-2.0.2@sha256:028b335259ba14a32c91c11657ebff5f3c7172fd5edb26cb612fc7ec82f9c698 AS base
+FROM ghcr.io/netcracker/qubership-java-base:21-alpine-2.1.1@sha256:36217a867a92977ceb6a34b9b5bdce9f1af11050486e3da0252ce180fb107b3d AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
@@ -26,15 +26,7 @@ ENV NIFI_TOOLKIT_HOME=${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
 
 RUN mkdir -p /opt/java/openjdk/lib/security \
-    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts \
-    #add appuser (10001:0):
-    && adduser --disabled-password \
-        --gecos "" \
-        --home "${NIFI_REGISTRY_HOME}" \
-        --ingroup "root" \
-        --no-create-home \
-        --uid 10001 \
-        $USER_NAME
+    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts
 
 USER 10001
 
