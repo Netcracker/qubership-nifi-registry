@@ -42,7 +42,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.7</version>
+        <version>3.5.9</version>
         <relativePath />
     </parent>
 
@@ -54,13 +54,12 @@
         <jacoco.version>0.8.8</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <com-google-guava.version>32.0.1-jre</com-google-guava.version>
-        <spring-cloud-consul.version>4.2.1</spring-cloud-consul.version>
-        <spring-cloud-context.version>4.2.1</spring-cloud-context.version>
+        <spring-cloud-consul.version>4.3.1</spring-cloud-consul.version>
+        <spring-cloud-context.version>4.3.1</spring-cloud-context.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <testcontainers.version>1.20.4</testcontainers.version>
-        <nifi.version>1.28.1</nifi.version>
-        <spring-framework.version>6.2.11</spring-framework.version>
-        <logback.version>1.5.19</logback.version>
+        <nifi.version>2.6.0</nifi.version>
+        <spring-framework.version>6.2.15</spring-framework.version>
     </properties>
 
     <profiles>
