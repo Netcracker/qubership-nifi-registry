@@ -3,17 +3,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.qubership.nifi</groupId>
-        <artifactId>qubership-nifi-registry-consul</artifactId>
+        <artifactId>qubership-nifi-registry-quarkus-consul</artifactId>
         <version>2.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>qubership-nifi-registry-consul-util</artifactId>
+    <artifactId>qubership-nifi-registry-quarkus-consul-util</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <description>
-        The qubership-nifi-registry-consul-util module provides utility classes and services for integrating Apache NiFi Registry with Consul.
-        It enables dynamic configuration management, advanced property handling, and supports runtime updates of logging levels and registry properties.
+        The qubership-nifi-registry-quarkus-consul-util module provides utility classes and services for integrating Apache NiFi Registry with Consul using Quarkus framework.
+        It enables dynamic configuration management and advanced property handling.
     </description>
 
     <dependencies>
@@ -22,34 +22,45 @@
             <artifactId>qubership-nifi-registry-consul-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Quarkus Core -->
         <dependency>
-            <groupId>org.qubership.nifi</groupId>
-            <artifactId>qubership-nifi-registry-consul-templates</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-config-yaml</artifactId>
         </dependency>
+
+        <!-- SmallRye Config for advanced configuration -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-consul-config</artifactId>
-            <version>${spring-cloud-consul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-context</artifactId>
-            <version>${spring-cloud-context.version}</version>
-        </dependency>
-        <!--EXTERNAL-->
+
+        <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${com-google-guava.version}</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.jboss.slf4j</groupId>
+            <artifactId>slf4j-jboss-logmanager</artifactId>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -57,36 +68,16 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- logback.xml and properties templates for test -->
         <dependency>
-            <groupId>org.apache.nifi</groupId>
-            <artifactId>nifi-mock</artifactId>
-            <version>${nifi.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-security-kms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-property-utils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-security-ssl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>at.favre.lib</groupId>
-                    <artifactId>bcrypt</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
+            <groupId>org.qubership.nifi</groupId>
+            <artifactId>qubership-nifi-registry-consul-templates</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Testcontainers -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>consul</artifactId>
@@ -99,20 +90,12 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Consul Config Extension for Testing -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul</artifactId>
-            <version>${spring-cloud-consul.version}</version>
+            <groupId>com.netcracker.cloud.quarkus</groupId>
+            <artifactId>consul-config-source</artifactId>
+            <version>8.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -155,6 +138,19 @@
                 <configuration>
                     <skip>false</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <id>make-index</id>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

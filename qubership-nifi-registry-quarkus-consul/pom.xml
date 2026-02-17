@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- Copyright 2020-2025 NetCracker Technology Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.qubership.nifi</groupId>
-    <artifactId>qubership-nifi-registry</artifactId>
+    <artifactId>qubership-nifi-registry-quarkus-consul</artifactId>
     <packaging>pom</packaging>
     <version>2.2.0-SNAPSHOT</version>
+
     <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        The qubership-nifi-registry-quarkus-consul module integrates Apache NiFi Registry with Consul using Quarkus framework for dynamic configuration management and advanced property handling.
+        This module enables seamless retrieval and updating of configuration properties from Consul.
+    </description>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <licenses>
         <license>
@@ -41,47 +30,44 @@
     <scm>
         <connection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</developerConnection>
-        <url>https://github.com/Netcracker/qubership-nifi-registry/tree/main</url>
-      <tag>HEAD</tag>
-  </scm>
-    <modules>
-        <module>nifi-registry-util</module>
-        <module>nifi-registry-migration-util</module>
-        <module>nifi-registry-db-util</module>
-        <module>nifi-registry-assembly</module>
-        <module>qubership-cached-providers</module>
-        <module>qubership-nifi-registry-consul-common</module>
-        <module>qubership-nifi-registry-consul-templates</module>
-        <module>qubership-nifi-registry-consul</module>
-        <module>qubership-nifi-registry-quarkus-consul</module>
-        <module>qubership-nifi-registry-deps</module>
-    </modules>
+        <url>https://github.com/Netcracker/qubership-nifi-registry/tree/main/qubership-nifi-registry-quarkus-consul</url>
+        <tag>HEAD</tag>
+    </scm>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.9</version>
-        <relativePath />
-    </parent>
+    <modules>
+        <module>qubership-nifi-registry-quarkus-consul-util</module>
+        <module>qubership-nifi-registry-quarkus-consul-application</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <quarkus.platform.version>3.27.2</quarkus.platform.version>
+        <quarkus-plugin.version>3.27.2</quarkus-plugin.version>
         <pmd.version>3.26.0</pmd.version>
         <jacoco.version>0.8.8</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
-        <postgresql.jdbc.version>42.7.2</postgresql.jdbc.version>
-        <commons-io.version>2.14.0</commons-io.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <com-google-guava.version>32.0.1-jre</com-google-guava.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
-        <lombok.version>1.18.30</lombok.version>
+        <testcontainers.version>1.20.4</testcontainers.version>
         <nifi.version>2.7.2</nifi.version>
-        <hikari.cp.version>5.1.0</hikari.cp.version>
-        <mockito.version>4.11.0</mockito.version>
-        <json.smart.version>2.5.2</json.smart.version>
-        <spring-framework.version>6.2.15</spring-framework.version>
+        <quarkus-consul-config.version>2.2.0</quarkus-consul-config.version>
+        <surefire-plugin.version>3.0.0</surefire-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
@@ -165,12 +151,23 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>${flatten-maven-plugin.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <flattenMode>oss</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
@@ -221,29 +218,52 @@
                     </includes>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${surefire-plugin.version}</version>
                 <configuration>
                     <argLine>@{argLine} -Duser.timezone=UTC</argLine>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${surefire-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.7.1</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -257,13 +277,11 @@
                     <linkXRef>true</linkXRef>
                     <includeTests>true</includeTests>
                     <failurePriority>2</failurePriority>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>check</goal>
-                            <!--<goal>cpd-check</goal>-->
                         </goals>
                     </execution>
                 </executions>
@@ -280,6 +298,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -288,6 +307,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -302,6 +322,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -315,6 +336,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -328,11 +350,13 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.1.1</version>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
