@@ -8,7 +8,6 @@ import org.testcontainers.containers.Container;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,18 +23,16 @@ public class ConsulTestResource implements QuarkusTestResourceLifecycleManager {
     public Map<String, String> start() {
         LOG.info("Starting Consul container for testing...");
 
-        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE))
-                .withExposedPorts(8500);
-        consul.setPortBindings(Collections.singletonList("18500:8500"));
+        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
         consul.start();
 
-        LOG.info("Consul container started at localhost:18500");
+        int consulPort = consul.getMappedPort(8500);
+        LOG.info("Consul container started at localhost:{}", consulPort);
 
         // Fill initial consul data
         populateConsulData();
 
-        // Return empty map as we're using fixed port binding
-        return Collections.emptyMap();
+        return Map.of("quarkus.consul-source-config.agent.url", "http://localhost:" + consulPort);
     }
 
     @Override

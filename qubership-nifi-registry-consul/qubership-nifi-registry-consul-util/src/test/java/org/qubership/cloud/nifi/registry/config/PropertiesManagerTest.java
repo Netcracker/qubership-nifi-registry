@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.testcontainers.consul.ConsulContainer;
 import org.testcontainers.containers.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.BufferedInputStream;
@@ -24,11 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-@Testcontainers
 @SpringBootTest(classes = {PropertiesManager.class,
         ConsulConfiguration.class, ConsulPropertiesProvider.class})
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
@@ -36,20 +32,19 @@ public class PropertiesManagerTest {
 
     private static final String CONSUL_IMAGE = "hashicorp/consul:1.20";
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
-    private static ConsulContainer consul;
+    private static final ConsulContainer consul;
+
+    static {
+        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
+        consul.start();
+        System.setProperty("consul.test.port", String.valueOf(consul.getMappedPort(8500)));
+    }
 
     @Autowired
     private PropertiesManager pm;
 
     @BeforeAll
     public static void initContainer() {
-        List<String> consulPorts = new ArrayList<>();
-        consulPorts.add("18500:8500");
-
-        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
-        consul.setPortBindings(consulPorts);
-        consul.start();
-
         //fill initial consul data:
         Container.ExecResult res = null;
         try {
@@ -116,6 +111,7 @@ public class PropertiesManagerTest {
 
     @AfterAll
     public static void tearDown() {
+        System.clearProperty("consul.test.port");
         consul.stop();
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));

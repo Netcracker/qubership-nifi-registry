@@ -70,4 +70,4 @@ spring:
   config:
     activate:
       on-profile: "!development"
-    import: consul:localhost:18500
+    import: consul:localhost:${consul.test.port}
