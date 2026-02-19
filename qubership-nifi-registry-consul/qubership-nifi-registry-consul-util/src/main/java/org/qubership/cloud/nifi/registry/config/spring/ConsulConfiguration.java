@@ -1,6 +1,7 @@
 package org.qubership.cloud.nifi.registry.config.spring;
 
 import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
+import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManagerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,7 @@ public class ConsulConfiguration {
                 String internalPropertiesCommentsFile,
             @Value("${config.file.path}") String path,
             ConsulPropertiesProvider propertiesProvider) {
-        return new BasePropertiesManager(
+        return new BasePropertiesManager(new BasePropertiesManagerConfig(
                 defaultLogbackFile,
                 defaultPropertiesFile,
                 internalPropertiesFile,
@@ -53,6 +54,6 @@ public class ConsulConfiguration {
                 "nifi.registry",
                 READ_ONLY_NIFI_REGISTRY_PROPS,
                 propertiesProvider
-        );
+        ));
     }
 }

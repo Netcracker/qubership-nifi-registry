@@ -68,39 +68,24 @@ public class BasePropertiesManager {
 
     /**
      * Creates new instance of PropertiesManager.
-     * @param defaultLogbackXmlResName
-     * @param defaultPropertiesResName
-     * @param internalPropertiesResName
-     * @param internalPropertiesCommentsResName
-     * @param confFilePath
-     * @param confFileName
-     * @param propPrefix
-     * @param roPropertyNames
-     * @param provider
+     *
+     * @param config configuration containing all required parameters
      */
-    public BasePropertiesManager(final String defaultLogbackXmlResName,
-                                 final String defaultPropertiesResName,
-                                 final String internalPropertiesResName,
-                                 final String internalPropertiesCommentsResName,
-                                 final String confFilePath,
-                                 final String confFileName,
-                                 final String propPrefix,
-                                 final Set<String> roPropertyNames,
-                                 final PropertiesProvider provider) {
-        this.defaultLogbackXmlResourceName = defaultLogbackXmlResName;
-        this.defaultPropertiesResourceName = defaultPropertiesResName;
-        this.internalPropertiesResourceName = internalPropertiesResName;
-        this.internalPropertiesCommentsResourceName = internalPropertiesCommentsResName;
-        this.configFilePath = confFilePath;
-        this.configFile = Paths.get(confFilePath, confFileName).toFile();
-        this.logConfigFile = Paths.get(confFilePath, "logback.xml").toFile();
-        if (propPrefix != null) {
-            this.propertyPrefix = propPrefix.toLowerCase();
+    public BasePropertiesManager(final BasePropertiesManagerConfig config) {
+        this.defaultLogbackXmlResourceName = config.defaultLogbackXmlResourceName();
+        this.defaultPropertiesResourceName = config.defaultPropertiesResourceName();
+        this.internalPropertiesResourceName = config.internalPropertiesResourceName();
+        this.internalPropertiesCommentsResourceName = config.internalPropertiesCommentsResourceName();
+        this.configFilePath = config.configFilePath();
+        this.configFile = Paths.get(config.configFilePath(), config.configFileName()).toFile();
+        this.logConfigFile = Paths.get(config.configFilePath(), "logback.xml").toFile();
+        if (config.propertyPrefix() != null) {
+            this.propertyPrefix = config.propertyPrefix().toLowerCase();
         } else {
             this.propertyPrefix = "";
         }
-        this.readonlyPropertyNames = roPropertyNames;
-        this.propertiesProvider = provider;
+        this.readonlyPropertyNames = config.readonlyPropertyNames();
+        this.propertiesProvider = config.propertiesProvider();
     }
 
     /**

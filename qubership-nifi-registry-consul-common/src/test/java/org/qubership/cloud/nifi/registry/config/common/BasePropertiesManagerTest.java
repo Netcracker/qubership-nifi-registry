@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class BasePropertiesManagerTest {
     //TODO: add tests with different parameter values:
-    private BasePropertiesManager pm = new BasePropertiesManager(
+    private BasePropertiesManager pm = new BasePropertiesManager(new BasePropertiesManagerConfig(
             "logback-template.xml",
             "nifi_registry_default.properties",
             "nifi_registry_internal.properties",
@@ -27,7 +27,7 @@ public class BasePropertiesManagerTest {
             "nifi.registry",
             Set.of(""),
             new TestPropertiesProvider()
-    );
+    ));
 
     @BeforeAll
     public static void init() {

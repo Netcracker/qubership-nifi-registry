@@ -5,6 +5,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
+import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManagerConfig;
 import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
 
 import java.util.HashSet;
@@ -56,7 +57,7 @@ public class BasePropertiesManagerProducer {
      */
     @Produces
     public BasePropertiesManager basePropertiesManager(PropertiesProvider provider) {
-        return new BasePropertiesManager(
+        return new BasePropertiesManager(new BasePropertiesManagerConfig(
                 defaultLogbackFile,
                 defaultPropertiesFile,
                 internalPropertiesFile,
@@ -66,7 +67,7 @@ public class BasePropertiesManagerProducer {
                 "nifi.registry",
                 READ_ONLY_NIFI_REGISTRY_PROPS,
                 provider
-        );
+        ));
     }
 
 }
