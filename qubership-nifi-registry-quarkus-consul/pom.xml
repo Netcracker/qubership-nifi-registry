@@ -43,18 +43,20 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--libraries versions-->
         <quarkus.platform.version>3.27.2</quarkus.platform.version>
         <quarkus-plugin.version>3.27.2</quarkus-plugin.version>
+        <com-google-guava.version>32.0.1-jre</com-google-guava.version>
+        <consul-config-source.version>8.4.0</consul-config-source.version>
+        <!--test libraries versions-->
+        <junit.jupiter.version>5.11.1</junit.jupiter.version>
+        <testcontainers.version>1.20.4</testcontainers.version>
+        <!--plugin versions-->
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <pmd.version>3.26.0</pmd.version>
         <jacoco.version>0.8.8</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
-        <com-google-guava.version>32.0.1-jre</com-google-guava.version>
-        <junit.jupiter.version>5.11.1</junit.jupiter.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
-        <nifi.version>2.7.2</nifi.version>
-        <quarkus-consul-config.version>2.2.0</quarkus-consul-config.version>
-        <surefire-plugin.version>3.0.0</surefire-plugin.version>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -155,8 +157,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <parameters>true</parameters>
                 </configuration>
             </plugin>

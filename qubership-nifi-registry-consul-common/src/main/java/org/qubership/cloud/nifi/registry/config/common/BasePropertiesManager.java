@@ -1,6 +1,5 @@
-package org.qubership.cloud.nifi.registry.config;
+package org.qubership.cloud.nifi.registry.config.common;
 
-import org.qubership.cloud.nifi.registry.config.util.PropertiesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -55,10 +54,10 @@ public class BasePropertiesManager {
     private static final String LOGGER_PREFIX = LOGGER_TAG + ".";
     private static final int LOGGER_PREFIX_LENGTH = LOGGER_PREFIX.length();
 
-    private InputStream defaultLogbackXmlStream;
-    private InputStream defaultPropertiesFileStream;
-    private InputStream internalPropertiesFileStream;
-    private InputStream internalPropertiesCommentsFileStream;
+    private String defaultLogbackXmlResourceName;
+    private String defaultPropertiesResourceName;
+    private String internalPropertiesResourceName;
+    private String internalPropertiesCommentsResourceName;
     private Map<String, String> consulPropertiesMap = new HashMap<>();
     private String configFilePath;
     private File configFile;
@@ -69,29 +68,29 @@ public class BasePropertiesManager {
 
     /**
      * Creates new instance of PropertiesManager.
-     * @param newDefaultLogbackXmlStream
-     * @param defPropertiesFileStream
-     * @param intPropertiesFileStream
-     * @param intPropertiesCommentsFileStream
+     * @param defaultLogbackXmlResName
+     * @param defaultPropertiesResName
+     * @param internalPropertiesResName
+     * @param internalPropertiesCommentsResName
      * @param confFilePath
      * @param confFileName
      * @param propPrefix
      * @param roPropertyNames
      * @param provider
      */
-    public BasePropertiesManager(final InputStream newDefaultLogbackXmlStream,
-                                 final InputStream defPropertiesFileStream,
-                                 final InputStream intPropertiesFileStream,
-                                 final InputStream intPropertiesCommentsFileStream,
+    public BasePropertiesManager(final String defaultLogbackXmlResName,
+                                 final String defaultPropertiesResName,
+                                 final String internalPropertiesResName,
+                                 final String internalPropertiesCommentsResName,
                                  final String confFilePath,
                                  final String confFileName,
                                  final String propPrefix,
                                  final Set<String> roPropertyNames,
                                  final PropertiesProvider provider) {
-        this.defaultLogbackXmlStream = newDefaultLogbackXmlStream;
-        this.defaultPropertiesFileStream = defPropertiesFileStream;
-        this.internalPropertiesFileStream = intPropertiesFileStream;
-        this.internalPropertiesCommentsFileStream = intPropertiesCommentsFileStream;
+        this.defaultLogbackXmlResourceName = defaultLogbackXmlResName;
+        this.defaultPropertiesResourceName = defaultPropertiesResName;
+        this.internalPropertiesResourceName = internalPropertiesResName;
+        this.internalPropertiesCommentsResourceName = internalPropertiesCommentsResName;
         this.configFilePath = confFilePath;
         this.configFile = Paths.get(confFilePath, confFileName).toFile();
         this.logConfigFile = Paths.get(confFilePath, "logback.xml").toFile();
@@ -161,7 +160,7 @@ public class BasePropertiesManager {
         dbFactory.setExpandEntityReferences(false);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = null;
-        try (InputStream is = new BufferedInputStream(defaultLogbackXmlStream)) {
+        try (InputStream is = new BufferedInputStream(getResourceAsStream(defaultLogbackXmlResourceName))) {
             doc = dBuilder.parse(is);
         }
         doc.getDocumentElement().normalize();
@@ -269,7 +268,8 @@ public class BasePropertiesManager {
     public void buildPropertiesFile() throws IOException {
         //We have to build combinedNifiProperties properties map.
         //First, copy nifi default properties as is without order change.
-        Map<String, String> combinedNifiProperties = getOrderedProperties(defaultPropertiesFileStream);
+        Map<String, String> combinedNifiProperties = getOrderedProperties(
+                getResourceAsStream(defaultPropertiesResourceName));
 
         //consul
         for (Map.Entry<String, String> consulEntry: consulPropertiesMap.entrySet()) {
@@ -280,7 +280,8 @@ public class BasePropertiesManager {
         }
 
         //internal properties should be placed as is, in the same order
-        Map<String, String> nifiInternalProps = getOrderedProperties(internalPropertiesFileStream);
+        Map<String, String> nifiInternalProps = getOrderedProperties(
+                getResourceAsStream(internalPropertiesResourceName));
         combinedNifiProperties.putAll(nifiInternalProps);
         if (LOG.isDebugEnabled()) {
             LOG.debug("combined nifi properties: {}", combinedNifiProperties);
@@ -294,7 +295,8 @@ public class BasePropertiesManager {
         //write nifiProperties to properties file
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(configFile));
              BufferedReader reader =
-                     new BufferedReader(new InputStreamReader(internalPropertiesCommentsFileStream))) {
+                     new BufferedReader(new InputStreamReader(
+                             getResourceAsStream(internalPropertiesCommentsResourceName)))) {
             //Storing the map in properties file in order
             for (Map.Entry<String, String> entry : combinedNifiProperties.entrySet()) {
                 pw.print(entry.getKey());
@@ -351,5 +353,20 @@ public class BasePropertiesManager {
         OrderedProperties op = new OrderedProperties();
         op.load(in);
         return op.getOrderedProperties();
+    }
+
+    /**
+     * Get resource as input stream from classpath.
+     *
+     * @param resourceName the resource name
+     * @return input stream for the resource
+     * @throws IOException if resource not found
+     */
+    private InputStream getResourceAsStream(String resourceName) throws IOException {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
+        if (is == null) {
+            throw new IOException("Resource not found: " + resourceName);
+        }
+        return is;
     }
 }

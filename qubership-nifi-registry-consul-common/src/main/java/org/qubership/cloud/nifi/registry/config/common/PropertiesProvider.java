@@ -1,4 +1,4 @@
-package org.qubership.cloud.nifi.registry.config.util;
+package org.qubership.cloud.nifi.registry.config.common;
 
 import java.util.Set;
 

@@ -85,6 +85,7 @@ RUN mkdir -p ${NIFI_REGISTRY_HOME}/docs \
 
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
 COPY --chown=1000:1000 qubership-nifi-registry-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
+COPY --chown=1000:1000 qubership-nifi-registry-quarkus-consul/qubership-nifi-registry-quarkus-consul-application/target/quarkus-app ${NIFI_REGISTRY_HOME}/utility-lib/quarkus-app
 
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"

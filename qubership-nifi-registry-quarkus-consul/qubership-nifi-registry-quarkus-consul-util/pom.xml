@@ -38,13 +38,6 @@
             <artifactId>smallrye-config</artifactId>
         </dependency>
 
-        <!-- Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${com-google-guava.version}</version>
-        </dependency>
-
         <!-- Logging -->
         <dependency>
             <groupId>org.jboss.slf4j</groupId>
@@ -91,12 +84,22 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Consul Config Extension for Testing -->
+        <!-- Consul Config Source for Testing -->
         <dependency>
             <groupId>com.netcracker.cloud.quarkus</groupId>
             <artifactId>consul-config-source</artifactId>
-            <version>8.4.0</version>
+            <version>${consul-config-source.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.netcracker.cloud.quarkus</groupId>
+                    <artifactId>log-manager</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.netcracker.cloud.quarkus</groupId>
+                    <artifactId>log-manager-deployment</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

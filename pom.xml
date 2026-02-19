@@ -68,19 +68,23 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <pmd.version>3.26.0</pmd.version>
-        <jacoco.version>0.8.8</jacoco.version>
-        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+        <!--libraries versions-->
         <postgresql.jdbc.version>42.7.2</postgresql.jdbc.version>
         <commons-io.version>2.14.0</commons-io.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
-        <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <lombok.version>1.18.30</lombok.version>
         <nifi.version>2.7.2</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
-        <mockito.version>4.11.0</mockito.version>
         <json.smart.version>2.5.2</json.smart.version>
         <spring-framework.version>6.2.15</spring-framework.version>
+        <!--test libraries versions-->
+        <testcontainers.version>1.20.4</testcontainers.version>
+        <junit.jupiter.version>5.11.1</junit.jupiter.version>
+        <mockito.version>4.11.0</mockito.version>
+        <!--plugin versions-->
+        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <pmd.version>3.26.0</pmd.version>
+        <jacoco.version>0.8.8</jacoco.version>
     </properties>
 
     <profiles>
@@ -224,7 +228,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${surefire-plugin.version}</version>
                 <configuration>
                     <argLine>@{argLine} -Duser.timezone=UTC</argLine>
                 </configuration>

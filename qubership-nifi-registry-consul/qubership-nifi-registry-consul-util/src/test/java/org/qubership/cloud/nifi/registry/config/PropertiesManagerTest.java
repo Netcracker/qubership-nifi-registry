@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.qubership.cloud.nifi.registry.config.spring.ConsulConfiguration;
+import org.qubership.cloud.nifi.registry.config.spring.ConsulPropertiesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,8 @@ import java.util.List;
 import java.util.Properties;
 
 @Testcontainers
-@SpringBootTest(classes = {PropertiesManager.class})
+@SpringBootTest(classes = {PropertiesManager.class,
+        ConsulConfiguration.class, ConsulPropertiesProvider.class})
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
 public class PropertiesManagerTest {
 

@@ -1,16 +1,14 @@
-package org.qubership.cloud.nifi.registry.quarkus.config;
+package org.qubership.cloud.nifi.registry.quarkus.config.application;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
-import io.quarkus.runtime.StartupEvent;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.qubership.cloud.nifi.registry.quarkus.config.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -47,6 +45,12 @@ public class NifiRegistryPropertiesApplication implements QuarkusApplication {
         Quarkus.run(NifiRegistryPropertiesApplication.class, args);
     }
 
+    /**
+     * Runs quarkus application.
+     * @param args command line arguments
+     * @return exit code
+     * @throws Exception unexpected exception
+     */
     @Override
     public int run(String... args) throws Exception {
         // Generate properties on startup
@@ -76,7 +80,7 @@ public class NifiRegistryPropertiesApplication implements QuarkusApplication {
     private void notifyCompletionToStartScript() {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            Path fPath = Paths.get(notificationPath + "initial-config-completed.txt");
+            Path fPath = Paths.get(notificationPath, "initial-config-completed.txt");
             Files.write(fPath, timestamp.getBytes());
             LOG.info("Consul App completion file created:{} ", fPath.toAbsolutePath());
         } catch (Exception e) {

@@ -26,14 +26,24 @@
             <artifactId>quarkus-config-yaml</artifactId>
         </dependency>
 
-        <!-- Consul Config Extension -->
+        <!-- Consul Config Source extension w/o log-manager to avoid starting web server -->
         <dependency>
             <groupId>com.netcracker.cloud.quarkus</groupId>
             <artifactId>consul-config-source</artifactId>
-            <version>8.4.0</version>
+            <version>${consul-config-source.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.netcracker.cloud.quarkus</groupId>
+                    <artifactId>log-manager</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.netcracker.cloud.quarkus</groupId>
+                    <artifactId>log-manager-deployment</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Local util module -->
+        <!-- util module -->
         <dependency>
             <groupId>org.qubership.nifi</groupId>
             <artifactId>qubership-nifi-registry-quarkus-consul-util</artifactId>
@@ -86,19 +96,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>native</id>
-            <activation>
-                <property>
-                    <name>native</name>
-                </property>
-            </activation>
-            <properties>
-                <skipITs>false</skipITs>
-                <quarkus.package.type>native</quarkus.package.type>
-            </properties>
-        </profile>
-    </profiles>
 </project>

@@ -1,6 +1,4 @@
-package org.qubership.cloud.nifi.registry.config;
-
-import org.qubership.cloud.nifi.registry.config.util.PropertiesProvider;
+package org.qubership.cloud.nifi.registry.config.common;
 
 import java.util.HashMap;
 import java.util.Map;

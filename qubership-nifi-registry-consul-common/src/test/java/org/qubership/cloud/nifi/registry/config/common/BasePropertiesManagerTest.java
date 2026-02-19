@@ -1,4 +1,4 @@
-package org.qubership.cloud.nifi.registry.config;
+package org.qubership.cloud.nifi.registry.config.common;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -18,10 +18,10 @@ import java.util.Set;
 public class BasePropertiesManagerTest {
     //TODO: add tests with different parameter values:
     private BasePropertiesManager pm = new BasePropertiesManager(
-            BasePropertiesManager.class.getResourceAsStream("/logback-template.xml"),
-            BasePropertiesManager.class.getResourceAsStream("/nifi_registry_default.properties"),
-            BasePropertiesManager.class.getResourceAsStream("/nifi_registry_internal.properties"),
-            BasePropertiesManager.class.getResourceAsStream("/nifi_registry_internal_comments.properties"),
+            "logback-template.xml",
+            "nifi_registry_default.properties",
+            "nifi_registry_internal.properties",
+            "nifi_registry_internal_comments.properties",
             "./conf/",
             "nifi-registry.properties",
             "nifi.registry",

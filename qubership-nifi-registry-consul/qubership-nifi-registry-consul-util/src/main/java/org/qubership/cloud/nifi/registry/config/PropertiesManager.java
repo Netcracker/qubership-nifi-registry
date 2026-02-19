@@ -1,27 +1,19 @@
 package org.qubership.cloud.nifi.registry.config;
 
-import org.qubership.cloud.nifi.registry.config.util.PropertiesProvider;
+import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.consul.config.ConsulPropertySource;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The {@code PropertiesManager} is responsible for managing configuration properties
@@ -39,24 +31,15 @@ import java.util.Set;
  */
 @Component
 @RefreshScope
-public class PropertiesManager
-    implements PropertiesProvider {
+public class PropertiesManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManager.class);
-    @Value("classpath:logback-template.xml")
-    private Resource sourceXmlFile;
-    @Value("classpath:nifi_registry_default.properties")
-    private Resource defaultPropertiesFile;
-    @Value("classpath:nifi_registry_internal.properties")
-    private Resource internalPropertiesFile;
-    @Value("classpath:nifi_registry_internal_comments.properties")
-    private Resource internalPropertiesCommentsFile;
-    @Value("${config.file.path}")
-    private String path;
     private ConfigurableEnvironment env;
     private Environment appEnv;
+    @Autowired
     private BasePropertiesManager basePropertiesManager;
 
+    //Not used, kept for backward compatibility.
     /**
      * Default constructor for Spring.
      * @param configEnv ConfigurableEnvironment instance to use
@@ -69,39 +52,11 @@ public class PropertiesManager
         this.appEnv = applicationEnv;
     }
 
-    private static final Set<String> READ_ONLY_NIFI_REGISTRY_PROPS = new HashSet<>();
-
-    static {
-        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.pattern.dn");
-        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.value.dn");
-        READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.transform.dn");
-    }
-
     /**
      * Default constructor.
      */
     public PropertiesManager() {
         // Default constructor
-    }
-
-    private void initBasePropertiesManager() {
-        if (this.basePropertiesManager == null) {
-            try {
-                this.basePropertiesManager = new BasePropertiesManager(
-                        sourceXmlFile.getInputStream(),
-                        defaultPropertiesFile.getInputStream(),
-                        internalPropertiesFile.getInputStream(),
-                        internalPropertiesCommentsFile.getInputStream(),
-                        path,
-                        "nifi-registry.properties",
-                        "nifi.registry",
-                        READ_ONLY_NIFI_REGISTRY_PROPS,
-                        this
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     /**
@@ -122,36 +77,7 @@ public class PropertiesManager
      */
     public void generateNifiRegistryProperties() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
-        initBasePropertiesManager();
         this.basePropertiesManager.generateNifiRegistryProperties();
-    }
-
-    /**
-     * Gets all available property names from Consul.
-     * @return set of property names
-     */
-    @Override
-    public Set<String> getAllPropertyNamesFromSource() {
-        MutablePropertySources sources = env.getPropertySources();
-        Set<String> allPropertyNames = new HashSet<>();
-        for (PropertySource<?> src1 : sources) {
-            // get properties for ConsulPropertySource
-            if (ConsulPropertySource.class.isAssignableFrom(src1.getClass())) {
-                String[] allNames = ((ConsulPropertySource) src1).getPropertyNames();
-                Collections.addAll(allPropertyNames, allNames);
-            }
-        }
-        return allPropertyNames;
-    }
-
-    /**
-     * Get property value with the specified name.
-     * @param propertyName property name to get
-     * @return property value
-     */
-    @Override
-    public String getPropertyValue(String propertyName) {
-        return appEnv.getProperty(propertyName);
     }
 
     /**
