@@ -10,6 +10,12 @@ import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * CDI producer for {@link BasePropertiesManager}.
+ * <p>
+ * Reads NiFi Registry configuration paths and resource names from MicroProfile Config
+ * and produces an application-scoped {@link BasePropertiesManager} instance.
+ */
 @ApplicationScoped
 public class BasePropertiesManagerProducer {
     @Inject
@@ -41,6 +47,13 @@ public class BasePropertiesManagerProducer {
         READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.transform.dn");
     }
 
+    /**
+     * Produces a {@link BasePropertiesManager} instance configured with
+     * NiFi Registry resource paths and the given properties provider.
+     *
+     * @param provider the properties provider for retrieving configuration values
+     * @return configured {@link BasePropertiesManager} instance
+     */
     @Produces
     public BasePropertiesManager basePropertiesManager(PropertiesProvider provider) {
         return new BasePropertiesManager(

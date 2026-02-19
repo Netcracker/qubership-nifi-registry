@@ -20,6 +20,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Spring Boot application for NiFi Registry Consul configuration management.
+ * <p>
+ * Generates NiFi Registry configuration files from Consul properties on startup
+ * and writes a completion notification file for the start script.
+ */
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "org.qubership.cloud.nifi.registry.config")

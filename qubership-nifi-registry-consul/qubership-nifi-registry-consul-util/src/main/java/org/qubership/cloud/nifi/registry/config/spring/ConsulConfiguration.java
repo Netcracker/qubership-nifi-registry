@@ -8,6 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Spring configuration class that produces a {@link BasePropertiesManager} bean
+ * configured with NiFi Registry resource paths and the Consul properties provider.
+ */
 @Configuration
 public class ConsulConfiguration {
     private static final Set<String> READ_ONLY_NIFI_REGISTRY_PROPS = new HashSet<>();
@@ -18,6 +22,18 @@ public class ConsulConfiguration {
         READ_ONLY_NIFI_REGISTRY_PROPS.add("nifi.registry.security.identity.mapping.transform.dn");
     }
 
+    /**
+     * Creates a {@link BasePropertiesManager} bean configured with
+     * NiFi Registry resource paths and the given Consul properties provider.
+     *
+     * @param defaultLogbackFile default logback XML template resource name
+     * @param defaultPropertiesFile default properties template resource name
+     * @param internalPropertiesFile internal (unchangeable) properties resource name
+     * @param internalPropertiesCommentsFile internal properties comments resource name
+     * @param path configuration file output path
+     * @param propertiesProvider the Consul properties provider
+     * @return configured {@link BasePropertiesManager} instance
+     */
     @Bean
     public BasePropertiesManager basePropertiesManager(
             @Value("${nifi.registry.config.logback.default:logback-template.xml}") String defaultLogbackFile,

@@ -2,6 +2,9 @@ package org.qubership.cloud.nifi.registry.config.common;
 
 import java.util.Set;
 
+/**
+ * Interface for accessing configuration properties from an external source (e.g. Consul).
+ */
 public interface PropertiesProvider {
     /**
      * Gets all available property names from source.
