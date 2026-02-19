@@ -224,10 +224,10 @@
                 <version>3.5.3</version>
                 <configuration>
                     <argLine>@{argLine} -Duser.timezone=UTC</argLine>
+                    <systemPropertyVariables>
+                        <api.version>1.44</api.version>
+                    </systemPropertyVariables>
                 </configuration>
-                <systemPropertyVariables>
-                    <api.version>1.44</api.version>
-                </systemPropertyVariables>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
