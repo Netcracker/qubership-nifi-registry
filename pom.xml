@@ -225,6 +225,9 @@
                 <configuration>
                     <argLine>@{argLine} -Duser.timezone=UTC</argLine>
                 </configuration>
+                <systemPropertyVariables>
+                    <api.version>1.44</api.version>
+                </systemPropertyVariables>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
