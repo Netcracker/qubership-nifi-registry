@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ghcr.io/netcracker/qubership-java-base:21-alpine-2.1.1@sha256:36217a867a92977ceb6a34b9b5bdce9f1af11050486e3da0252ce180fb107b3d AS base
+ARG BASE_IMAGE_VERSION='21-alpine-2.2.4'
+ARG BASE_IMAGE_VERSION_SHA256='sha256:eb6f44dac3e2a05b8ca69a5472b8054a0d3668fd7cfb2a037dfa36a7dba8c567'
+FROM ghcr.io/netcracker/qubership-java-base:$BASE_IMAGE_VERSION@$BASE_IMAGE_VERSION_SHA256 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
@@ -109,16 +111,6 @@ VOLUME ${NIFI_REGISTRY_HOME}/run
 VOLUME ${NIFI_REGISTRY_HOME}/work
 
 EXPOSE 18080 18443
-# Start NiFi Registry
-#
-# We need to use the exec form to avoid running our command in a subshell and omitting signals,
-# thus being unable to shut down gracefully:
-# https://docs.docker.com/engine/reference/builder/#entrypoint
-#
-# Also we need to use relative path, because the exec form does not invoke a command shell,
-# thus normal shell processing does not happen:
-# https://docs.docker.com/engine/reference/builder/#exec-form-entrypoint-example
-#
-# ENTRYPOINT overrides CMD defined in base image
-ENTRYPOINT ["../scripts/start.sh"]
+
+CMD ["bash", "../scripts/start.sh"]
 HEALTHCHECK NONE
