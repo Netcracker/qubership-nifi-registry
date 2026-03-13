@@ -12,8 +12,7 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <description>
-        The qubership-nifi-registry-consul-common module provides common utility classes and services for integrating Apache NiFi Registry with Consul.
-        It enables dynamic configuration management of logging levels and registry properties.
+        The qubership-nifi-registry-consul-common module provides common utility classes and services for integrating Apache NiFi with Consul.
     </description>
 
     <dependencies>
@@ -28,30 +27,6 @@
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.nifi</groupId>
-            <artifactId>nifi-mock</artifactId>
-            <version>${nifi.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-security-kms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-property-utils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.nifi</groupId>
-                    <artifactId>nifi-security-ssl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>at.favre.lib</groupId>
-                    <artifactId>bcrypt</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

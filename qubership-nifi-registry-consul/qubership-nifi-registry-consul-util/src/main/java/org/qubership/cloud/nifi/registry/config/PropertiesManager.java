@@ -34,10 +34,11 @@ import java.io.IOException;
 public class PropertiesManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManager.class);
-    private ConfigurableEnvironment env;
-    private Environment appEnv;
     @Autowired
     private BasePropertiesManager basePropertiesManager;
+    //Not used, kept for backward compatibility:
+    private ConfigurableEnvironment env;
+    private Environment appEnv;
 
     //Not used, kept for backward compatibility.
     /**
@@ -52,6 +53,7 @@ public class PropertiesManager {
         this.appEnv = applicationEnv;
     }
 
+    //Not used, kept for backward compatibility.
     /**
      * Default constructor.
      */
@@ -77,7 +79,7 @@ public class PropertiesManager {
      */
     public void generateNifiRegistryProperties() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
-        this.basePropertiesManager.generateNifiRegistryProperties();
+        this.basePropertiesManager.generateNifiPropertiesAndLogbackConfig();
     }
 
     /**
@@ -92,7 +94,7 @@ public class PropertiesManager {
     public void handleChangeEvent(EnvironmentChangeEvent event) {
         LOG.debug("Change event received for keys: {}", event.getKeys());
         try {
-            this.basePropertiesManager.updateLogbackXML();
+            this.basePropertiesManager.updateLogbackConfig();
         } catch (Exception e) {
             LOG.error("Exception while processing change event from consul", e);
         }

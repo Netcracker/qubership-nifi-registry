@@ -51,7 +51,8 @@ RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
 COPY --chown=nifi:nifi ./nifi-scripts/* $NIFI_REGISTRY_BASE_DIR/scripts/
 RUN chmod 774 $NIFI_REGISTRY_BASE_DIR/scripts/*.sh
 
-COPY --chown=nifi:nifi ./conf-template-custom/logback.xml ${NIFI_REGISTRY_HOME}/conf-template-custom/
+COPY --chown=nifi:nifi ./qubership-nifi-registry-consul-templates/src/main/resources/logback-template.xml \
+    ${NIFI_REGISTRY_HOME}/conf-template-custom/logback.xml
 
 RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/spring-core-*.jar \

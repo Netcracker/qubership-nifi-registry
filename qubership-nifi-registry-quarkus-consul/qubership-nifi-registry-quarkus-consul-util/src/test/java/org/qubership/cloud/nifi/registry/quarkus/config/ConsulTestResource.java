@@ -91,4 +91,10 @@ public class ConsulTestResource implements QuarkusTestResourceLifecycleManager {
                 (res != null ? "stdout=" + res.getStdout() + ", stderr=" + res.getStderr() : "null result"));
         }
     }
+
+    @Override
+    public void inject(TestInjector testInjector) {
+        testInjector.injectIntoFields(consul, new TestInjector.
+                AnnotatedAndMatchesType(InjectConsulContainer.class, ConsulContainer.class));
+    }
 }

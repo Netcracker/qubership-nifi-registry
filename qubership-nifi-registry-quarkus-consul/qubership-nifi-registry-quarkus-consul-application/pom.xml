@@ -26,23 +26,6 @@
             <artifactId>quarkus-config-yaml</artifactId>
         </dependency>
 
-        <!-- Consul Config Source extension w/o log-manager to avoid starting web server -->
-        <dependency>
-            <groupId>com.netcracker.cloud.quarkus</groupId>
-            <artifactId>consul-config-source</artifactId>
-            <version>${consul-config-source.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.netcracker.cloud.quarkus</groupId>
-                    <artifactId>log-manager</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.netcracker.cloud.quarkus</groupId>
-                    <artifactId>log-manager-deployment</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- util module -->
         <dependency>
             <groupId>org.qubership.nifi</groupId>

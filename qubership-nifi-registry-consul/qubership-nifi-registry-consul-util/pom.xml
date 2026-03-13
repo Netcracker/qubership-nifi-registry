@@ -38,12 +38,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-consul-config</artifactId>
-            <version>${spring-cloud-consul.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-context</artifactId>
-            <version>${spring-cloud-context.version}</version>
         </dependency>
         <!--EXTERNAL-->
         <dependency>
@@ -83,8 +81,13 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul</artifactId>
-            <version>${spring-cloud-consul.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ecwid.consul</groupId>
+            <artifactId>consul-api</artifactId>
+            <version>1.4.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

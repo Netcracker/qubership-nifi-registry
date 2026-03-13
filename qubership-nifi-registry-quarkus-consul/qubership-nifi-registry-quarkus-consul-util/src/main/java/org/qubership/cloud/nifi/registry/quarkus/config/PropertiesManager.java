@@ -1,5 +1,7 @@
 package org.qubership.cloud.nifi.registry.quarkus.config;
 
+import com.netcracker.cloud.consul.config.source.runtime.ConfigUpdatedEvent;
+import jakarta.enterprise.event.Observes;
 import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,7 @@ import java.io.IOException;
 
 /**
  * The {@code PropertiesManager} is responsible for managing configuration properties
- * and logging settings for the Qubership NiFi Registry application (Quarkus version).
+ * and logging settings for the Qubership NiFi Registry application.
  * <p>
  * <b>Responsibilities:</b>
  * <ul>
@@ -55,7 +57,20 @@ public class PropertiesManager {
      */
     public void generateNifiRegistryProperties() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
-        this.basePropertiesManager.generateNifiRegistryProperties();
+        this.basePropertiesManager.generateNifiPropertiesAndLogbackConfig();
         LOG.info("nifi registry properties files generated");
+    }
+
+    /**
+     * Handles config update event.
+     * @param event config updated event
+     */
+    protected void handleConfigChange(@Observes ConfigUpdatedEvent event) {
+        LOG.info("Config change event received");
+        try {
+            this.basePropertiesManager.updateLogbackConfig();
+        } catch (Exception e) {
+            LOG.error("Exception while processing change event from consul", e);
+        }
     }
 }

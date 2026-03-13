@@ -13,15 +13,26 @@ public class TestPropertiesProvider
         TEST_VALUES.put("logger.org.apache.nifi.registry.StdErr", "INFO");
         TEST_VALUES.put("nifi.registry.db.maxConnections", "15");
         TEST_VALUES.put("nifi.registry.security.user.oidc.connect.timeout", "10 secs");
+        TEST_VALUES.put("test.non-matching.property", "Some value");
+        TEST_VALUES.put("nifi.registry.security.identity.mapping.transform.dn", "NONE");
     }
+    private Map<String, String> testValues = new HashMap<>(TEST_VALUES);
 
     @Override
     public Set<String> getAllPropertyNamesFromSource() {
-        return TEST_VALUES.keySet();
+        return testValues.keySet();
     }
 
     @Override
     public String getPropertyValue(String propertyName) {
-        return TEST_VALUES.get(propertyName);
+        return testValues.get(propertyName);
+    }
+
+    public void putProperty(String propName, String propValue) {
+        testValues.put(propName, propValue);
+    }
+
+    public void removeProperty(String propName) {
+        testValues.remove(propName);
     }
 }

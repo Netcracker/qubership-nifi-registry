@@ -28,8 +28,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -44,7 +49,7 @@ import java.util.Set;
  * <b>Responsibilities:</b>
  * <ul>
  *   <li>Accesses property source to retrieve dynamic configuration properties.</li>
- *   <li>Generates nifi properties and {@code logback.xml} files before application startup.</li>
+ *   <li>Generates nifi properties and {@code logback.xml} files.</li>
  * </ul>
  * <p>
  */
@@ -58,7 +63,6 @@ public class BasePropertiesManager {
     private String defaultPropertiesResourceName;
     private String internalPropertiesResourceName;
     private String internalPropertiesCommentsResourceName;
-    private Map<String, String> consulPropertiesMap = new HashMap<>();
     private String configFilePath;
     private File configFile;
     private File logConfigFile;
@@ -67,7 +71,7 @@ public class BasePropertiesManager {
     private PropertiesProvider propertiesProvider;
 
     /**
-     * Creates new instance of PropertiesManager.
+     * Creates new instance of BasePropertiesManager.
      *
      * @param config configuration containing all required parameters
      */
@@ -90,13 +94,14 @@ public class BasePropertiesManager {
 
     /**
      * Generates the nifi properties and {@code logback.xml}
-     * files using Consul data and default values.
+     * files using the external source data and default values.
      * <p>
      * This method performs the following steps:
      * <ol>
-     *   <li>Reads properties from Consul and merges them with default and internal (unchangeable) properties.</li>
+     *   <li>Reads properties from the external source and merges them
+     *   with default and internal (unchangeable) properties.</li>
      *   <li>Builds the properties file with the combined properties.</li>
-     *   <li>Builds the {@code logback.xml} file, updating logger levels as specified in Consul.</li>
+     *   <li>Builds the {@code logback.xml} file, updating logger levels as specified in the external source.</li>
      * </ol>
      *
      * @throws IOException if an I/O error occurs while reading or writing files
@@ -104,37 +109,38 @@ public class BasePropertiesManager {
      * @throws TransformerException if an error occurs during XML transformation
      * @throws SAXException if an error occurs while parsing XML
      */
-    public void generateNifiRegistryProperties() throws IOException, ParserConfigurationException,
+    public void generateNifiPropertiesAndLogbackConfig() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
-        readAndFilterProperties();
-        buildPropertiesFile();
-        buildLogbackXMLFile();
+        Map<String, String> consulPropertiesMap = readAndFilterProperties();
+        buildPropertiesFile(consulPropertiesMap);
+        buildLogbackXMLFile(consulPropertiesMap);
         LOG.info("nifi properties and logback.xml files generated");
     }
 
     /**
      * Generates the {@code logback.xml}
-     * file using Consul data and default values.
+     * file using the external source data and default values.
      * <p>
      * This method performs the following steps:
      * <ol>
-     *   <li>Reads properties from Consul and merges them with default and internal (unchangeable) properties.</li>
-     *   <li>Builds the {@code logback.xml} file, updating logger levels as specified in Consul.</li>
+     *   <li>Reads properties from the external source and merges them with
+     *   default and internal (unchangeable) properties.</li>
+     *   <li>Builds the {@code logback.xml} file, updating logger levels as specified in the external source.</li>
      * </ol>
-     *
+     * This method is synchronized to avoid parallel update to logback configuration.
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws TransformerException
      * @throws SAXException
      */
-    public void updateLogbackXML() throws IOException, ParserConfigurationException,
+    public synchronized void updateLogbackConfig() throws IOException, ParserConfigurationException,
             TransformerException, SAXException {
-        readAndFilterProperties();
-        buildLogbackXMLFile();
+        Map<String, String> consulPropertiesMap = readAndFilterProperties();
+        buildLogbackXMLFile(consulPropertiesMap);
         LOG.info("logback.xml file updated");
     }
 
-    private void buildLogbackXMLFile()
+    private void buildLogbackXMLFile(Map<String, String> consulPropertiesMap)
             throws ParserConfigurationException, IOException, SAXException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         //configure to avoid XXE attacks:
@@ -155,8 +161,11 @@ public class BasePropertiesManager {
         NodeList loggersList = doc.getElementsByTagName(LOGGER_TAG);
 
         for (Map.Entry<String, String> consulEntry : consulPropertiesMap.entrySet()) {
-            // if it starts with "logger.*" then, check element in logback.xml
-            if (consulEntry.getKey().toLowerCase().startsWith(LOGGER_PREFIX)) {
+            // if key starts with "logger.*" and value is not empty then, check element in logback.xml
+            // empty values = removal of logger returning to default behavior
+            if (consulEntry.getKey().toLowerCase().startsWith(LOGGER_PREFIX) &&
+                consulEntry.getValue() != null &&
+                !"".equals(consulEntry.getValue())) {
                 String xmlKey = consulEntry.getKey().substring(LOGGER_PREFIX_LENGTH);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("current xmlKey: {}", xmlKey);
@@ -164,10 +173,26 @@ public class BasePropertiesManager {
                 addOrUpdateLogger(xmlKey, consulEntry.getValue(), loggersList, doc);
             }
         }
-        try (OutputStream output = new BufferedOutputStream(new FileOutputStream(logConfigFile))) {
-            //write to new file:
-            writeXml(doc, output);
+        // create temp file
+        Path tmp = Files.createTempFile(logConfigFile.getParentFile().toPath(),
+                "logback-conf-", ".tmp");
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing logback to temp file: {}", tmp.toString());
+            }
+            // write to tmp file:
+            try (OutputStream output = new BufferedOutputStream(new FileOutputStream(tmp.toFile()))) {
+                writeXml(doc, output);
+            }
+            // replace target file with temp file:
+            Files.move(tmp, logConfigFile.toPath(),
+                    StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            LOG.error("Failed to write to temp file or move temp file to permanent location");
+            Files.deleteIfExists(tmp);
+            throw e;
         }
+
         LOG.info("logback.xml file created at path: {}", configFilePath);
     }
 
@@ -213,9 +238,11 @@ public class BasePropertiesManager {
 
     /**
      * Reads properties names, filters them according to filtering rules and gets properties values.
-     * Resulting map is saved as consulPropertiesMap.
+     * @return map with properties loaded from consul
      */
-    protected void readAndFilterProperties() {
+    protected synchronized Map<String, String> readAndFilterProperties() {
+        //recreate the map:
+        Map<String, String> consulPropertiesMap = new HashMap<>();
         Set<String> allPropertyNamesFromSource = propertiesProvider.getAllPropertyNamesFromSource();
 
         if (LOG.isDebugEnabled()) {
@@ -231,6 +258,7 @@ public class BasePropertiesManager {
         if (LOG.isDebugEnabled()) {
             LOG.debug("consulPropertiesMap with names and values: {}", consulPropertiesMap);
         }
+        return consulPropertiesMap;
     }
 
     private Set<String> getMatchingPropertyNames(Set<String> propertyNamesFromSource) {
@@ -246,11 +274,12 @@ public class BasePropertiesManager {
     }
 
     /**
-     * Builds the {@code nifi-registry.properties} file by combining default,
-     * internal (unchangeable), and Consul-provided properties.
+     * Builds the nifi properties file by combining default,
+     * internal (unchangeable), and the external source provided properties.
+     * @param consulPropertiesMap map with properties loaded from consul
      * @throws IOException if an I/O error occurs while writing the properties file
      */
-    public void buildPropertiesFile() throws IOException {
+    public void buildPropertiesFile(Map<String, String> consulPropertiesMap) throws IOException {
         //We have to build combinedNifiProperties properties map.
         //First, copy nifi default properties as is without order change.
         Map<String, String> combinedNifiProperties = getOrderedProperties(
@@ -278,7 +307,8 @@ public class BasePropertiesManager {
         }
 
         //write nifiProperties to properties file
-        try (PrintWriter pw = new PrintWriter(new FileOutputStream(configFile));
+        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(configFile), StandardCharsets.UTF_8));
              BufferedReader reader =
                      new BufferedReader(new InputStreamReader(
                              getResourceAsStream(internalPropertiesCommentsResourceName)))) {

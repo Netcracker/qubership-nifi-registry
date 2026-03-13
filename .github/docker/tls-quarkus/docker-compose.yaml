@@ -35,8 +35,8 @@ services:
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
       - INITIAL_ADMIN_IDENTITY=admin
       - CONSUL_ENABLED=true
-      - CONSUL_URL=consul:8500
-      - NIFI_CONSUL_INT_FRAMEWORK=spring
+      #default NIFI_CONSUL_INT_FRAMEWORK = quarkus
+      - CONSUL_URL=http://consul:8500
     container_name: local-nifi-registry
     hostname: nifi-registry
   consul:

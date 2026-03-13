@@ -62,7 +62,7 @@ public class NifiRegistryPropertiesApplication implements QuarkusApplication {
     }
 
     /**
-     * Generates NiFi Registry properties files and notifies completion.
+     * Generates NiFi Registry properties files and notifies startup script on completion.
      *
      * @throws IOException
      * @throws ParserConfigurationException

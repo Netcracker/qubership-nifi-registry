@@ -83,13 +83,18 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- Consul Config Source for Testing -->
+        <!-- Consul Config Source  -->
         <dependency>
             <groupId>com.netcracker.cloud.quarkus</groupId>
             <artifactId>consul-config-source</artifactId>
             <version>${consul-config-source.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.netcracker.cloud.quarkus</groupId>
