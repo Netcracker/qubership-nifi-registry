@@ -7,6 +7,8 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.util.Optional;
+
 /**
  * Consul Client Configuration providing token storage taken from property.
  */
@@ -23,11 +25,12 @@ public class ConsulClientConfiguration {
     @ApplicationScoped
     @UnlessBuildProperty(name = "quarkus.consul.acl-token.enabled", stringValue = "false", enableIfMissing = true)
     public TokenStorage propertyBasedTokenStorage(
-            @ConfigProperty(name = "quarkus.consul.acl-token.token") String aclToken) {
+            //aclToken declared as Optional to support development/testing setup without ACLs
+            @ConfigProperty(name = "quarkus.consul.acl-token.token") Optional<String> aclToken) {
         return new TokenStorage() {
             @Override
             public String get() {
-                return aclToken;
+                return aclToken.orElse("");
             }
 
             @Override
