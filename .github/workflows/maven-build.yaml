@@ -89,8 +89,8 @@ jobs:
         with:
           java-version: ${{ inputs.java-version || '21' }}
           distribution: 'temurin'
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
           gpg-private-key: ${{ secrets.gpg-private-key }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Run local maven build with sonar
