@@ -47,7 +47,7 @@
         <quarkus.platform.version>3.27.2</quarkus.platform.version>
         <quarkus-plugin.version>3.27.2</quarkus-plugin.version>
         <com-google-guava.version>32.0.1-jre</com-google-guava.version>
-        <consul-config-source.version>8.4.0</consul-config-source.version>
+        <consul-config-source.version>8.4.1</consul-config-source.version>
         <!--test libraries versions-->
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <testcontainers.version>1.20.4</testcontainers.version>
@@ -188,48 +188,16 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <include>org/qubership/**/*</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>@{argLine} -Duser.timezone=UTC</argLine>
+                    <argLine>-Duser.timezone=UTC</argLine>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <quarkus.jacoco.includes>org/qubership/**/quarkus/config/**/*</quarkus.jacoco.includes>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
