@@ -65,6 +65,9 @@ permissions:
 jobs:
   maven-build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Input parameters
         env:
