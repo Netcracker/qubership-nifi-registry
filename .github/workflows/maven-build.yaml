@@ -96,6 +96,20 @@ jobs:
           server-password: ${{ github.token }}
           gpg-private-key: ${{ secrets.gpg-private-key }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Additional GitHub repository configuration
+        shell: bash
+        run: |
+          if [ -n "$(xmlstarlet sel -N x="http://maven.apache.org/SETTINGS/1.0.0" -t -v "/x:settings/x:servers/x:server[x:id='github']" ~/.m2/settings.xml)" ]; then
+          echo "ℹ️ GitHub server configuration already exists in ~/.m2/settings.xml"
+          else
+          echo "✅ Adding GitHub server configuration to ~/.m2/settings.xml"
+          xmlstarlet ed -L -N x="http://maven.apache.org/SETTINGS/1.0.0" -s "/x:settings/x:servers" -t elem -n "serverNew" -v '' \
+          -s "//serverNew" -t elem -n "id" -v "github" \
+          -s "//serverNew" -t elem -n "username" -v '${env.GITHUB_ACTOR}' \
+          -s "//serverNew" -t elem -n "password" -v '${env.GITHUB_TOKEN}' \
+          -r "//serverNew" -v "server" \
+          ~/.m2/settings.xml
+          fi
       - name: Run local maven build with sonar
         if: ${{ !inputs.skip-sonar && vars.SONAR_HOST_URL }}
         run: >
@@ -111,8 +125,6 @@ jobs:
           SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
-          MAVEN_USERNAME: ${{ github.actor }}
-          MAVEN_PASSWORD: ${{ github.token }}
       - name: Run local maven build w/o sonar
         if: ${{ inputs.skip-sonar || !vars.SONAR_HOST_URL }}
         run: >
@@ -120,8 +132,6 @@ jobs:
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          MAVEN_USERNAME: ${{ github.actor }}
-          MAVEN_PASSWORD: ${{ github.token }}
       - name: Upload test results
         if: failure() || cancelled()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
