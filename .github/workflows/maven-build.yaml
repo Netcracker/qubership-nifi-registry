@@ -93,7 +93,7 @@ jobs:
           java-version: ${{ inputs.java-version || '21' }}
           distribution: 'temurin'
           server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
+          server-password: ${{ github.token }}
           gpg-private-key: ${{ secrets.gpg-private-key }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Run local maven build with sonar
@@ -112,7 +112,7 @@ jobs:
           SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           MAVEN_USERNAME: ${{ github.actor }}
-          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_PASSWORD: ${{ github.token }}
       - name: Run local maven build w/o sonar
         if: ${{ inputs.skip-sonar || !vars.SONAR_HOST_URL }}
         run: >
@@ -121,7 +121,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           MAVEN_USERNAME: ${{ github.actor }}
-          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_PASSWORD: ${{ github.token }}
       - name: Upload test results
         if: failure() || cancelled()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
