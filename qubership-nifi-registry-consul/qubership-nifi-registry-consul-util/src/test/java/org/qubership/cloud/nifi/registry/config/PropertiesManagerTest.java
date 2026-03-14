@@ -1,18 +1,23 @@
 package org.qubership.cloud.nifi.registry.config;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.qubership.cloud.nifi.registry.config.spring.ConsulConfiguration;
+import org.qubership.cloud.nifi.registry.config.spring.ConsulPropertiesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.consul.config.ConsulConfigAutoConfiguration;
 import org.testcontainers.consul.ConsulContainer;
 import org.testcontainers.containers.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.BufferedInputStream;
@@ -22,67 +27,41 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-@Testcontainers
-@SpringBootTest(classes = {PropertiesManager.class})
-@ImportAutoConfiguration(RefreshAutoConfiguration.class)
+@SpringBootTest(classes = {PropertiesManager.class,
+        ConsulConfiguration.class, ConsulPropertiesProvider.class})
+@ImportAutoConfiguration(classes = {RefreshAutoConfiguration.class, ConsulConfigAutoConfiguration.class})
 public class PropertiesManagerTest {
 
     private static final String CONSUL_IMAGE = "hashicorp/consul:1.20";
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
-    private static ConsulContainer consul;
+    private static final ConsulContainer consul;
+
+    static {
+        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
+        consul.start();
+        System.setProperty("consul.test.port", String.valueOf(consul.getMappedPort(8500)));
+    }
 
     @Autowired
     private PropertiesManager pm;
 
     @BeforeAll
     public static void initContainer() {
-        List<String> consulPorts = new ArrayList<>();
-        consulPorts.add("18500:8500");
-
-        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
-        consul.setPortBindings(consulPorts);
-        consul.start();
-
         //fill initial consul data:
-        Container.ExecResult res = null;
-        try {
-            //configure logging levels:
-            res = consul.execInContainer(
-                    "consul", "kv", "put", "config/local/application/logger.org.qubership", "DEBUG");
-            LOG.debug("Result for put config/local/application/logger.org.qubership = {}", res.getStdout());
-            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
-            res = consul.execInContainer(
-                    "consul", "kv", "put",
-                    "config/local/application/logger.org.apache.nifi.registry.StdErr", "INFO");
-            LOG.debug("Result for put config/local/application/logger.org.apache.nifi.registry.StdErr = {}",
-                    res.getStdout());
-            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
-            //configure properties:
-            //nifi.registry.db.maxConnections -- with default value
-            res = consul.execInContainer(
-                    "consul", "kv", "put", "config/local/application/nifi/registry/db/maxConnections", "15");
-            LOG.debug("Result for put config/local/application/nifi/registry/db/maxConnections = {}", res.getStdout());
-            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
-            //nifi.registry.security.user.oidc.connect.timeout -- w/o default value
-            res = consul.execInContainer(
-                    "consul", "kv", "put",
-                    "config/local/application/nifi/registry/security/user/oidc/connect/timeout", "10 secs");
-            LOG.debug("Result for put config/local/application/nifi/registry/security/user/oidc/connect/timeout = {}",
-                    res.getStdout());
-            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
-        } catch (IOException | InterruptedException e) {
-            if (res != null) {
-                LOG.error("Last command stdout = {}", res.getStdout());
-                LOG.error("Last command stderr = {}", res.getStderr());
-            }
-            LOG.error("Failed to fill initial consul data", e);
-            Assertions.fail("Failed to fill initial consul data", e);
-        }
-
+        //configure logging levels:
+        putToConsul("config/local/application/logger.org.qubership", "DEBUG");
+        putToConsul("config/local/application/logger.org.apache.nifi.registry.StdOut", "WARN");
+        //configure properties:
+        //nifi.registry.db.maxConnections -- with default value
+        putToConsul("config/local/application/nifi/registry/db/maxConnections",
+                "15");
+        //nifi.registry.security.user.oidc.connect.timeout -- w/o default value
+        putToConsul("config/local/application/nifi/registry/security/user/oidc/connect/timeout",
+                "10 secs");
         //prepare test directories:
         try {
             Files.createDirectories(Paths.get(".", "conf"));
@@ -91,11 +70,52 @@ public class PropertiesManagerTest {
         }
     }
 
+    private static void putToConsul(String key, String value) {
+        Container.ExecResult res = null;
+        try {
+            res = consul.execInContainer(
+                    "consul", "kv", "put", key, value);
+            LOG.debug("Result for put key = {}: {}", key, res.getStdout());
+            Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
+        } catch (IOException | InterruptedException e) {
+            if (res != null) {
+                LOG.error("Last command stdout = {}, stderr = {}", res.getStdout(), res.getStderr());
+            }
+            LOG.error("Failed to fill initial consul data", e);
+            Assertions.fail("Failed to fill initial consul data", e);
+        }
+    }
+
+    @BeforeEach
+    public void prepareDirectories() {
+        //prepare test directories:
+            try {
+            Files.createDirectories(Paths.get(".", "conf"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create test dir", e);
+        }
+    }
+
     @Test
     public void testPropertiesLoadOnStart() throws Exception {
-        pm.generateNifiRegistryProperties();
         File logbackConfig = new File("./conf/logback.xml");
+        //remove existing logback.xml:
+        try {
+            Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete conf test dir", e);
+        }
+        putToConsul("config/local/application/logger.org.qubership", "DEBUG");
+        //wait for logback.xml to be recreated after refresh:
+        Awaitility.await().atMost(25000, TimeUnit.MILLISECONDS).
+                until(logbackConfig::exists);
+        pm.generateNifiRegistryProperties();
         Assertions.assertTrue(logbackConfig.exists());
+        LogbackConfigParser parser = new LogbackConfigParser("./conf/logback.xml");
+        Map<String, String> loggingLevels = parser.getAllLoggingLevels();
+        Assertions.assertEquals("DEBUG", loggingLevels.get("org.qubership"));
+        Assertions.assertEquals("ERROR", loggingLevels.get("org.apache.nifi.registry.StdErr"));
+        Assertions.assertEquals("WARN", loggingLevels.get("org.apache.nifi.registry.StdOut"));
         File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
         Assertions.assertTrue(nifiRegistryPropsConfig.exists());
         Properties nifiRegistryProps = new Properties();
@@ -111,8 +131,49 @@ public class PropertiesManagerTest {
         }
     }
 
+    @Test
+    public void testLoggingLevelsUpdate() throws Exception {
+        //initial load:
+        putToConsul("config/local/application/logger.org.qubership", "DEBUG");
+        pm.generateNifiRegistryProperties();
+        final File logbackConfig = new File("./conf/logback.xml");
+        Assertions.assertTrue(logbackConfig.exists());
+        LogbackConfigParser parser = new LogbackConfigParser("./conf/logback.xml");
+        Map<String, String> loggingLevels = parser.getAllLoggingLevels();
+        Assertions.assertTrue(loggingLevels.containsKey("org.qubership"));
+        Assertions.assertEquals("DEBUG", loggingLevels.get("org.qubership"));
+        File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
+        Assertions.assertTrue(nifiRegistryPropsConfig.exists());
+        //remove existing logback.xml:
+        try {
+            Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete conf test dir", e);
+        }
+        //update consul:
+        putToConsul("config/local/application/logger.org.qubership", "INFO");
+        //wait for logback.xml to be recreated after refresh:
+        Awaitility.await().atMost(25000, TimeUnit.MILLISECONDS).
+                until(logbackConfig::exists);
+        Assertions.assertTrue(logbackConfig.exists());
+        loggingLevels = parser.getAllLoggingLevels();
+        Assertions.assertTrue(loggingLevels.containsKey("org.qubership"));
+        Assertions.assertEquals("INFO", loggingLevels.get("org.qubership"));
+    }
+
+    @AfterEach
+    public void cleanUpDirectories() {
+        try {
+            Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
+            Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete conf test dir", e);
+        }
+    }
+
     @AfterAll
     public static void tearDown() {
+        System.clearProperty("consul.test.port");
         consul.stop();
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));

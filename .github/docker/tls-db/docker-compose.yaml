@@ -46,6 +46,7 @@ services:
       - dbPassword=${DB_PASSWORD}
       - CONSUL_ENABLED=true
       - CONSUL_URL=consul:8500
+      - NIFI_CONSUL_INT_FRAMEWORK=spring
       - CONSUL_ACL_TOKEN=${CONSUL_TOKEN}
     container_name: local-nifi-registry
     hostname: nifi-registry

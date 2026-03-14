@@ -20,6 +20,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Spring Boot application for NiFi Registry Consul configuration management.
+ * <p>
+ * Generates NiFi Registry configuration files from Consul properties on startup
+ * and writes a completion notification file for the start script.
+ */
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "org.qubership.cloud.nifi.registry.config")
@@ -65,7 +71,7 @@ public class NifiRegistryPropertiesLookup implements CommandLineRunner {
     private void notifyCompletionToStartScript() {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            Path fPath = Paths.get(path + "initial-config-completed.txt");
+            Path fPath = Paths.get(path, "initial-config-completed.txt");
             Files.write(fPath, timestamp.getBytes());
             LOG.info("Consul App completion file created:{} ", fPath.toAbsolutePath());
         } catch (Exception e) {

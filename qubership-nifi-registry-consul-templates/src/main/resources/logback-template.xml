@@ -40,7 +40,7 @@
         </encoder>
     </appender>
 
-    
+
     <!-- valid logging levels: TRACE, DEBUG, INFO, WARN, ERROR -->
 
     <!-- Everything written to NiFi Registry's Standard Error will be logged with the logger org.apache.nifi.StdErr at ERROR level -->
@@ -48,5 +48,5 @@
     <root level="${ROOT_LOG_LEVEL}">
         <appender-ref ref="APP_FILE"/>
     </root>
-    
+
 </configuration>

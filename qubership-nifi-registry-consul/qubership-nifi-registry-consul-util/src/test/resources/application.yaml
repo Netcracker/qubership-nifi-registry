@@ -37,8 +37,8 @@ spring:
         enabled: ${CONSUL_ENABLED:true}
         watch:
           enabled: ${CONSUL_ENABLED:true}
-          delay: 1000
-          wait-time: 20
+          delay: 500
+          wait-time: 10
 info:
   app:
     name: ${spring.application.name}
@@ -70,4 +70,4 @@ spring:
   config:
     activate:
       on-profile: "!development"
-    import: consul:localhost:18500
+    import: consul:localhost:${consul.test.port}
