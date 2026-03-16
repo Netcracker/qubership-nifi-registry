@@ -198,6 +198,7 @@
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                         <quarkus.jacoco.includes>org/qubership/**/quarkus/config/**/*</quarkus.jacoco.includes>
+                        <quarkus.jacoco.report-location>target/jacoco</quarkus.jacoco.report-location>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
