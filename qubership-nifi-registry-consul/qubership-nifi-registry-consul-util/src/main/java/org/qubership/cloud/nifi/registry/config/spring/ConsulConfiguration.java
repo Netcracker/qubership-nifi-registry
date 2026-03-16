@@ -38,8 +38,10 @@ public class ConsulConfiguration {
     @Bean
     public BasePropertiesManager basePropertiesManager(
             @Value("${nifi.registry.config.logback.default:logback-template.xml}") String defaultLogbackFile,
-            @Value("${nifi.registry.config.properties.default:nifi_registry_default.properties}") String defaultPropertiesFile,
-            @Value("${nifi.registry.config.properties.internal:nifi_registry_internal.properties}") String internalPropertiesFile,
+            @Value("${nifi.registry.config.properties.default:nifi_registry_default.properties}")
+                String defaultPropertiesFile,
+            @Value("${nifi.registry.config.properties.internal:nifi_registry_internal.properties}")
+                String internalPropertiesFile,
             @Value("${nifi.registry.config.properties.comments:nifi_registry_internal_comments.properties}")
                 String internalPropertiesCommentsFile,
             @Value("${config.file.path}") String path,

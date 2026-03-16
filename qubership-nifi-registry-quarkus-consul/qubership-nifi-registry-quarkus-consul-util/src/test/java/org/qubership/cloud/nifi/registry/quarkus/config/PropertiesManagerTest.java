@@ -32,11 +32,17 @@ public class PropertiesManagerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
 
+    /**
+     * Properties manager instance.
+     */
     @Inject
-    PropertiesManager pm;
+    private PropertiesManager pm;
 
+    /**
+     * Consul container instance.
+     */
     @InjectConsulContainer
-    protected ConsulContainer consul;
+    private ConsulContainer consul;
 
     @BeforeAll
     public static void setup() {
@@ -183,9 +189,11 @@ public class PropertiesManagerTest {
         Map<String, String> loggingLevels = parser.getAllLoggingLevels();
         Assertions.assertTrue(loggingLevels.containsKey("org.qubership"), "Should contain org.qubership logging level");
         Assertions.assertEquals("DEBUG", loggingLevels.get("org.qubership"), "Should be DEBUG");
-        Assertions.assertTrue(loggingLevels.containsKey("org.qubership2"), "Should contain org.qubership2 logging level");
+        Assertions.assertTrue(loggingLevels.containsKey("org.qubership2"),
+                "Should contain org.qubership2 logging level");
         Assertions.assertEquals("WARN", loggingLevels.get("org.qubership2"), "Should be WARN");
-        Assertions.assertTrue(loggingLevels.containsKey("org.qubership3"), "Should contain org.qubership3 logging level");
+        Assertions.assertTrue(loggingLevels.containsKey("org.qubership3"),
+                "Should contain org.qubership3 logging level");
         Assertions.assertEquals("ERROR", loggingLevels.get("org.qubership3"), "Should be ERROR");
         File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
         Assertions.assertTrue(nifiRegistryPropsConfig.exists(), "nifi-registry.properties should exist");

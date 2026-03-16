@@ -21,12 +21,10 @@ import java.util.Map;
 public class LogbackConfigParser {
     private static final Logger LOG = LoggerFactory.getLogger(LogbackConfigParser.class);
     private static final String LOGGER_TAG = "logger";
-    private static final String LOGGER_PREFIX = LOGGER_TAG + ".";
-    private static final int LOGGER_PREFIX_LENGTH = LOGGER_PREFIX.length();
     private final String configFileName;
 
-    public LogbackConfigParser(String configFileName) {
-        this.configFileName = configFileName;
+    public LogbackConfigParser(final String confFileName) {
+        this.configFileName = confFileName;
     }
 
     public Map<String, String> getAllLoggingLevels() throws IOException, ParserConfigurationException {
@@ -39,7 +37,7 @@ public class LogbackConfigParser {
         dbFactory.setExpandEntityReferences(false);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Map<String, String> loggingLevels = new HashMap<>();
-        try(InputStream in = new BufferedInputStream(new FileInputStream(configFileName))) {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(configFileName))) {
             Document doc = null;
             doc = dBuilder.parse(in);
             doc.getDocumentElement().normalize();

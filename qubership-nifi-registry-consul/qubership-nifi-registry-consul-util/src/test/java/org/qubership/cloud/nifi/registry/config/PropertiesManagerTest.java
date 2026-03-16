@@ -38,12 +38,12 @@ public class PropertiesManagerTest {
 
     private static final String CONSUL_IMAGE = "hashicorp/consul:1.20";
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
-    private static final ConsulContainer consul;
+    private static final ConsulContainer CONSUL;
 
     static {
-        consul = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
-        consul.start();
-        System.setProperty("consul.test.port", String.valueOf(consul.getMappedPort(8500)));
+        CONSUL = new ConsulContainer(DockerImageName.parse(CONSUL_IMAGE));
+        CONSUL.start();
+        System.setProperty("consul.test.port", String.valueOf(CONSUL.getMappedPort(8500)));
     }
 
     @Autowired
@@ -73,7 +73,7 @@ public class PropertiesManagerTest {
     private static void putToConsul(String key, String value) {
         Container.ExecResult res = null;
         try {
-            res = consul.execInContainer(
+            res = CONSUL.execInContainer(
                     "consul", "kv", "put", key, value);
             LOG.debug("Result for put key = {}: {}", key, res.getStdout());
             Assertions.assertTrue(res.getStdout() != null && res.getStdout().contains("Success"));
@@ -174,7 +174,7 @@ public class PropertiesManagerTest {
     @AfterAll
     public static void tearDown() {
         System.clearProperty("consul.test.port");
-        consul.stop();
+        CONSUL.stop();
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
