@@ -53,6 +53,9 @@
         <!--libraries versions-->
         <com-google-guava.version>32.0.1-jre</com-google-guava.version>
         <spring-cloud.version>2025.0.1</spring-cloud.version>
+        <consul-api.version>1.4.5</consul-api.version>
+        <httpclient.version>4.5.14</httpclient.version>
+        <httpcore.version>4.4.16</httpcore.version>
         <nifi.version>2.7.2</nifi.version>
         <spring-framework.version>6.2.15</spring-framework.version>
         <!--test libraries versions-->
