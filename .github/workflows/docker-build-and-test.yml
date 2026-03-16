@@ -67,6 +67,8 @@ jobs:
         - 'plain'
         - 'tls'
         - 'tls-db'
+        - 'tls-quarkus'
+        - 'tls-db-quarkus'
         - 'tls-db-std'
         - 'oidc'
         - 'upgrade-plain'
