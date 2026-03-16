@@ -1,0 +1,77 @@
+package org.qubership.cloud.nifi.registry.quarkus.config.application;
+
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.main.QuarkusMainLauncher;
+import io.quarkus.test.junit.main.QuarkusMainTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.qubership.cloud.nifi.registry.quarkus.config.ConsulTestResource;
+import org.qubership.cloud.nifi.registry.quarkus.config.InjectConsulContainer;
+import org.testcontainers.consul.ConsulContainer;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+@QuarkusMainTest
+@QuarkusTestResource(ConsulTestResource.class)
+public class NifiRegistryPropertiesApplicationTest {
+    /**
+     * Consul container instance.
+     */
+    @InjectConsulContainer
+    private ConsulContainer consul;
+
+    @BeforeAll
+    public static void setup() {
+        //prepare test directories:
+        try {
+            Files.createDirectories(Paths.get(".", "conf"));
+            Files.createDirectories(Paths.get(".", "tmp"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create test dir", e);
+        }
+    }
+
+    private Thread mainThread;
+
+    @Test
+    public void testPropertiesLoadOnStart(QuarkusMainLauncher launcher) throws Exception {
+        mainThread = new Thread(launcher::launch);
+        mainThread.start();
+        //wait for logback.xml file creation:
+        File logbackConfig = new File("./conf/logback.xml");
+        Awaitility.await().atMost(10000, TimeUnit.MILLISECONDS).
+                until(logbackConfig::exists);
+        Assertions.assertTrue(logbackConfig.exists(), "logback.xml should exist");
+        File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
+        Assertions.assertTrue(nifiRegistryPropsConfig.exists(), "nifi-registry.properties should exist");
+        Assertions.assertTrue(Files.exists(Paths.get(".", "tmp", "initial-config-completed.txt")));
+    }
+
+    @AfterEach
+    void cleanupThread() {
+        if (mainThread != null) {
+            mainThread.interrupt();
+        }
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        try {
+            Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
+            Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
+            Files.deleteIfExists(Paths.get(".", "conf"));
+            Files.deleteIfExists(Paths.get(".", "tmp", "initial-config-completed.txt"));
+            Files.deleteIfExists(Paths.get(".", "tmp"));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete conf test dir", e);
+        }
+    }
+}
