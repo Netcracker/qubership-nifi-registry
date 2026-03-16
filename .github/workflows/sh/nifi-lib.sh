@@ -286,7 +286,7 @@ setup_env_before_tests() {
     prepare_results_dir "$runMode"
     generate_tls_passwords
     create_docker_env_file "$runMode"
-    if [[ "$runMode" == "plain" ]] || [[ "$runMode" == "tls"* ]]; then
+    if [[ "$runMode" == "plain" ]] || [[ "$runMode" == "tls" ]] || [[ "$runMode" == "tls-quarkus" ]]; then
         mkdir -p ./temp-vol/nifi-reg/database/
         mkdir -p ./temp-vol/nifi-reg/flow-storage/
     else
