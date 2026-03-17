@@ -11,17 +11,13 @@ info "Consul integration framework = $NIFI_CONSUL_INT_FRAMEWORK"
 if [ "$NIFI_CONSUL_INT_FRAMEWORK" = 'spring' ]; then
     # if mode explicitly set as spring, then run spring:
     eval "$JAVA_HOME"/bin/java "$CONSUL_CONFIG_JAVA_OPTIONS" \
-        -jar "$NIFI_REGISTRY_HOME"/utility-lib/qubership-nifi-registry-consul-application.jar org.qubership.cloud.nifi.registry.config.NifiRegistryPropertiesLookup &
-    consul_pid=$!
-elif [ "$NIFI_CONSUL_INT_FRAMEWORK" = 'quarkus' ]; then
-    # if mode explicitly set as quarkus, use quarkus:
-    eval "$JAVA_HOME"/bin/java "$CONSUL_CONFIG_JAVA_OPTIONS" \
-        -jar "$NIFI_REGISTRY_HOME"/utility-lib/quarkus-app/quarkus-run.jar org.qubership.cloud.nifi.registry.quarkus.config.NifiRegistryPropertiesApplication &
+        -jar "$NIFI_REGISTRY_HOME"/utility-lib/qubership-nifi-registry-consul-application.jar &
     consul_pid=$!
 else
-    # if nothing set, use quarkus:
+    # if mode explicitly set as quarkus, use quarkus:
+    # or if nothing set, use quarkus:
     eval "$JAVA_HOME"/bin/java "$CONSUL_CONFIG_JAVA_OPTIONS" \
-        -jar "$NIFI_REGISTRY_HOME"/utility-lib/quarkus-app/quarkus-run.jar org.qubership.cloud.nifi.registry.quarkus.config.NifiRegistryPropertiesApplication &
+        -jar "$NIFI_REGISTRY_HOME"/utility-lib/quarkus-app/quarkus-run.jar &
     consul_pid=$!
 fi
 
