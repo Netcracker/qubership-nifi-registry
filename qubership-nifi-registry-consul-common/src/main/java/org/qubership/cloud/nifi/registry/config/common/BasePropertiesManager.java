@@ -363,7 +363,7 @@ public class BasePropertiesManager {
          * @return true if the specified Object is equal to this OrderedProperties
          */
         @Override
-        public boolean equals(Object o) {
+        public synchronized boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
@@ -379,7 +379,7 @@ public class BasePropertiesManager {
          * @return hash code
          */
         @Override
-        public int hashCode() {
+        public synchronized int hashCode() {
             return Objects.hash(super.hashCode(), orderedProperties);
         }
     }
