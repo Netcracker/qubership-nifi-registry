@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -178,7 +179,7 @@ public class BasePropertiesManager {
                 "logback-conf-", ".tmp");
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing logback to temp file: {}", tmp.toString());
+                LOG.debug("Writing logback to temp file: {}", tmp);
             }
             // write to tmp file:
             try (OutputStream output = new BufferedOutputStream(new FileOutputStream(tmp.toFile()))) {
@@ -343,6 +344,7 @@ public class BasePropertiesManager {
          * @param value value to be associated with the specified key
          * @return the previous value of the specified key in this hashtable, or null if it did not have one
          */
+        @Override
         public synchronized Object put(Object key, Object value) {
             return orderedProperties.put((String) key, (String) value);
         }
@@ -353,6 +355,32 @@ public class BasePropertiesManager {
          */
         public Map<String, String> getOrderedProperties() {
             return orderedProperties;
+        }
+
+        /**
+         * Compares the specified Object with this OrderedProperties for equality.
+         * @param o object to be compared for equality with this OrderedProperties
+         * @return true if the specified Object is equal to this OrderedProperties
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+            OrderedProperties that = (OrderedProperties) o;
+            return Objects.equals(orderedProperties, that.orderedProperties);
+        }
+
+        /**
+         * Returns the hash code value for this OrderedProperties.
+         * @return hash code
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), orderedProperties);
         }
     }
 

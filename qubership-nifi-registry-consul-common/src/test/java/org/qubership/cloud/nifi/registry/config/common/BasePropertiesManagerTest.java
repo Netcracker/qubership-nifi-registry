@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-public class BasePropertiesManagerTest {
+class BasePropertiesManagerTest {
     private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesManagerTest.class);
     private BasePropertiesManager pm;
     private TestPropertiesProvider propertiesProvider;
@@ -279,7 +279,7 @@ public class BasePropertiesManagerTest {
     }
 
     @Test
-    void testNonExistingTemplate() throws Exception {
+    void testNonExistingTemplate() {
         initBasePropertiesManager("logback-template-not-exists.xml",
                 "nifi_registry_default.properties",
                 "./conf/", "nifi-registry.properties", "",
@@ -290,7 +290,7 @@ public class BasePropertiesManagerTest {
     }
 
     @Test
-    void testNonExistingDefaultPropertiesTemplate() throws Exception {
+    void testNonExistingDefaultPropertiesTemplate() {
         initBasePropertiesManager("logback-template.xml",
                 "nifi_registry_default-not-exists.properties",
                 "./conf/", "nifi-registry.properties", "",
@@ -301,7 +301,7 @@ public class BasePropertiesManagerTest {
     }
 
     @Test
-    void testNonExistingTargetDirectory() throws Exception {
+    void testNonExistingTargetDirectory() {
         initBasePropertiesManager("logback-template.xml",
                 "nifi_registry_default.properties",
                 "./conf-not-exists/", "nifi-registry.properties", "",
@@ -316,7 +316,7 @@ public class BasePropertiesManagerTest {
     }
 
     @Test
-    void testInvalidLogbackTemplate() throws Exception {
+    void testInvalidLogbackTemplate() {
         initBasePropertiesManager("logback-template-invalid.xml",
                 "nifi_registry_default.properties",
                 "./conf/", "nifi-registry.properties", "",

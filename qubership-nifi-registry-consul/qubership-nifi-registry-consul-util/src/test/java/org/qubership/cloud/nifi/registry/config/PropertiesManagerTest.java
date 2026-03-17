@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest(classes = {PropertiesManager.class,
         ConsulConfiguration.class, ConsulPropertiesProvider.class})
 @ImportAutoConfiguration(classes = {RefreshAutoConfiguration.class, ConsulConfigAutoConfiguration.class})
-public class PropertiesManagerTest {
+class PropertiesManagerTest {
 
     private static final String CONSUL_IMAGE = "hashicorp/consul:1.20";
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
@@ -50,7 +50,7 @@ public class PropertiesManagerTest {
     private PropertiesManager pm;
 
     @BeforeAll
-    public static void initContainer() {
+    static void initContainer() {
         //fill initial consul data:
         //configure logging levels:
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
@@ -87,7 +87,7 @@ public class PropertiesManagerTest {
     }
 
     @BeforeEach
-    public void prepareDirectories() {
+    void prepareDirectories() {
         //prepare test directories:
             try {
             Files.createDirectories(Paths.get(".", "conf"));
@@ -97,7 +97,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void testPropertiesLoadOnStart() throws Exception {
+    void testPropertiesLoadOnStart() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         //remove existing logback.xml:
         try {
@@ -132,7 +132,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void testLoggingLevelsUpdate() throws Exception {
+    void testLoggingLevelsUpdate() throws Exception {
         //initial load:
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
         pm.generateNifiRegistryProperties();
@@ -162,7 +162,7 @@ public class PropertiesManagerTest {
     }
 
     @AfterEach
-    public void cleanUpDirectories() {
+    void cleanUpDirectories() {
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
@@ -172,7 +172,7 @@ public class PropertiesManagerTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         System.clearProperty("consul.test.port");
         CONSUL.stop();
         try {

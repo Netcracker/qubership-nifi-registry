@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @QuarkusTest
 @QuarkusTestResource(ConsulTestResource.class)
-public class PropertiesManagerTest {
+class PropertiesManagerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
 
@@ -45,7 +45,7 @@ public class PropertiesManagerTest {
     private ConsulContainer consul;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         //prepare test directories:
         try {
             Files.createDirectories(Paths.get(".", "conf"));
@@ -87,7 +87,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void testPropertiesLoadOnStart() throws Exception {
+    void testPropertiesLoadOnStart() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
         pm.generateNifiRegistryProperties();
@@ -115,7 +115,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void testUpdateLoggingLevels() throws Exception {
+    void testUpdateLoggingLevels() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
         pm.generateNifiRegistryProperties();
@@ -145,7 +145,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void testAddLoggingLevels() throws Exception {
+    void testAddLoggingLevels() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
         pm.generateNifiRegistryProperties();
@@ -178,7 +178,7 @@ public class PropertiesManagerTest {
 
 
     @Test
-    public void testRemoveLoggingLevels() throws Exception {
+    void testRemoveLoggingLevels() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
         putToConsul("config/local/application/logger.org.qubership2", "WARN");
@@ -221,7 +221,7 @@ public class PropertiesManagerTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));

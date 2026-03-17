@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @QuarkusMainTest
 @QuarkusTestResource(ConsulTestResource.class)
-public class NifiRegistryPropertiesApplicationTest {
+class NifiRegistryPropertiesApplicationTest {
     /**
      * Consul container instance.
      */
@@ -29,7 +29,7 @@ public class NifiRegistryPropertiesApplicationTest {
     private ConsulContainer consul;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         //prepare test directories:
         try {
             Files.createDirectories(Paths.get(".", "conf"));
@@ -42,7 +42,7 @@ public class NifiRegistryPropertiesApplicationTest {
     private Thread mainThread;
 
     @Test
-    public void testPropertiesLoadOnStart(QuarkusMainLauncher launcher) throws Exception {
+    void testPropertiesLoadOnStart(QuarkusMainLauncher launcher) {
         mainThread = new Thread(launcher::launch);
         mainThread.start();
         //wait for logback.xml file creation:
@@ -63,7 +63,7 @@ public class NifiRegistryPropertiesApplicationTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         try {
             Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
             Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));

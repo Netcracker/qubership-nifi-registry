@@ -29,7 +29,7 @@ import java.util.Properties;
 @SpringBootTest(classes = {NifiRegistryPropertiesLookup.class})
 @ImportAutoConfiguration(classes = {RefreshAutoConfiguration.class, ConsulConfigAutoConfiguration.class})
 @ActiveProfiles("test")
-public class NifiRegistryPropertiesLookupTest {
+class NifiRegistryPropertiesLookupTest {
     private static final String CONSUL_IMAGE = "hashicorp/consul:1.20";
     private static final Logger LOG = LoggerFactory.getLogger(NifiRegistryPropertiesLookupTest.class);
     private static final ConsulContainer CONSUL;
@@ -41,7 +41,7 @@ public class NifiRegistryPropertiesLookupTest {
     }
 
     @BeforeAll
-    public static void initContainer() {
+    static void initContainer() {
         //fill initial consul data:
         //configure logging levels:
         putToConsul("config/local/application/logger.org.qubership", "DEBUG");
@@ -79,7 +79,7 @@ public class NifiRegistryPropertiesLookupTest {
     }
 
     @Test
-    public void testPropertiesLoadOnStart() throws Exception {
+    void testPropertiesLoadOnStart() throws Exception {
         File logbackConfig = new File("./conf/logback.xml");
         Assertions.assertTrue(logbackConfig.exists());
         File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
@@ -99,7 +99,7 @@ public class NifiRegistryPropertiesLookupTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         System.clearProperty("consul.test.port");
         CONSUL.stop();
         try {
