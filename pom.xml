@@ -52,7 +52,7 @@
         <module>qubership-cached-providers</module>
         <module>qubership-nifi-registry-consul-common</module>
         <module>qubership-nifi-registry-consul-templates</module>
-        <module>qubership-nifi-registry-consul</module>
+        <module>qubership-nifi-registry-spring-consul</module>
         <module>qubership-nifi-registry-quarkus-consul</module>
         <module>qubership-nifi-registry-deps</module>
     </modules>

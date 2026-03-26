@@ -9,7 +9,10 @@ on:
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
       - 'qubership-cached-providers/**'
-      - 'qubership-nifi-registry-consul/**'
+      - 'qubership-nifi-registry-spring-consul/**'
+      - 'qubership-nifi-registry-quarkus-consul/**'
+      - 'qubership-nifi-registry-consul-common/**'
+      - 'qubership-nifi-registry-consul-templates/**'
       - 'pom.xml'
   pull_request:
     paths:
@@ -18,7 +21,10 @@ on:
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
       - 'qubership-cached-providers/**'
-      - 'qubership-nifi-registry-consul/**'
+      - 'qubership-nifi-registry-spring-consul/**'
+      - 'qubership-nifi-registry-quarkus-consul/**'
+      - 'qubership-nifi-registry-consul-common/**'
+      - 'qubership-nifi-registry-consul-templates/**'
       - 'pom.xml'
   workflow_dispatch:
     inputs:

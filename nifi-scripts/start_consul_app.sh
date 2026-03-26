@@ -17,7 +17,7 @@ else
     # if mode explicitly set as quarkus, use quarkus:
     # or if nothing set, use quarkus:
     eval "$JAVA_HOME"/bin/java "$CONSUL_CONFIG_JAVA_OPTIONS" \
-        -jar "$NIFI_REGISTRY_HOME"/utility-lib/quarkus-app/quarkus-run.jar &
+        -jar "$NIFI_REGISTRY_HOME"/utility-lib/qubership-nifi-registry-quarkus-consul-application/quarkus-run.jar &
     consul_pid=$!
 fi
 

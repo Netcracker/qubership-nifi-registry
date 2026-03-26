@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.qubership.nifi</groupId>
-        <artifactId>qubership-nifi-registry-consul</artifactId>
+        <artifactId>qubership-nifi-registry-spring-consul</artifactId>
         <version>2.3.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -41,8 +41,12 @@
             <artifactId>qubership-nifi-registry-consul-util</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.qubership.nifi</groupId>
+            <artifactId>qubership-nifi-registry-consul-templates</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--TEST-->
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
