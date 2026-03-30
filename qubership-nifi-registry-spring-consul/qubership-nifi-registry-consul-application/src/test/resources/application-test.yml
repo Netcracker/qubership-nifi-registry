@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: consul:localhost:${consul.test.port}
+  cloud:
+    consul:
+      config:
+        acl-token: ${CONSUL_ACL_TOKEN:}
+
+config:
+  file:
+    path: ./conf/
+  notify-completion:
+    path: ./tmp/

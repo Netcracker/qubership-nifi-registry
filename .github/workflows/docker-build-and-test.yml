@@ -10,10 +10,12 @@ on:
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
       - 'qubership-cached-providers/**'
-      - 'qubership-nifi-registry-consul/**'
+      - 'qubership-nifi-registry-spring-consul/**'
+      - 'qubership-nifi-registry-quarkus-consul/**'
+      - 'qubership-nifi-registry-consul-common/**'
+      - 'qubership-nifi-registry-consul-templates/**'
       - 'pom.xml'
       - 'Dockerfile'
-      - 'conf-template-custom/**'
       - 'nifi-scripts/**'
       - '.github/actions/**'
       - '.github/collections/**'
@@ -28,10 +30,12 @@ on:
       - 'nifi-registry-migration-util/**'
       - 'nifi-registry-util/**'
       - 'qubership-cached-providers/**'
-      - 'qubership-nifi-registry-consul/**'
+      - 'qubership-nifi-registry-spring-consul/**'
+      - 'qubership-nifi-registry-quarkus-consul/**'
+      - 'qubership-nifi-registry-consul-common/**'
+      - 'qubership-nifi-registry-consul-templates/**'
       - 'pom.xml'
       - 'Dockerfile'
-      - 'conf-template-custom/**'
       - 'nifi-scripts/**'
       - '.github/actions/**'
       - '.github/collections/**'
@@ -59,7 +63,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        run-mode: [ 'plain', 'tls', 'tls-db', 'tls-db-std', 'oidc', 'upgrade-plain', 'upgrade-tls-db', 'upgrade-tls-db-std' ]
+        run-mode:
+        - 'plain'
+        - 'tls'
+        - 'tls-db'
+        - 'tls-quarkus'
+        - 'tls-db-quarkus'
+        - 'tls-db-std'
+        - 'oidc'
+        - 'upgrade-plain'
+        - 'upgrade-tls-db'
+        - 'upgrade-tls-db-std'
     needs: [ mvn ]
     runs-on: ubuntu-latest
     steps:
@@ -121,7 +135,7 @@ jobs:
           fi
       - name: Upload test results
         if: failure() || cancelled()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: nifi-registry-autotests-${{ matrix.run-mode }}-logs
           path: |

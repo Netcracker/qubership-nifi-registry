@@ -36,6 +36,7 @@ services:
       - INITIAL_ADMIN_IDENTITY=admin
       - CONSUL_ENABLED=true
       - CONSUL_URL=consul:8500
+      - NIFI_CONSUL_INT_FRAMEWORK=spring
     container_name: local-nifi-registry
     hostname: nifi-registry
   consul:

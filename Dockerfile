@@ -53,7 +53,8 @@ RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
 COPY --chown=nifi:nifi ./nifi-scripts/* $NIFI_REGISTRY_BASE_DIR/scripts/
 RUN chmod 774 $NIFI_REGISTRY_BASE_DIR/scripts/*.sh
 
-COPY --chown=nifi:nifi ./conf-template-custom/logback.xml ${NIFI_REGISTRY_HOME}/conf-template-custom/
+COPY --chown=nifi:nifi ./qubership-nifi-registry-consul-templates/src/main/resources/logback-template.xml \
+    ${NIFI_REGISTRY_HOME}/conf-template-custom/logback.xml
 
 RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/spring-core-*.jar \
@@ -86,7 +87,8 @@ RUN mkdir -p ${NIFI_REGISTRY_HOME}/docs \
     && touch ${NIFI_REGISTRY_HOME}/docs/readme.txt
 
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
-COPY --chown=1000:1000 qubership-nifi-registry-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
+COPY --chown=1000:1000 qubership-nifi-registry-spring-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
+COPY --chown=1000:1000 qubership-nifi-registry-quarkus-consul/qubership-nifi-registry-quarkus-consul-application/target/quarkus-app ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-quarkus-consul-application
 
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"

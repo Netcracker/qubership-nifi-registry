@@ -2,10 +2,11 @@
 
 qubership-nifi-registry is a service built on top of Apache NiFi Registry.
 Compared with Apache NiFi Registry it supports:
-1. additional environment variables for configuration
-2. configuration parameters for PostgreSQL DB storage
-3. migration process for moving from file-based storage to DB storage
+1. additional environment variables for configuration.
+2. configuration parameters for PostgreSQL DB storage.
+3. migration process for moving from file-based storage to DB storage.
 4. AccessPolicyProvider and UserGroupProvider for PostgreSQL with in-memory cache.
+5. Integration with Consul as configuration source for logging levels and other configuration properties.
 
 ## Status
 [![Build status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml)
