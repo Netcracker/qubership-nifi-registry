@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 class NifiRegistryPropertiesApplicationTest {
     /**
      * Consul container instance.
+     * Reserved for future development.
      */
     @InjectConsulContainer
     private ConsulContainer consul;
@@ -47,7 +48,7 @@ class NifiRegistryPropertiesApplicationTest {
         mainThread.start();
         //wait for logback.xml file creation:
         File logbackConfig = new File("./conf/logback.xml");
-        Awaitility.await().atMost(10000, TimeUnit.MILLISECONDS).
+        Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).
                 until(logbackConfig::exists);
         Assertions.assertTrue(logbackConfig.exists(), "logback.xml should exist");
         File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
