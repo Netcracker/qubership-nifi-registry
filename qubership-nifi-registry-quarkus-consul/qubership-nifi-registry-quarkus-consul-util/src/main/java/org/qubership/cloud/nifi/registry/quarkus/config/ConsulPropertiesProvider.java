@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
+import org.qubership.cloud.nifi.config.common.PropertiesProvider;
 
 import java.util.HashSet;
 import java.util.Set;

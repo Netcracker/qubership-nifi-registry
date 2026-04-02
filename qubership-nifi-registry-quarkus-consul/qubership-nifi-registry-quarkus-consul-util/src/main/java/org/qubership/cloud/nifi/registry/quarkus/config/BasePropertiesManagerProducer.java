@@ -4,9 +4,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
-import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManagerConfig;
-import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
+import org.qubership.cloud.nifi.config.common.BasePropertiesManager;
+import org.qubership.cloud.nifi.config.common.BasePropertiesManagerConfig;
+import org.qubership.cloud.nifi.config.common.PropertiesProvider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -66,6 +66,8 @@ public class BasePropertiesManagerProducer {
                 "nifi-registry.properties",
                 "nifi.registry",
                 READ_ONLY_NIFI_REGISTRY_PROPS,
+                null,
+                null,
                 provider
         ));
     }

@@ -1,6 +1,6 @@
 package org.qubership.cloud.nifi.registry.config.spring;
 
-import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
+import org.qubership.cloud.nifi.config.common.PropertiesProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.consul.config.ConsulPropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;

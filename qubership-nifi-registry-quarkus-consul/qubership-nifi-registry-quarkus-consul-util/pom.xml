@@ -19,8 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>org.qubership.nifi</groupId>
-            <artifactId>qubership-nifi-registry-consul-common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>qubership-nifi-consul-common</artifactId>
+            <version>${qubership-nifi.version}</version>
         </dependency>
         <!-- Quarkus Core -->
         <dependency>
