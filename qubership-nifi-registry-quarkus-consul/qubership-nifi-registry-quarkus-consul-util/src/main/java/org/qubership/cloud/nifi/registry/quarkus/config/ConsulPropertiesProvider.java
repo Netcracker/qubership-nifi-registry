@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
+import org.qubership.cloud.nifi.config.common.PropertiesProvider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +30,12 @@ public class ConsulPropertiesProvider
         // Get all config sources from MicroProfile Config
         for (ConfigSource configSource : config.getConfigSources()) {
             // Get all property names from each:
-            allPropertyNames.addAll(configSource.getPropertyNames());
+            Set<String> allNames = configSource.getPropertyNames();
+            for (String name : allNames) {
+                if (name.toLowerCase().startsWith("logger.") || name.toLowerCase().startsWith("nifi.registry.")) {
+                    allPropertyNames.add(name);
+                }
+            }
         }
         return allPropertyNames;
     }

@@ -2,7 +2,7 @@ package org.qubership.cloud.nifi.registry.quarkus.config;
 
 import com.netcracker.cloud.consul.config.source.runtime.ConfigUpdatedEvent;
 import jakarta.enterprise.event.Observes;
-import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
+import org.qubership.cloud.nifi.config.common.BasePropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;

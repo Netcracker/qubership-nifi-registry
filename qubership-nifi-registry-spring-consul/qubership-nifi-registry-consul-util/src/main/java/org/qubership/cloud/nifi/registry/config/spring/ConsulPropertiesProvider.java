@@ -1,6 +1,6 @@
 package org.qubership.cloud.nifi.registry.config.spring;
 
-import org.qubership.cloud.nifi.registry.config.common.PropertiesProvider;
+import org.qubership.cloud.nifi.config.common.PropertiesProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.consul.config.ConsulPropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -9,7 +9,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +45,13 @@ public class ConsulPropertiesProvider
             // get properties for ConsulPropertySource
             if (ConsulPropertySource.class.isAssignableFrom(src1.getClass())) {
                 String[] allNames = ((ConsulPropertySource) src1).getPropertyNames();
-                Collections.addAll(allPropertyNames, allNames);
+                //fetch only properties starting with logger.* and nifi.registry.*
+                for (String name : allNames) {
+                    String lowercaseName = name.toLowerCase();
+                    if (lowercaseName.startsWith("logger.") || lowercaseName.startsWith("nifi.registry.")) {
+                        allPropertyNames.add(name);
+                    }
+                }
             }
         }
         return allPropertyNames;

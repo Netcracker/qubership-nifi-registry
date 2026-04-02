@@ -1,7 +1,7 @@
 package org.qubership.cloud.nifi.registry.config.spring;
 
-import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManager;
-import org.qubership.cloud.nifi.registry.config.common.BasePropertiesManagerConfig;
+import org.qubership.cloud.nifi.config.common.BasePropertiesManager;
+import org.qubership.cloud.nifi.config.common.BasePropertiesManagerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +55,8 @@ public class ConsulConfiguration {
                 "nifi-registry.properties",
                 "nifi.registry",
                 READ_ONLY_NIFI_REGISTRY_PROPS,
+                null,
+                null,
                 propertiesProvider
         ));
     }
