@@ -46,7 +46,13 @@ public class ConsulPropertiesProvider
             // get properties for ConsulPropertySource
             if (ConsulPropertySource.class.isAssignableFrom(src1.getClass())) {
                 String[] allNames = ((ConsulPropertySource) src1).getPropertyNames();
-                Collections.addAll(allPropertyNames, allNames);
+                //fetch only properties starting with logger.* and nifi.registry.*
+                for (String name : allNames) {
+                    String lowercaseName = name.toLowerCase();
+                    if (lowercaseName.startsWith("logger.") || lowercaseName.startsWith("nifi.registry.")) {
+                        allPropertyNames.add(name);
+                    }
+                }
             }
         }
         return allPropertyNames;

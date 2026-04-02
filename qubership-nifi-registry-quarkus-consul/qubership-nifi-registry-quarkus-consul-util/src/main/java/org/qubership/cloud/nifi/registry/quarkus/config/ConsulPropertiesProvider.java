@@ -30,7 +30,12 @@ public class ConsulPropertiesProvider
         // Get all config sources from MicroProfile Config
         for (ConfigSource configSource : config.getConfigSources()) {
             // Get all property names from each:
-            allPropertyNames.addAll(configSource.getPropertyNames());
+            Set<String> allNames = configSource.getPropertyNames();
+            for (String name : allNames) {
+                if (name.toLowerCase().startsWith("logger.") || name.toLowerCase().startsWith("nifi.registry.")) {
+                    allPropertyNames.add(name);
+                }
+            }
         }
         return allPropertyNames;
     }
