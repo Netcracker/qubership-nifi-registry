@@ -21,7 +21,7 @@
     <groupId>org.qubership.nifi</groupId>
     <artifactId>qubership-nifi-registry</artifactId>
     <packaging>pom</packaging>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.3.0</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <licenses>
@@ -42,7 +42,7 @@
         <connection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-nifi-registry.git</developerConnection>
         <url>https://github.com/Netcracker/qubership-nifi-registry/tree/main</url>
-      <tag>HEAD</tag>
+      <tag>v2.3.0</tag>
   </scm>
     <modules>
         <module>nifi-registry-util</module>
