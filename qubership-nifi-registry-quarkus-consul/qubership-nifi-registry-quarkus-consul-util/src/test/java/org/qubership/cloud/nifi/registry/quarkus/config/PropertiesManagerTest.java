@@ -2,6 +2,7 @@ package org.qubership.cloud.nifi.registry.quarkus.config;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 @QuarkusTest
 @QuarkusTestResource(ConsulTestResource.class)
+@TestProfile(PropertiesManagerTestProfile.class)
 class PropertiesManagerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesManagerTest.class);
@@ -109,6 +111,14 @@ class PropertiesManagerTest {
             Assertions.assertEquals("10 secs",
                     nifiRegistryProps.getProperty("nifi.registry.security.user.oidc.connect.timeout"),
                     "Consul property without default should be loaded");
+            Assertions.assertFalse(nifiRegistryProps.containsKey("NIFI_REGISTRY_HOME"),
+                    "Env variable NIFI_REGISTRY_HOME should not be loaded");
+            Assertions.assertFalse(nifiRegistryProps.containsKey("nifi.home"),
+                    "Env variable nifi.registry.home should not be loaded");
+            Assertions.assertFalse(nifiRegistryProps.containsKey("nifi.registry.env.prop1"),
+                    "Env variable nifi.registry.env.prop1 should not be loaded");
+            Assertions.assertFalse(nifiRegistryProps.containsKey("nifi.registry.env.prop2"),
+                    "Env variable nifi.registry.env.prop2 should not be loaded");
         } catch (IOException e) {
             Assertions.fail("Failed to read nifi-registry.properties", e);
         }
