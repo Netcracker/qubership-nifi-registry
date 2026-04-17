@@ -32,8 +32,8 @@ public class ConsulPropertiesProvider
         for (ConfigSource configSource : config.getConfigSources()) {
             String configSourceName = configSource.getName();
             //config source name must start with ConsulConfigSourceFactory.BASE_CONFIG_SOURCE_NAME
-            if (configSourceName != null
-                    && configSourceName.startsWith(ConsulConfigSourceFactory.BASE_CONFIG_SOURCE_NAME)) {
+            if (configSourceName != null &&
+                    configSourceName.startsWith(ConsulConfigSourceFactory.BASE_CONFIG_SOURCE_NAME)) {
                 // Get all property names from each:
                 Set<String> allNames = configSource.getPropertyNames();
                 for (String name : allNames) {
