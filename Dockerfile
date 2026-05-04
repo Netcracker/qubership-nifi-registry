@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG BASE_IMAGE_VERSION='21-alpine-2.2.6'
-ARG BASE_IMAGE_VERSION_SHA256='sha256:61249d23501cec4c1ce883f61f241f5e3daea87214c88c68675ea222c8000c4a'
+ARG BASE_IMAGE_VERSION='21-alpine-2.2.13'
+ARG BASE_IMAGE_VERSION_SHA256='sha256:ed0ee1413fa27f2484f683efd2295e6f63bb0b3441873b8fa2c14e785313d0cb'
 FROM ghcr.io/netcracker/qubership-java-base:$BASE_IMAGE_VERSION@$BASE_IMAGE_VERSION_SHA256 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
