@@ -54,6 +54,7 @@
         <module>qubership-nifi-registry-spring-consul</module>
         <module>qubership-nifi-registry-quarkus-consul</module>
         <module>qubership-nifi-registry-deps</module>
+        <module>qubership-nifi-registry-openapi-spec-enricher-tool</module>
     </modules>
 
     <parent>
@@ -74,6 +75,7 @@
         <nifi.version>2.7.2</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
+        <jackson.databind.version>2.20.1</jackson.databind.version>
         <spring-framework.version>6.2.15</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
