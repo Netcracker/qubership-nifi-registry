@@ -42,6 +42,6 @@ Set `<nifi.version>` to target.
 
 ## 8. Build
 ```bash
-mvn clean install -DskipUnitTests=true -Dgpg.skip=true -q
+mvn clean install -DskipTests -Dgpg.skip=true -q
 mvn clean install 2>&1 | grep -E "BUILD|ERROR|FAIL|Tests run" | tail -20
 ```
