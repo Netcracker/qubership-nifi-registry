@@ -59,7 +59,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.9</version>
+        <version>4.0.3</version>
         <relativePath />
     </parent>
 
@@ -74,7 +74,7 @@
         <nifi.version>2.7.2</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
-        <spring-framework.version>6.2.15</spring-framework.version>
+        <spring-framework.version>7.0.5</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
@@ -83,7 +83,7 @@
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <pmd.version>3.26.0</pmd.version>
-        <jacoco.version>0.8.8</jacoco.version>
+        <jacoco.version>0.8.11</jacoco.version>
     </properties>
 
     <profiles>
@@ -263,7 +263,6 @@
                     <linkXRef>true</linkXRef>
                     <includeTests>true</includeTests>
                     <failurePriority>2</failurePriority>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                 </configuration>
                 <executions>
                     <execution>
