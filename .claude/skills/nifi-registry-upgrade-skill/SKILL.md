@@ -37,7 +37,10 @@ Diff `nifi-registry.properties` between versions. Apply relevant changes to thes
 ## 6. Update Dockerfile
 Replace `NIFI_REGISTRY_VERSION` and `NIFI_REGISTRY_VERSION_SHA256` with target values.
 
-## 7. Build
+## 7. Update pom.xml versions
+Set `<nifi.version>` to target.
+
+## 8. Build
 ```bash
 mvn clean install -DskipUnitTests=true -Dgpg.skip=true -q
 mvn clean install 2>&1 | grep -E "BUILD|ERROR|FAIL|Tests run" | tail -20
