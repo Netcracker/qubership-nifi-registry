@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration test that invokes the openapi-spec-enricher tool against the project
  * and verifies that docs/openapi/openapi.json has no uncommitted changes.
  *
- * <p>Run via: {@code mvn verify -P tools-integration-tests -Dgpg.skip=true
+ * <p>Run via: {@code mvn verify -P tools-integration-tests -DskipUnitTests=true -Dgpg.skip=true
  * -pl qubership-nifi-registry-openapi-enricher}
  * (must be run from the repository root; mvn install must have been executed first).
  */
@@ -56,9 +56,9 @@ class OpenApiEnricherIT {
         String rootDirProp = System.getProperty("project.rootdir");
         if (rootDirProp == null || rootDirProp.isEmpty()) {
             throw new IllegalStateException(
-                "System property 'project.rootdir' is not set. "
-                + "Run this test via maven-failsafe-plugin "
-                + "(mvn verify -P tools-integration-tests -DskipUnitTests=true).");
+                "System property 'project.rootdir' is not set. " +
+                "Run this test via maven-failsafe-plugin " +
+                "(mvn verify -P tools-integration-tests -DskipUnitTests=true).");
         }
         File projectRoot = new File(rootDirProp);
 
@@ -79,18 +79,18 @@ class OpenApiEnricherIT {
         try (Git git = Git.open(projectRoot)) {
             Set<String> untracked = git.status().call().getUntracked();
             assertFalse(untracked.contains("docs/openapi/openapi.json"),
-                "docs/openapi/openapi.json is untracked. "
-                + "Generate the file and commit it first: "
-                + "mvn exec:java -pl qubership-nifi-tools/qubership-nifi-openapi-enricher");
+        "docs/openapi/openapi.json is untracked. " +
+                "Generate the file and commit it first: " +
+                "mvn exec:java -pl qubership-nifi-registry-openapi-enricher");
 
             List<DiffEntry> diffResult = git.diff()
                 .setPathFilter(PathFilter.create("docs/openapi/openapi.json"))
                 .call();
             assertEquals(0, diffResult.size(),
-                "docs/openapi/openapi.json has local changes after running the enricher tool. "
-                + "The committed file is out of date. Re-run "
-                + "'mvn exec:java -pl qubership-nifi-registry-openapi-enricher' "
-                + "check and commit the result.");
+                "docs/openapi/openapi.json has local changes after running the enricher tool. " +
+                "The committed file is out of date. Re-run " +
+                "'mvn exec:java -pl qubership-nifi-registry-openapi-enricher' " +
+                "check and commit the result.");
         }
     }
 

@@ -45,6 +45,6 @@ mvn test -pl qubership-nifi-registry-openapi-enricher
 Integration tests:
 
 ```shell
-mvn verify -P tools-integration-tests -Dgpg.skip=true \
+mvn verify -P tools-integration-tests -Dgpg.skip=true -DskipUnitTests=true \
     -pl qubership-nifi-registry-openapi-enricher
 ```
