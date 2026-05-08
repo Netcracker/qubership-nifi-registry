@@ -23,4 +23,5 @@ skip-check:
 # https://www.checkov.io/5.Policy%20Index/openapi.html
 - CKV_OPENAPI_4 # Ensure that the global security field has rules defined
 - CKV_OPENAPI_5 # Ensure that security operations is not empty
+# Upstream Apache NiFi Registry spec doesn't declare maxItems
 - CKV_OPENAPI_21 # Ensure that arrays have a maximum number of items
