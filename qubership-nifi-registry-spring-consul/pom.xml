@@ -42,7 +42,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
         <relativePath />
     </parent>
 
@@ -55,8 +55,8 @@
         <consul-api.version>1.4.5</consul-api.version>
         <httpclient.version>4.5.14</httpclient.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <spring-framework.version>7.0.5</spring-framework.version>
-        <!--<logback.version>1.5.32</logback.version>-->
+        <spring-framework.version>7.0.6</spring-framework.version>
+        <jackson-bom.version>3.1.2</jackson-bom.version>
         <qubership-nifi.version>2.5.0</qubership-nifi.version>
         <!--test libraries versions-->
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
@@ -66,6 +66,8 @@
         <jacoco.version>0.8.11</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <!--skipUnitTests default value-->
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
 
@@ -228,6 +230,8 @@
                     <systemPropertyVariables>
                         <api.version>1.44</api.version>
                     </systemPropertyVariables>
+                    <!-- Custom property to skip unit tests -->
+                    <skipTests>${skipUnitTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>

@@ -54,12 +54,13 @@
         <module>qubership-nifi-registry-spring-consul</module>
         <module>qubership-nifi-registry-quarkus-consul</module>
         <module>qubership-nifi-registry-deps</module>
+        <module>qubership-nifi-registry-openapi-enricher</module>
     </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
         <relativePath />
     </parent>
 
@@ -68,22 +69,27 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
-        <postgresql.jdbc.version>42.7.2</postgresql.jdbc.version>
+        <postgresql.jdbc.version>42.7.11</postgresql.jdbc.version>
         <commons-io.version>2.14.0</commons-io.version>
         <lombok.version>1.18.30</lombok.version>
         <nifi.version>2.9.0</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
-        <spring-framework.version>7.0.5</spring-framework.version>
+        <jackson.databind.version>2.20.1</jackson.databind.version>
+        <spring-framework.version>7.0.6</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <mockito.version>4.11.0</mockito.version>
+        <jgit.version>7.6.0.202603022253-r</jgit.version>
         <!--plugin versions-->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <failsafe-plugin.version>3.5.4</failsafe-plugin.version>
         <pmd.version>3.26.0</pmd.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <!--skipUnitTests default value-->
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
     <profiles>
@@ -233,6 +239,8 @@
                     <systemPropertyVariables>
                         <api.version>1.44</api.version>
                     </systemPropertyVariables>
+                    <!-- Custom property to skip unit tests -->
+                    <skipTests>${skipUnitTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>
