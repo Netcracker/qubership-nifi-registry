@@ -118,7 +118,7 @@ jobs:
       - name: Run local maven build with sonar
         if: ${{ !inputs.skip-sonar && vars.SONAR_HOST_URL }}
         run: >
-          mvn --batch-mode install -Dgpg.skip=true
+          mvn --batch-mode install
           -Dgpg.skip=true
           org.sonarsource.scanner.maven:sonar-maven-plugin:${SONAR_PLUGIN_VERSION}:sonar
           -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.organization=${SONAR_ORGANIZATION}
