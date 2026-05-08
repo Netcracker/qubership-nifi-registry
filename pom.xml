@@ -21,7 +21,7 @@
     <groupId>org.qubership.nifi</groupId>
     <artifactId>qubership-nifi-registry</artifactId>
     <packaging>pom</packaging>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>2.3.4-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/Netcracker/qubership-nifi-registry</url>
     <licenses>
@@ -60,7 +60,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.9</version>
+        <version>4.0.5</version>
         <relativePath />
     </parent>
 
@@ -69,14 +69,14 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
-        <postgresql.jdbc.version>42.7.2</postgresql.jdbc.version>
+        <postgresql.jdbc.version>42.7.11</postgresql.jdbc.version>
         <commons-io.version>2.14.0</commons-io.version>
         <lombok.version>1.18.30</lombok.version>
         <nifi.version>2.7.2</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
         <jackson.databind.version>2.20.1</jackson.databind.version>
-        <spring-framework.version>6.2.15</spring-framework.version>
+        <spring-framework.version>7.0.6</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
@@ -85,7 +85,7 @@
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <pmd.version>3.26.0</pmd.version>
-        <jacoco.version>0.8.8</jacoco.version>
+        <jacoco.version>0.8.11</jacoco.version>
     </properties>
 
     <profiles>
@@ -175,7 +175,7 @@
                 <version>${flatten-maven-plugin.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <flattenMode>oss</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
@@ -265,7 +265,6 @@
                     <linkXRef>true</linkXRef>
                     <includeTests>true</includeTests>
                     <failurePriority>2</failurePriority>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                 </configuration>
                 <executions>
                     <execution>

@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG BASE_IMAGE_VERSION='21-alpine-2.2.6'
-ARG BASE_IMAGE_VERSION_SHA256='sha256:61249d23501cec4c1ce883f61f241f5e3daea87214c88c68675ea222c8000c4a'
+ARG NIFI_REGISTRY_VERSION='2.7.2'
+ARG NIFI_REGISTRY_VERSION_SHA256='sha256:a44cce96f8e0f3230107da7782fc1041787cfbdf84c2252441b8b78a0db7a71d'
+
+ARG BASE_IMAGE_VERSION='21-alpine-2.2.13'
+ARG BASE_IMAGE_VERSION_SHA256='sha256:ed0ee1413fa27f2484f683efd2295e6f63bb0b3441873b8fa2c14e785313d0cb'
 FROM ghcr.io/netcracker/qubership-java-base:$BASE_IMAGE_VERSION@$BASE_IMAGE_VERSION_SHA256 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
@@ -32,7 +35,7 @@ RUN mkdir -p /opt/java/openjdk/lib/security \
 
 USER 10001
 
-FROM apache/nifi-registry:2.7.2@sha256:a44cce96f8e0f3230107da7782fc1041787cfbdf84c2252441b8b78a0db7a71d AS nifi-reg2
+FROM apache/nifi-registry:$NIFI_REGISTRY_VERSION@$NIFI_REGISTRY_VERSION_SHA256 AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \

@@ -56,3 +56,6 @@ fabric.properties
 /**/*.agent
 
 /.idea/
+
+# NiFi-Registry upgrade skill: extracted reference files
+upgrade-temp-data/
