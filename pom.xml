@@ -59,7 +59,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
         <relativePath />
     </parent>
 
@@ -68,13 +68,13 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
-        <postgresql.jdbc.version>42.7.2</postgresql.jdbc.version>
+        <postgresql.jdbc.version>42.7.11</postgresql.jdbc.version>
         <commons-io.version>2.14.0</commons-io.version>
         <lombok.version>1.18.30</lombok.version>
         <nifi.version>2.7.2</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
-        <spring-framework.version>7.0.5</spring-framework.version>
+        <spring-framework.version>7.0.6</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
