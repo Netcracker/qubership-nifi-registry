@@ -66,6 +66,8 @@
         <jacoco.version>0.8.11</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <!--skipUnitTests default value-->
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
 
@@ -228,6 +230,8 @@
                     <systemPropertyVariables>
                         <api.version>1.44</api.version>
                     </systemPropertyVariables>
+                    <!-- Custom property to skip unit tests -->
+                    <skipTests>${skipUnitTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>

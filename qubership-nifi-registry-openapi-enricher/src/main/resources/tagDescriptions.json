@@ -1,0 +1,56 @@
+{
+    "tags": [
+        {
+            "name": "About",
+            "description": "Retrieves the version information for this NiFi Registry."
+        },
+        {
+            "name": "Access",
+            "description": "Endpoints for obtaining an access token or checking access status."
+        },
+        {
+            "name": "BucketBundles",
+            "description": "Create extension bundles scoped to an existing bucket in the registry. "
+        },
+        {
+            "name": "BucketFlows",
+            "description": "Create flows scoped to an existing bucket in the registry."
+        },
+        {
+            "name": "Buckets",
+            "description": "Create named buckets in the registry to store NiFi objects such flows and extensions. Search for and retrieve existing buckets."
+        },
+        {
+            "name": "Bundles",
+            "description": "Gets metadata about extension bundles and their versions. "
+        },
+        {
+            "name": "Config",
+            "description": "Retrieves the configuration for this NiFi Registry."
+        },
+        {
+            "name": "ExtensionRepository",
+            "description": "Interact with extension bundles via the hierarchy of bucket/group/artifact/version. "
+        },
+        {
+            "name": "Extensions",
+            "description": "Find and retrieve extensions. "
+        },
+        {
+            "name": "Flows",
+            "description": "Gets metadata about flows."
+        },
+        {
+            "name": "Items",
+            "description": "Retrieve items across all buckets for which the user is authorized."
+        },
+        {
+            "name": "Policies",
+            "description": "Endpoint for managing access policies."
+        },
+        {
+            "name": "Tenants",
+            "description": "Endpoint for managing users and user groups."
+        }
+    ]
+}
