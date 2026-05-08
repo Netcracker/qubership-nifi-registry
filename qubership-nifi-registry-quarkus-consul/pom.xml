@@ -57,6 +57,8 @@
         <pmd.version>3.26.0</pmd.version>
         <jacoco.version>0.8.11</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+        <!--skipUnitTests default value-->
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
     <dependencyManagement>
@@ -200,6 +202,8 @@
                         <quarkus.jacoco.includes>org/qubership/**/quarkus/config/**/*</quarkus.jacoco.includes>
                         <quarkus.jacoco.report-location>target/site/jacoco</quarkus.jacoco.report-location>
                     </systemPropertyVariables>
+                    <!-- Custom property to skip unit tests -->
+                    <skipTests>${skipUnitTests}</skipTests>
                 </configuration>
             </plugin>
 

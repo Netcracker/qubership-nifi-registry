@@ -35,7 +35,7 @@ public final class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
-    private static final String DEFAULT_OUTPUT_DIR = "./openapi";
+    private static final String DEFAULT_OUTPUT_DIR = "./docs/openapi";
 
     private Main() { }
 
@@ -61,8 +61,7 @@ public final class Main {
             }
         }
 
-        LOG.info("Starting openapi spec enrichment tool");
-        LOG.info("  output-dir : {}", outputDir);
+        LOG.info("Starting openapi spec enrichment tool. Output-dir: {}", outputDir);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = null;

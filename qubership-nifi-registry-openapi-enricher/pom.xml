@@ -14,13 +14,11 @@
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>CLI tool that enriches Apache NiFi Registry openapi spec with additional parameters to pass APIHUB validations.</description>
+    <description>CLI tool that enriches Apache NiFi Registry openapi spec with additional parameters to pass API Hub validations.</description>
 
     <properties>
         <!-- Skip ITs by default; enable with profile tools-integration-tests -->
         <skipITs>true</skipITs>
-        <!--skipUnitTests default value-->
-        <skipUnitTests>false</skipUnitTests>
     </properties>
 
     <dependencies>
@@ -61,16 +59,6 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
-                <configuration>
-                    <argLine>@{argLine} -Duser.timezone=UTC</argLine>
-                    <!-- Custom property to skip unit tests -->
-                    <skipTests>${skipUnitTests}</skipTests>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>

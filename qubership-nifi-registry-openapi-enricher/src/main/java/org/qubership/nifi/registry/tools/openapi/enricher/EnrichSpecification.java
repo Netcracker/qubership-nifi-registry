@@ -26,12 +26,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+/**
+ * Enriches Apache NiFi Registry JSON OpenAPI specification with additional data to pass API Hub validations.
+ */
 public class EnrichSpecification {
     private static final Logger LOG = LoggerFactory.getLogger(EnrichSpecification.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
-     * Enriches Apache NiFi Registry JSON OpenAPI specification with additional data to pass APIHUB validations.
+     * Default constructor.
+     */
+    public EnrichSpecification() {
+        //default constructor
+    }
+
+    /**
+     * Enriches Apache NiFi Registry JSON OpenAPI specification with additional data to pass API Hub validations.
      * @param spec JsonNode with Apache NiFi Registry OpenAPI specification
      * @return modified specification
      */
@@ -84,17 +94,23 @@ public class EnrichSpecification {
         ObjectNode pathsNode = (ObjectNode) spec.path("paths");
         for (JsonNode pathNode : pathsNode) {
             if (pathNode.isObject()) {
-                //the only case:
                 ObjectNode pathNodeObj = (ObjectNode) pathNode;
                 for (Map.Entry<String, JsonNode> methodEntry : pathNodeObj.properties()) {
                     if (methodEntry.getValue().isObject()) {
-                        //the only case:
                         ObjectNode methodNodeObj = (ObjectNode) methodEntry.getValue();
                         addMissingResponseDescriptions(methodNodeObj);
-                        //
                         if (!methodNodeObj.has("description")) {
                             //if no description is set, set description = summary
-                            methodNodeObj.put("description", methodNodeObj.get("summary").asText());
+                            JsonNode summaryNode = methodNodeObj.path("summary");
+                            if (summaryNode.isMissingNode()) {
+                                LOG.warn("Skipping description update for node: summary not found for operationId = {}",
+                                        methodNodeObj.path("operationId").asText());
+                            } else if (summaryNode.isNull()) {
+                                LOG.warn("Skipping description update for node: summary is null for operationId = {}",
+                                        methodNodeObj.path("operationId").asText());
+                            } else {
+                                methodNodeObj.put("description", summaryNode.asText());
+                            }
                         }
                     }
                 }

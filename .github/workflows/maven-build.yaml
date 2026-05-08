@@ -13,6 +13,8 @@ on:
       - 'qubership-nifi-registry-quarkus-consul/**'
       - 'qubership-nifi-registry-consul-common/**'
       - 'qubership-nifi-registry-consul-templates/**'
+      - 'qubership-nifi-registry-openapi-enricher/**'
+      - 'docs/openapi/**'
       - 'pom.xml'
   pull_request:
     paths:
@@ -25,6 +27,8 @@ on:
       - 'qubership-nifi-registry-quarkus-consul/**'
       - 'qubership-nifi-registry-consul-common/**'
       - 'qubership-nifi-registry-consul-templates/**'
+      - 'qubership-nifi-registry-openapi-enricher/**'
+      - 'docs/openapi/**'
       - 'pom.xml'
   workflow_dispatch:
     inputs:
@@ -48,6 +52,11 @@ on:
         required: false
         type: boolean
         description: 'If set, skips sonar cloud analysis'
+      skip-tools-it:
+        default: false
+        required: false
+        type: boolean
+        description: 'If set, skips tools integration tests'
   workflow_call:
     inputs:
       java-version:
@@ -63,6 +72,10 @@ on:
         required: false
         type: string
       skip-sonar:
+        default: false
+        required: false
+        type: boolean
+      skip-tools-it:
         default: false
         required: false
         type: boolean
@@ -105,7 +118,7 @@ jobs:
       - name: Run local maven build with sonar
         if: ${{ !inputs.skip-sonar && vars.SONAR_HOST_URL }}
         run: >
-          mvn --batch-mode package
+          mvn --batch-mode install
           -Dgpg.skip=true
           org.sonarsource.scanner.maven:sonar-maven-plugin:${SONAR_PLUGIN_VERSION}:sonar
           -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.organization=${SONAR_ORGANIZATION}
@@ -122,10 +135,19 @@ jobs:
       - name: Run local maven build w/o sonar
         if: ${{ inputs.skip-sonar || !vars.SONAR_HOST_URL }}
         run: >
-          mvn --batch-mode package
+          mvn --batch-mode install
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run tools integration tests
+        if: ${{ !inputs.skip-tools-it }}
+        run: |
+          # Run integration tests
+          mvn --batch-mode verify -DskipUnitTests=true -Dgpg.skip=true -P tools-integration-tests
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload test results
