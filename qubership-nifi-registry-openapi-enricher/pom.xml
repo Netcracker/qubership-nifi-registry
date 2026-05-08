@@ -16,12 +16,18 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>CLI tool that enriches Apache NiFi Registry openapi spec with additional parameters to pass APIHUB validations.</description>
 
+    <properties>
+        <!-- Skip ITs by default; enable with profile tools-integration-tests -->
+        <skipITs>true</skipITs>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.nifi.registry</groupId>
             <artifactId>nifi-registry-web-api</artifactId>
             <version>${nifi.version}</version>
             <type>war</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -40,8 +46,14 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${jgit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -56,14 +68,56 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin.version}</version>
+                <configuration>
+                    <skipITs>${skipITs}</skipITs>
+                    <systemPropertyVariables>
+                        <project.rootdir>${session.executionRootDirectory}</project.rootdir>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
+                <dependencies>
+                    <!--By default, project's WAR dependency is ignored by exec-maven-plugin-->
+                    <!--this explicit dependency and includePluginDependencies are needed to include WAR in classpath-->
+                    <dependency>
+                        <groupId>org.apache.nifi.registry</groupId>
+                        <artifactId>nifi-registry-web-api</artifactId>
+                        <version>${nifi.version}</version>
+                        <type>war</type>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <mainClass>org.qubership.nifi.registry.tools.openapi.enricher.Main</mainClass>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <includePluginDependencies>true</includePluginDependencies>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>tools-integration-tests</id>
+            <properties>
+                <!-- Enable ITs if running with profile -->
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+    </profiles>
 </project>

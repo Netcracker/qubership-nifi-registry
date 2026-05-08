@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020-2026 NetCracker Technology Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.qubership.nifi.registry.tools.openapi.enricher;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,25 +53,12 @@ public class EnrichSpecification {
         }
     }
 
-    /**
-     * Get resource as input stream from classpath.
-     *
-     * @param resourceName the resource name
-     * @return input stream for the resource
-     * @throws IOException if resource not found
-     */
-    private static InputStream getResourceAsStream(String resourceName) throws IOException {
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
-        if (is == null) {
-            throw new IOException("Resource not found: " + resourceName);
-        }
-        return is;
-    }
-
     private String getDefaultResponseDescription(String responseCode) {
         if ("200".equals(responseCode)) {
             return "successful operation";
         } else if ("201".equals(responseCode)) {
+            return "successful operation";
+        } else if ("202".equals(responseCode)) {
             return "successful operation";
         } else if ("default".equals(responseCode)) {
             return "successful operation";
@@ -102,7 +104,7 @@ public class EnrichSpecification {
 
     private void addTagsDescriptions(JsonNode spec) {
         JsonNode defaultTags = null;
-        try (InputStream in = getResourceAsStream("tagDescriptions.json")) {
+        try (InputStream in = ResourceUtils.getResourceAsStream("tagDescriptions.json")) {
             defaultTags = MAPPER.readTree(in);
         } catch (IOException e) {
             LOG.error("Failed to read tagDescriptions.json from resources");

@@ -54,7 +54,7 @@
         <module>qubership-nifi-registry-spring-consul</module>
         <module>qubership-nifi-registry-quarkus-consul</module>
         <module>qubership-nifi-registry-deps</module>
-        <module>qubership-nifi-registry-openapi-spec-enricher-tool</module>
+        <module>qubership-nifi-registry-openapi-enricher</module>
     </modules>
 
     <parent>
@@ -81,9 +81,11 @@
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <mockito.version>4.11.0</mockito.version>
+        <jgit.version>7.6.0.202603022253-r</jgit.version>
         <!--plugin versions-->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <failsafe-plugin.version>3.5.4</failsafe-plugin.version>
         <pmd.version>3.26.0</pmd.version>
         <jacoco.version>0.8.11</jacoco.version>
     </properties>
