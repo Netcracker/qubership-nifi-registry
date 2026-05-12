@@ -60,7 +60,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.6</version>
         <relativePath />
     </parent>
 
@@ -76,7 +76,7 @@
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
         <jackson.databind.version>2.20.1</jackson.databind.version>
-        <spring-framework.version>7.0.6</spring-framework.version>
+        <spring-framework.version>7.0.7</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
