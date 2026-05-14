@@ -46,6 +46,7 @@ services:
       - dbPassword=${DB_PASSWORD}
       - CONSUL_ENABLED=true
       - CONSUL_URL=consul:8500
+      - NIFI_CONSUL_INT_FRAMEWORK=spring
       - CONSUL_ACL_TOKEN=${CONSUL_TOKEN}
     container_name: local-nifi-registry
     hostname: nifi-registry
@@ -71,7 +72,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: $BASE_DIR/.github/workflows/sh/
+      device: ${GIT_BASE_DIR:-$BASE_DIR}/.github/workflows/sh/
   tls-cert:
     driver: local
     driver_opts:
@@ -95,4 +96,4 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: $BASE_DIR/.github/configuration/consul/
+      device: ${GIT_BASE_DIR:-$BASE_DIR}/.github/configuration/consul/

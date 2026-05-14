@@ -12,33 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine/java:21-jre AS base
+ARG NIFI_REGISTRY_VERSION='2.7.2'
+ARG NIFI_REGISTRY_VERSION_SHA256='sha256:a44cce96f8e0f3230107da7782fc1041787cfbdf84c2252441b8b78a0db7a71d'
+
+ARG BASE_IMAGE_VERSION='21-alpine-2.2.13'
+ARG BASE_IMAGE_VERSION_SHA256='sha256:ed0ee1413fa27f2484f683efd2295e6f63bb0b3441873b8fa2c14e785313d0cb'
+FROM ghcr.io/netcracker/qubership-java-base:$BASE_IMAGE_VERSION@$BASE_IMAGE_VERSION_SHA256 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
 #add jq:
 RUN apk add --no-cache \
-    jq=1.7.1-r0 \
-    bash=5.2.26-r0 \
-    curl=8.14.1-r2
+    jq=1.8.1-r0
 
 ENV NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
 ENV NIFI_REGISTRY_HOME=$NIFI_REGISTRY_BASE_DIR/nifi-registry-current
 ENV NIFI_TOOLKIT_HOME=${NIFI_REGISTRY_BASE_DIR}/nifi-toolkit-current
 ENV HOME=${NIFI_REGISTRY_HOME}
 
-RUN chmod 664 /opt/java/openjdk/lib/security/cacerts \
-    && adduser --disabled-password \
-        --gecos "" \
-        --home "${NIFI_REGISTRY_HOME}" \
-        --ingroup "root" \
-        --no-create-home \
-        --uid 10001 \
-        nifi-registry
+RUN mkdir -p /opt/java/openjdk/lib/security \
+    && ln -s /app/volumes/certs/java/cacerts /opt/java/openjdk/lib/security/cacerts
 
 USER 10001
 
-FROM apache/nifi-registry:2.5.0 AS nifi-reg2
+FROM apache/nifi-registry:$NIFI_REGISTRY_VERSION@$NIFI_REGISTRY_VERSION_SHA256 AS nifi-reg2
 
 RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
     && mkdir -p $NIFI_REGISTRY_HOME/persistent_data/flow_storage \
@@ -59,7 +56,8 @@ RUN mkdir -p $NIFI_REGISTRY_HOME/persistent_data \
 COPY --chown=nifi:nifi ./nifi-scripts/* $NIFI_REGISTRY_BASE_DIR/scripts/
 RUN chmod 774 $NIFI_REGISTRY_BASE_DIR/scripts/*.sh
 
-COPY --chown=nifi:nifi ./conf-template-custom/logback.xml ${NIFI_REGISTRY_HOME}/conf-template-custom/
+COPY --chown=nifi:nifi ./qubership-nifi-registry-consul-templates/src/main/resources/logback-template.xml \
+    ${NIFI_REGISTRY_HOME}/conf-template-custom/logback.xml
 
 RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
     && rm -rf $NIFI_TOOLKIT_HOME/lib/spring-core-*.jar \
@@ -86,8 +84,14 @@ RUN rm -rf $NIFI_TOOLKIT_HOME/lib/spring-web-*.jar \
 RUN mkdir -p ${NIFI_REGISTRY_HOME}/ext-cached \
     && mkdir -p ${NIFI_REGISTRY_HOME}/utility-lib
 
+# Temporarily add docs directory with empty file.
+# This directory can be removed, once Apache NiFi Registry stop using it.
+RUN mkdir -p ${NIFI_REGISTRY_HOME}/docs \
+    && touch ${NIFI_REGISTRY_HOME}/docs/readme.txt
+
 COPY --chown=1000:1000 qubership-cached-providers/target/qubership-cached-providers-*.jar qubership-cached-providers/target/lib/*.jar ${NIFI_REGISTRY_HOME}/ext-cached/
-COPY --chown=1000:1000 qubership-nifi-registry-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
+COPY --chown=1000:1000 qubership-nifi-registry-spring-consul/qubership-nifi-registry-consul-application/target/qubership-nifi-registry-consul-application*.jar ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-consul-application.jar
+COPY --chown=1000:1000 qubership-nifi-registry-quarkus-consul/qubership-nifi-registry-quarkus-consul-application/target/quarkus-app ${NIFI_REGISTRY_HOME}/utility-lib/qubership-nifi-registry-quarkus-consul-application
 
 FROM base
 LABEL org.opencontainers.image.authors="qubership.org"
@@ -110,16 +114,6 @@ VOLUME ${NIFI_REGISTRY_HOME}/run
 VOLUME ${NIFI_REGISTRY_HOME}/work
 
 EXPOSE 18080 18443
-# Start NiFi Registry
-#
-# We need to use the exec form to avoid running our command in a subshell and omitting signals,
-# thus being unable to shut down gracefully:
-# https://docs.docker.com/engine/reference/builder/#entrypoint
-#
-# Also we need to use relative path, because the exec form does not invoke a command shell,
-# thus normal shell processing does not happen:
-# https://docs.docker.com/engine/reference/builder/#exec-form-entrypoint-example
-#
-# ENTRYPOINT overrides CMD defined in base image
-ENTRYPOINT ["../scripts/start.sh"]
+
+CMD ["bash", "../scripts/start.sh"]
 HEALTHCHECK NONE

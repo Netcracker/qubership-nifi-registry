@@ -35,6 +35,11 @@ if [ -n "$dbUrl" ]; then
     escDatabaseUrl="${databaseUrl//&/\\&}"
 fi
 
+#escape & in dbPassword due to requirements of prop_replace function:
+if [ -n "$dbPassword" ]; then
+    escDbPassword="${dbPassword//&/\\&}"
+fi
+
 if [ -z "$database" ]; then info "Database name not available"; else info "Configuring Database :- $database"; fi
 if [ -z "$dbUrl" ]; then info "Database URL not available"; else info info "Database URL :- $databaseUrl"; fi
 if [ -n "$escDatabaseUrl" ]; then info "Escaped database URL :- $escDatabaseUrl"; fi
@@ -46,7 +51,7 @@ if [ -z "$dbPassword" ]; then info "Password not available"; else info "Database
 info "Setting database properties..."
 prop_replace 'nifi.registry.db.url'   "$escDatabaseUrl"
 prop_replace 'nifi.registry.db.username'   "$dbUsername"
-prop_replace 'nifi.registry.db.password'   "$dbPassword"
+prop_replace 'nifi.registry.db.password'   "$escDbPassword"
 prop_replace 'nifi.registry.db.driver.directory'   "$dbDriverDir"
 prop_replace 'nifi.registry.db.driver.class'   "$dbDriver"
 prop_replace 'nifi.registry.db.directory'   "$dbDirectory"

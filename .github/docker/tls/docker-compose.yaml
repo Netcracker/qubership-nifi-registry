@@ -36,6 +36,7 @@ services:
       - INITIAL_ADMIN_IDENTITY=admin
       - CONSUL_ENABLED=true
       - CONSUL_URL=consul:8500
+      - NIFI_CONSUL_INT_FRAMEWORK=spring
     container_name: local-nifi-registry
     hostname: nifi-registry
   consul:
@@ -49,7 +50,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: $BASE_DIR/.github/workflows/sh/
+      device: ${GIT_BASE_DIR:-$BASE_DIR}/.github/workflows/sh/
   tls-cert:
     driver: local
     driver_opts:

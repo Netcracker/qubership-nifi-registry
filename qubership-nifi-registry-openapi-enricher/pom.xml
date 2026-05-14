@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.qubership.nifi</groupId>
+        <artifactId>qubership-nifi-registry</artifactId>
+        <version>2.3.6-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>qubership-nifi-registry-openapi-enricher</artifactId>
+    <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>CLI tool that enriches Apache NiFi Registry openapi spec with additional parameters to pass API Hub validations.</description>
+
+    <properties>
+        <!-- Skip ITs by default; enable with profile tools-integration-tests -->
+        <skipITs>true</skipITs>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.nifi.registry</groupId>
+            <artifactId>nifi-registry-web-api</artifactId>
+            <version>${nifi.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${jgit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin.version}</version>
+                <configuration>
+                    <skipITs>${skipITs}</skipITs>
+                    <systemPropertyVariables>
+                        <project.rootdir>${session.executionRootDirectory}</project.rootdir>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <dependencies>
+                    <!--By default, project's WAR dependency is ignored by exec-maven-plugin-->
+                    <!--this explicit dependency and includePluginDependencies are needed to include WAR in classpath-->
+                    <dependency>
+                        <groupId>org.apache.nifi.registry</groupId>
+                        <artifactId>nifi-registry-web-api</artifactId>
+                        <version>${nifi.version}</version>
+                        <type>war</type>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <mainClass>org.qubership.nifi.registry.tools.openapi.enricher.Main</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <includePluginDependencies>true</includePluginDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>tools-integration-tests</id>
+            <properties>
+                <!-- Enable ITs if running with profile -->
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+</project>

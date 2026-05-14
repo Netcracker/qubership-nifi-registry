@@ -2,18 +2,19 @@
 
 qubership-nifi-registry is a service built on top of Apache NiFi Registry.
 Compared with Apache NiFi Registry it supports:
-1. additional environment variables for configuration
-2. configuration parameters for PostgreSQL DB storage
-3. migration process for moving from file-based storage to DB storage
+1. additional environment variables for configuration.
+2. configuration parameters for PostgreSQL DB storage.
+3. migration process for moving from file-based storage to DB storage.
 4. AccessPolicyProvider and UserGroupProvider for PostgreSQL with in-memory cache.
+5. Integration with Consul as configuration source for logging levels and other configuration properties.
 
 ## Status
-![Unit tests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build-and-test.yml/badge.svg)
-![Autotests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml/badge.svg)
-![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=coverage)
-![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=ncloc)
-![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=alert_status)
-![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=vulnerabilities)
+[![Build status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml)
+[![Autotests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=coverage)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=ncloc)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
 
 ## Overview
 
@@ -31,7 +32,7 @@ Depending on configuration, it relies on:
 Build process requires the following tools:
 1. Java - JDK 17 or JDK 21
 2. Maven - Maven 3.x, see [maven installation guide](https://maven.apache.org/install.html) for details on how to install
-3. Docker - any version of Docker Engine or any compatible docker container runtime.
+3. Docker - any version of Docker Engine or any compatible Docker container runtime.
 
 ### Project build
 
@@ -40,7 +41,7 @@ To execute maven build, run:
 mvn clean install
 ```
 
-Once maven build is completed, you can execute docker build. To do that, run:
+Once maven build is completed, you can execute Docker build. To do that, run:
 ```shell
 docker build .
 ```
