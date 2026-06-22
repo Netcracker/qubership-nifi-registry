@@ -49,14 +49,14 @@ policy.update.enabled: false
 
 logging:
   level:
-    root: ${ROOT_LOG_LEVEL:DEBUG}
+    root: ${ROOT_LOG_LEVEL:INFO}
     org:
       qubership:
         cloud:
           nifi:
             registry:
               config:
-                PropertiesManagerTest: DEBUG
+                PropertiesManagerTest: INFO
 
 config:
   file:
