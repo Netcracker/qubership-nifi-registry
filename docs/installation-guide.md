@@ -3,6 +3,7 @@
 qubership-nifi-registry service can be started in docker (or compatible) container runtime with support of `docker compose` command.
 
 Sections below describe typical startup configurations:
+
 1. plain - service without any authentication with plain (HTTP) communications and file-based storage
 2. tls - service with mTLS authentication with encrypted (HTTPS) communications and file-based storage
 3. db - service with mTLS authentication, encrypted (HTTPS) communications and PostgreSQL storage
@@ -13,11 +14,12 @@ Sections below describe typical startup configurations:
 ### Plain
 
 Execute the following steps, to run service:
+
 1. Set up environment parameters [`docker.env`](../dev/plain/docker.env)
 
-| Parameter | Required | Default | Description                                                                                                                                                                                                                              |
-|-----------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BASE_DIR  | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<ul><li>temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)</li><li>temp-vol/nifi-reg/flow-storage/ - for storing flow versions</li></ul> |
+   | Parameter | Required | Default | Description                                                                                                                                                                                                               |
+   |-----------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+   | BASE_DIR  | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)<br>- temp-vol/nifi-reg/flow-storage/ - for storing flow versions |
 
 2. Change image in docker compose [`docker-compose.yaml`](../dev/plain/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
 3. Start docker compose
@@ -29,14 +31,15 @@ docker compose -f dev/plain/docker-compose.yaml --env-file dev/plain/docker.env 
 ### TLS
 
 Execute the following steps, to run service:
+
 1. Set up environment parameters [`docker.env`](../dev/tls/docker.env)
 
-| Parameter           | Required | Default | Description                                                                                                                                                                                                                                                                                |
-|---------------------|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BASE_DIR            | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<ul><li>temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)</li><li>temp-vol/nifi-reg/flow-storage/ - for storing flow versions</li><li>temp-vol/tls-cert/ - for TLS certificates</li></ul> |
-| GIT_REPO_DIR        | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                                                                                            |
-| TRUSTSTORE_PASSWORD | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                                                                                            |
-| KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                                                                                             |
+   | Parameter           | Required | Default | Description                                                                                                                                                                                                                                                              |
+   |---------------------|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+   | BASE_DIR            | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)<br>- temp-vol/nifi-reg/flow-storage/ - for storing flow versions<br>- temp-vol/tls-cert/ - for TLS certificates |
+   | GIT_REPO_DIR        | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                                                                          |
+   | TRUSTSTORE_PASSWORD | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                                                                          |
+   | KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                                                                           |
 
 2. Change image in docker compose [`docker-compose.yaml`](../dev/tls/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
 3. Start docker compose
@@ -48,22 +51,25 @@ docker compose -f dev/tls/docker-compose.yaml --env-file dev/tls/docker.env up -
 ### DB
 
 Starts the following services:
+
 1. qubership-nifi-registry
 2. postgresql.
 
 As well as one auxiliary container:
+
 1. nifi-toolkit - to generate TLS certificates using Apache NiFi Toolkit.
 
 Execute the following steps, to run service:
+
 1. Set up environment parameters [`docker.env`](../dev/tls-db/docker.env)
 
-| Parameter           | Required | Default | Description                                                                                                                                                                                                                            |
-|---------------------|----------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BASE_DIR            | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<ul><li>temp-vol/pg-db/ - for storing PostgreSQL database with qubership-nifi-registry data</li><li>temp-vol/tls-cert/ - for TLS certificates</li></ul> |
-| GIT_REPO_DIR        | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                                        |
-| TRUSTSTORE_PASSWORD | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                                        |
-| KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                                         |
-| DB_PASSWORD         | Y        |         | Defines password for PostgreSQL database.                                                                                                                                                                                              |
+   | Parameter           | Required | Default | Description                                                                                                                                                                                                             |
+   |---------------------|----------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+   | BASE_DIR            | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/pg-db/ - for storing PostgreSQL database with qubership-nifi-registry data<br>- temp-vol/tls-cert/ - for TLS certificates |
+   | GIT_REPO_DIR        | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                         |
+   | TRUSTSTORE_PASSWORD | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                         |
+   | KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                          |
+   | DB_PASSWORD         | Y        |         | Defines password for PostgreSQL database.                                                                                                                                                                               |
 
 2. Start docker compose
 
@@ -74,25 +80,28 @@ docker compose -f dev/tls-db/docker-compose.yaml --env-file dev/tls-db/docker.en
 ### OIDC
 
 Starts the following services:
+
 1. qubership-nifi-registry
 2. postgresql
 3. keycloak.
 
 As well as two auxiliary containers:
+
 1. nifi-toolkit - to generate TLS certificates using Apache NiFi Toolkit
 2. postgresql-init - to create keycloak database.
 
 Execute the following steps, to run service:
+
 1. Set up environment parameters [`docker.env`](../dev/oidc/docker.env)
 
-| Parameter               | Required | Default | Description                                                                                                                                                                                                                            |
-|-------------------------|----------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BASE_DIR                | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<ul><li>temp-vol/pg-db/ - for storing PostgreSQL database with qubership-nifi-registry data</li><li>temp-vol/tls-cert/ - for TLS certificates</li></ul> |
-| GIT_REPO_DIR            | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                                        |
-| TRUSTSTORE_PASSWORD     | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                                        |
-| KEYSTORE_PASSWORD       | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                                         |
-| DB_PASSWORD             | Y        |         | Defines password for postgres user in local PostgreSQL database.                                                                                                                                                                       |
-| KEYCLOAK_ADMIN_PASSWORD | Y        |         | Defines password for admin user in local keycloak instance.                                                                                                                                                                            |
+   | Parameter               | Required | Default | Description                                                                                                                                                                                                             |
+   |-------------------------|----------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+   | BASE_DIR                | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/pg-db/ - for storing PostgreSQL database with qubership-nifi-registry data<br>- temp-vol/tls-cert/ - for TLS certificates |
+   | GIT_REPO_DIR            | Y        | .       | Defines directory, where qubership-nifi-registry repository is located locally.                                                                                                                                         |
+   | TRUSTSTORE_PASSWORD     | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                         |
+   | KEYSTORE_PASSWORD       | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                          |
+   | DB_PASSWORD             | Y        |         | Defines password for postgres user in local PostgreSQL database.                                                                                                                                                        |
+   | KEYCLOAK_ADMIN_PASSWORD | Y        |         | Defines password for admin user in local keycloak instance.                                                                                                                                                             |
 
 2. Start docker compose
 

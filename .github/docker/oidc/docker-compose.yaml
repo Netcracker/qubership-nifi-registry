@@ -28,6 +28,7 @@ services:
     volumes:
       - tls-cert-reg:/tmp/tls-certs
       - tls-cert-ca:/tmp/cert
+      - tls-cert-pwd:/tmp/cert-pwd
     ports:
       - 127.0.0.1:18080:18080
     environment:
@@ -36,10 +37,11 @@ services:
       - NIFI_REGISTRY_WEB_HTTP_HOST=0.0.0.0
       - KEYSTORE_PATH=/tmp/tls-certs/keystore.p12
       - KEYSTORE_TYPE=PKCS12
-      - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD_NIFI_REG}
       - TRUSTSTORE_PATH=/tmp/tls-certs/truststore.p12
       - TRUSTSTORE_TYPE=PKCS12
-      - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
+      - NIFI_REG_KEY_PASSWORD_PATH=/tmp/cert-pwd/keystore-nifi-reg.pass
+      - NIFI_REG_KEYSTORE_PASSWORD_PATH=/tmp/cert-pwd/keystore-nifi-reg.pass
+      - NIFI_REG_TRUSTSTORE_PASSWORD_PATH=/tmp/cert-pwd/truststore.pass
       - INITIAL_ADMIN_IDENTITY=admin
       - NIFI_REG_USE_PGDB=true
       - NIFI_REG_DB_URL=jdbc:postgresql://postgresql:5432/postgres?sslResponseTimeout=5000&ssl=false
@@ -154,6 +156,12 @@ volumes:
       o: bind
       type: none
       device: $BASE_DIR/temp-vol/tls-cert/ca/
+  tls-cert-pwd:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASE_DIR/temp-vol/tls-cert/pwd/
   pg-db:
     driver: local
     driver_opts:

@@ -46,6 +46,35 @@ export TRUSTSTORE_PATH="/tmp/tls-certs/truststore.p12"
 export TRUSTSTORE_TYPE="PKCS12"
 export KEYSTORE_PATH="/tmp/tls-certs/keystore.p12"
 export KEYSTORE_TYPE="PKCS12"
+
+### key password
+if [ -z "$KEY_PASSWORD" ] && [ -n "$NIFI_REG_KEY_PASSWORD_PATH" ]; then
+    if [ -f "$NIFI_REG_KEY_PASSWORD_PATH" ]; then
+        info "Found key password file $NIFI_REG_KEY_PASSWORD_PATH, fetching data"
+        KEY_PASSWORD=$(cat "$NIFI_REG_KEY_PASSWORD_PATH")
+    else
+        warn "Key password file $NIFI_REG_KEY_PASSWORD_PATH does not exist"
+    fi
+fi
+### keystore password
+if [ -z "$KEYSTORE_PASSWORD" ] && [ -n "$NIFI_REG_KEYSTORE_PASSWORD_PATH" ]; then
+    if [ -f "$NIFI_REG_KEYSTORE_PASSWORD_PATH" ]; then
+        info "Found keystore password file $NIFI_REG_KEYSTORE_PASSWORD_PATH, fetching data"
+        KEYSTORE_PASSWORD=$(cat "$NIFI_REG_KEYSTORE_PASSWORD_PATH")
+    else
+        warn "Keystore password file $NIFI_REG_KEYSTORE_PASSWORD_PATH does not exist"
+    fi
+fi
+### truststore password
+if [ -z "$TRUSTSTORE_PASSWORD" ] && [ -n "$NIFI_REG_TRUSTSTORE_PASSWORD_PATH" ]; then
+    if [ -f "$NIFI_REG_TRUSTSTORE_PASSWORD_PATH" ]; then
+        info "Found truststore password file $NIFI_REG_TRUSTSTORE_PASSWORD_PATH, fetching data"
+        TRUSTSTORE_PASSWORD=$(cat "$NIFI_REG_TRUSTSTORE_PASSWORD_PATH")
+    else
+        warn "Truststore password file $NIFI_REG_TRUSTSTORE_PASSWORD_PATH does not exist"
+    fi
+fi
+
 TRUSTSTORE_PASSWORD=$(echo "$TRUSTSTORE_PASSWORD" | sed -e "s|&|\\\\&|g")
 export TRUSTSTORE_PASSWORD
 KEYSTORE_PASSWORD=$(echo "$KEYSTORE_PASSWORD" | sed -e "s|&|\\\\&|g")
