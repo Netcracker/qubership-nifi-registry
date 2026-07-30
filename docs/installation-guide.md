@@ -1,6 +1,6 @@
 # Installation Guide
 
-qubership-nifi-registry service can be started in docker (or compatible) container runtime with support of `docker compose` command.
+qubership-nifi-registry service can be started in Docker (or compatible) container runtime with support of `docker compose` command.
 
 Sections below describe typical startup configurations:
 
@@ -21,8 +21,8 @@ Execute the following steps, to run service:
    |-----------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
    | BASE_DIR  | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)<br>- temp-vol/nifi-reg/flow-storage/ - for storing flow versions |
 
-2. Change image in docker compose [`docker-compose.yaml`](../dev/plain/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
-3. Start docker compose
+2. Change image in Docker Compose [`docker-compose.yaml`](../dev/plain/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
+3. Start Docker Compose
 
 ```shell
 docker compose -f dev/plain/docker-compose.yaml --env-file dev/plain/docker.env up -d
@@ -41,8 +41,8 @@ Execute the following steps, to run service:
    | TRUSTSTORE_PASSWORD | Y        |         | Defines password for keystore with trusted certificates. It'll be created during the first run.                                                                                                                                                                          |
    | KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                                                                           |
 
-2. Change image in docker compose [`docker-compose.yaml`](../dev/tls/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
-3. Start docker compose
+2. Change image in Docker Compose [`docker-compose.yaml`](../dev/tls/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
+3. Start Docker Compose
 
 ```shell
 docker compose -f dev/tls/docker-compose.yaml --env-file dev/tls/docker.env up -d
@@ -53,7 +53,7 @@ docker compose -f dev/tls/docker-compose.yaml --env-file dev/tls/docker.env up -
 Starts the following services:
 
 1. qubership-nifi-registry
-2. postgresql.
+2. PostgreSQL.
 
 As well as one auxiliary container:
 
@@ -71,7 +71,7 @@ Execute the following steps, to run service:
    | KEYSTORE_PASSWORD   | Y        |         | Defines password for keystore with server certificates. It'll be created during the first run.                                                                                                                          |
    | DB_PASSWORD         | Y        |         | Defines password for PostgreSQL database.                                                                                                                                                                               |
 
-2. Start docker compose
+2. Start Docker Compose
 
 ```shell
 docker compose -f dev/tls-db/docker-compose.yaml --env-file dev/tls-db/docker.env up -d
@@ -82,7 +82,7 @@ docker compose -f dev/tls-db/docker-compose.yaml --env-file dev/tls-db/docker.en
 Starts the following services:
 
 1. qubership-nifi-registry
-2. postgresql
+2. PostgreSQL
 3. keycloak.
 
 As well as two auxiliary containers:
@@ -103,7 +103,7 @@ Execute the following steps, to run service:
    | DB_PASSWORD             | Y        |         | Defines password for postgres user in local PostgreSQL database.                                                                                                                                                        |
    | KEYCLOAK_ADMIN_PASSWORD | Y        |         | Defines password for admin user in local keycloak instance.                                                                                                                                                             |
 
-2. Start docker compose
+2. Start Docker Compose
 
 ```shell
 docker compose -f dev/oidc/docker-compose.yaml --env-file dev/oidc/docker.env up -d
