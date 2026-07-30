@@ -47,7 +47,7 @@
         <quarkus.platform.version>3.27.2</quarkus.platform.version>
         <quarkus-plugin.version>3.27.2</quarkus-plugin.version>
         <consul-config-source.version>8.4.1</consul-config-source.version>
-        <netty.version>4.1.135.Final</netty.version>
+        <netty.version>4.1.136.Final</netty.version>
         <jackson.version>2.21.4</jackson.version>
         <qubership-nifi.version>2.6.2</qubership-nifi.version>
         <!--test libraries versions-->
