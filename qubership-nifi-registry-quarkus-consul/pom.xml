@@ -40,8 +40,10 @@
     </modules>
 
     <properties>
+        <!--Keep 21 for backward compatibility-->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
         <quarkus.platform.version>3.27.2</quarkus.platform.version>
@@ -55,9 +57,9 @@
         <testcontainers.version>2.0.2</testcontainers.version>
         <!--plugin versions-->
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <pmd.version>3.26.0</pmd.version>
-        <jacoco.version>0.8.11</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <!--skipUnitTests default value-->
         <skipUnitTests>false</skipUnitTests>

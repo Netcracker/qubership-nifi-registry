@@ -2,6 +2,7 @@
 
 qubership-nifi-registry is a service built on top of Apache NiFi Registry.
 Compared with Apache NiFi Registry it supports:
+
 1. additional environment variables for configuration.
 2. configuration parameters for PostgreSQL DB storage.
 3. migration process for moving from file-based storage to DB storage.
@@ -9,6 +10,7 @@ Compared with Apache NiFi Registry it supports:
 5. Integration with Consul as configuration source for logging levels and other configuration properties.
 
 ## Status
+
 [![Build status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/maven-build.yaml)
 [![Autotests status](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml/badge.svg)](https://github.com/Netcracker/qubership-nifi-registry/actions/workflows/docker-build-and-test.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Netcracker_qubership-nifi-registry&metric=coverage)](https://sonarcloud.io/summary/overall?id=Netcracker_qubership-nifi-registry)
@@ -22,26 +24,31 @@ Compared with Apache NiFi Registry it supports:
 
 qubership-nifi-registry serves as version control tool for qubership-nifi (or Apache NiFi in general).
 Depending on configuration, it relies on:
+
 1. externally provided TLS certificates: TLS is required for security to be enabled, so TLS certificates are need for all configurations, except may be configuration for local development
 2. identity provider service: required for OIDC integration, if it's enabled
 3. PostgreSQL DB: required, if DB storage is used. Alternative is to store data on disk with H2 DB (metadata DB), files (flow storage and users/policies information).
 
 ## Build
+
 ### Prerequisites
 
 Build process requires the following tools:
-1. Java - JDK 17 or JDK 21
+
+1. Java - JDK 25
 2. Maven - Maven 3.x, see [maven installation guide](https://maven.apache.org/install.html) for details on how to install
 3. Docker - any version of Docker Engine or any compatible Docker container runtime.
 
 ### Project build
 
 To execute maven build, run:
+
 ```shell
 mvn clean install
 ```
 
 Once maven build is completed, you can execute Docker build. To do that, run:
+
 ```shell
 docker build .
 ```
