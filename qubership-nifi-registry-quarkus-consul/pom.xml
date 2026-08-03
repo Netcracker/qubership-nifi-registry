@@ -5,7 +5,7 @@
     <groupId>org.qubership.nifi</groupId>
     <artifactId>qubership-nifi-registry-quarkus-consul</artifactId>
     <packaging>pom</packaging>
-    <version>2.4.4-SNAPSHOT</version>
+    <version>2.5.1-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
@@ -40,23 +40,26 @@
     </modules>
 
     <properties>
+        <!--Keep 21 for backward compatibility-->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
         <quarkus.platform.version>3.27.2</quarkus.platform.version>
         <quarkus-plugin.version>3.27.2</quarkus-plugin.version>
         <consul-config-source.version>8.4.1</consul-config-source.version>
-        <netty.version>4.1.135.Final</netty.version>
-        <qubership-nifi.version>2.5.0</qubership-nifi.version>
+        <netty.version>4.1.136.Final</netty.version>
+        <jackson.version>2.21.4</jackson.version>
+        <qubership-nifi.version>2.6.2</qubership-nifi.version>
         <!--test libraries versions-->
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
         <testcontainers.version>2.0.2</testcontainers.version>
         <!--plugin versions-->
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <pmd.version>3.26.0</pmd.version>
-        <jacoco.version>0.8.11</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <!--skipUnitTests default value-->
         <skipUnitTests>false</skipUnitTests>
@@ -68,6 +71,13 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
                 <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

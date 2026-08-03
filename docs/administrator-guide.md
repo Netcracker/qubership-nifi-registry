@@ -16,9 +16,12 @@ The table below describes environment variables supported by qubership-nifi-regi
 | OIDC_DISCOVERY_URL_NEW                           | Y (if AUTH = oidc)                |         | The Discovery Configuration URL for the OpenID Connect Provider                                                                                                                                                                                        |
 | OIDC_CLIENT_ID                                   | Y (if AUTH = oidc)                |         | The Client ID for NiFi registered with the OpenID Connect Provider                                                                                                                                                                                     |
 | OIDC_CLIENT_SECRET                               | Y (if AUTH = oidc)                |         | The Client Secret for NiFi registered with the OpenID Connect Provider                                                                                                                                                                                 |
-| KEY_PASSWORD                                     | Y (if AUTH = oidc or tls or ldap) |         | The key password for secret key stored in the keystore. May contain any printable characters except for `\` (backslash).                                                                                                                               |
-| KEYSTORE_PASSWORD                                | Y (if AUTH = oidc or tls or ldap) |         | The keystore password for the keystore. May contain any printable characters except for `\` (backslash).                                                                                                                                               |
-| TRUSTSTORE_PASSWORD                              | Y (if AUTH = oidc or tls or ldap) |         | The truststore password. May contain any printable characters except for `\` (backslash).                                                                                                                                                              |
+| KEY_PASSWORD                                     | N                                 |         | The key password for secret key stored in the keystore. May contain any printable characters except for `\` (backslash). Either `KEY_PASSWORD` or `NIFI_REG_KEY_PASSWORD_PATH` must be set, if `AUTH` = oidc or tls or ldap.                           |
+| NIFI_REG_KEY_PASSWORD_PATH                       | N                                 |         | Path to the file with the key password for secret key stored in the keystore. Used only if `KEY_PASSWORD` is not set. Supported for `AUTH` = oidc or tls.                                                                                              |
+| KEYSTORE_PASSWORD                                | N                                 |         | The keystore password for the keystore. May contain any printable characters except for `\` (backslash). Either `KEYSTORE_PASSWORD` or `NIFI_REG_KEYSTORE_PASSWORD_PATH` must be set, if `AUTH` = oidc or tls or ldap.                                 |
+| NIFI_REG_KEYSTORE_PASSWORD_PATH                  | N                                 |         | Path to the file with the keystore password for the keystore. Used only if `KEYSTORE_PASSWORD` is not set. Supported for `AUTH` = oidc or tls.                                                                                                         |
+| TRUSTSTORE_PASSWORD                              | N                                 |         | The truststore password. May contain any printable characters except for `\` (backslash). Either `TRUSTSTORE_PASSWORD` or `NIFI_REG_TRUSTSTORE_PASSWORD_PATH` must be set, if `AUTH` = oidc or tls or ldap.                                            |
+| NIFI_REG_TRUSTSTORE_PASSWORD_PATH                | N                                 |         | Path to the file with the truststore password. Used only if `TRUSTSTORE_PASSWORD` is not set. Supported for `AUTH` = oidc or tls.                                                                                                                      |
 | NIFI_REGISTRY_WEB_HTTP_PORT                      | N                                 | 18080   | The HTTP port.                                                                                                                                                                                                                                         |
 | NIFI_REGISTRY_WEB_HTTPS_PORT                     | N                                 |         | The HTTPS host. It is blank by default.                                                                                                                                                                                                                |
 | NIFI_REGISTRY_WEB_HTTP_HOST                      | N                                 |         | The HTTP host. It is blank by default.                                                                                                                                                                                                                 |
@@ -43,7 +46,6 @@ The table below describes environment variables supported by qubership-nifi-regi
 | NIFI_REGISTRY_DB_DEBUG_SQL                       | N                                 | false   | Whether or not enable debug logging for SQL statements. Defines value for `nifi.registry.db.sql.debug` property.                                                                                                                                       |
 | NIFI_REGISTRY_SECURITY_USER_OIDC_CONNECT_TIMEOUT | N                                 | 5 secs  | Socket Connect timeout when communicating with the OpenID Connect Provider. Defines value for `nifi.registry.security.user.oidc.connect.timeout` property.                                                                                             |
 | NIFI_REGISTRY_SECURITY_USER_OIDC_READ_TIMEOUT    | N                                 | 5 secs  | Socket Read timeout when communicating with the OpenID Connect Provider. Defines value for `nifi.registry.security.user.oidc.read.timeout` property.                                                                                                   |
-
 
 ## Extension points
 
@@ -72,10 +74,14 @@ The table below provides a list of volumes and directories and their description
 | TLS certificates           | Directory | /tmp/tls-certs                                           | Contains TLS keystore (keystore.p12) and truststore (truststore.p12). Required for startup with AUTH = oidc, tls, ldap.                                                  |
 | Configuration data         | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains metadata database and flow storage, if NIFI_REG_USE_PGDB != `true`.                                                                                             |
 | Cached providers extension | Directory | /opt/nifi-registry/nifi-registry-current/ext-cached      | Extension for cached access policy and user group providers. See also environment property `NIFI_REG_DB_FLOW_AUTHORIZERS` and section below dedicated to this extension. |
+| Key password               | File      | `$NIFI_REG_KEY_PASSWORD_PATH`                            | Contains the key password for secret key stored in the keystore. File-based alternative to `KEY_PASSWORD`. Used only if `KEY_PASSWORD` is not set.                       |
+| Keystore password          | File      | `$NIFI_REG_KEYSTORE_PASSWORD_PATH`                       | Contains the keystore password. File-based alternative to `KEYSTORE_PASSWORD`. Used only if `KEYSTORE_PASSWORD` is not set.                                              |
+| Truststore password        | File      | `$NIFI_REG_TRUSTSTORE_PASSWORD_PATH`                     | Contains the truststore password. File-based alternative to `TRUSTSTORE_PASSWORD`. Used only if `TRUSTSTORE_PASSWORD` is not set.                                        |
 
 ## Changing logging levels
 
 You can modify logging levels by:
+
 1. Setting `ROOT_LOG_LEVEL` environment variable. Be mindful that this variable allows you to set only root logging level;
 2. Setting logging level for specific package in Consul. Consul property name must start with "logger." followed by package name. Value should be one of logging level supported by Logback: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF. Property should be located in one of two locations:
     1. `config/${NAMESPACE}/application`, where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
@@ -84,16 +90,19 @@ You can modify logging levels by:
 ## Changing NiFi Registry configuration properties
 
 NiFi Registry configuration properties could be set up in Consul:
+
 1. Property name must start with `nifi.registry.`
 2. Property should be located in one of two locations:
     1. `config/${NAMESPACE}/application`, where `NAMESPACE` is a value of `NAMESPACE` environment variable, or value = `local`, if not set.
     2. `config/${NAMESPACE}/${MICROSERVICE_NAME}` or `config/${NAMESPACE}/qubership-nifi-registry`, if `MICROSERVICE_NAME` not set.
 
 To change NiFi Registry properties:
+
 1. Change the NiFi Registry properties in Consul as per your requirements.
 2. Restart qubership-nifi-registry container.
 
 The list of properties that can be configured via Consul:
+
 - nifi.registry.web.https.application.protocols
 - nifi.registry.web.jetty.threads
 - nifi.registry.web.should.send.server.version
@@ -115,6 +124,7 @@ The detailed description of all supported NiFi Registry properties is available 
 ## Migration from file storage
 
 To migrate data from file-based storage to PostgreSQL DB one needs to:
+
 1. enable DB usage for storage in environment variables: set NIFI_REG_USE_PGDB = `true`
 2. set up DB connection details:
    - either via environment variables (NIFI_REG_DB_URL, NIFI_REG_DB_USERNAME, NIFI_REG_DB_PASSWORD)
@@ -131,6 +141,7 @@ This extension contains libraries for PostgreSQL DB-based access policy (CachedD
 Functionality of these providers is identical to standard DatabaseAccessPolicyProvider and DatabaseUserGroupProvider.
 Configuration parameters are the same as for standard DatabaseAccessPolicyProvider and DatabaseUserGroupProvider.
 The differences are:
+
 1. only PostgreSQL Database is supported
 2. cached providers load in-memory cache for all entities, if bulk method (e.g. getPolicies or getUsers) is called, or only accessed entities (if single gets are used).
 3. cache is hold until the next restart. The assumption is that all changes to DB are done via provider, so it can properly update the cache.
