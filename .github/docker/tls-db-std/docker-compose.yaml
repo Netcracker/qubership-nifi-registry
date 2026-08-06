@@ -18,7 +18,7 @@ services:
       nifi-toolkit:
         condition: service_completed_successfully
       postgresql:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
@@ -39,13 +39,32 @@ services:
       - dbUrl=jdbc:postgresql://postgresql:5432/postgres
       - dbUsername=postgres
       - dbPassword=${DB_PASSWORD}
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry
     hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
   consul:
     image: hashicorp/consul:1.20
     ports:
       - 127.0.0.1:8500:8500
     hostname: consul
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "wget -q -O - http://127.0.0.1:8500/v1/status/leader | grep -q ':'"
+      start_period: 10s
+      interval: 5s
+      timeout: 3s
+      retries: 12
   postgresql:
     image: postgres:16.8
     volumes:
@@ -55,6 +74,14 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     container_name: postgresql
     hostname: postgresql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U postgres -d postgres"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
 volumes:
   tls-scripts:
     driver: local

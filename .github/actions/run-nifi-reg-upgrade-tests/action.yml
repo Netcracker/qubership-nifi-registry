@@ -25,33 +25,22 @@ runs:
         #prepare both new run mode and original run mode, only the latter must be used
         prepare_results_dir "$origRunMode"
         echo "RUN_MODE=$newRunMode" >> $GITHUB_OUTPUT
-    - name: Run local nifi with 1.x version
+    - name: Run local nifi with 1.x version and wait for containers to become healthy
       shell: bash
+      continue-on-error: true
       run: |
-        echo "Starting containers..."
+        . .github/workflows/sh/nifi-lib.sh
         #latest tag before upgrade:
         export NIFI_REG_IMAGE='ghcr.io/netcracker/qubership-nifi-registry'
         export NIFI_REG_IMAGE_TAG='1.0.9'
         echo "Running with nifi registry version: $NIFI_REG_IMAGE:$NIFI_REG_IMAGE_TAG"
-        docker compose -f .github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml --env-file ./docker.env up -d
-    - name: Wait for nifi-registry container to start (plain)
-      if: ${{ inputs.run-mode == 'upgrade-plain' }}
-      shell: bash
-      continue-on-error: true
-      run: |
-        . .github/workflows/sh/nifi-lib.sh
-        wait_nifi_reg_container "localhost" "18080" ".github/docker/plain/docker-compose.yaml" "false" \
-          "5" "40" "${{ inputs.run-mode }}"
-    - name: Wait for nifi-registry container to start (TLS)
-      if: ${{ inputs.run-mode != 'upgrade-plain' }}
-      shell: bash
-      continue-on-error: true
-      run: |
-        . .github/workflows/sh/nifi-lib.sh
-        NIFI_CLIENT_PASSWORD=$(cat ./temp-vol/tls-cert/nifi/CN=admin_OU=NIFI.password)
-        wait_nifi_reg_container "localhost" "18080" ".github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml" "true" \
-          "5" "80" "${{ inputs.run-mode }}" "./temp-vol/tls-cert/nifi/nifi-cert.pem" \
-          "./temp-vol/tls-cert/nifi/CN=admin_OU=NIFI.p12" "$NIFI_CLIENT_PASSWORD"
+        #the 1.x image has neither ready.sh nor curl, so override the healthcheck:
+        healthcheckFile='.github/docker/upgrade/healthcheck-1x-tls.yaml'
+        if [ "${{ inputs.run-mode }}" == 'upgrade-plain' ]; then
+          healthcheckFile='.github/docker/upgrade/healthcheck-1x-plain.yaml'
+        fi
+        start_containers_and_wait ".github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml" \
+          "${{ inputs.run-mode }}" "180" "$healthcheckFile"
     - name: Run nifi registry policy API tests
       if: ${{ inputs.run-mode != 'upgrade-plain' }}
       continue-on-error: true
@@ -77,29 +66,13 @@ runs:
         tls-ca-certs: ${{ inputs.run-mode != 'upgrade-plain' && 'nifi/nifi-cert.pem' || '' }}
         tls-client-certs-config: ${{ inputs.run-mode != 'upgrade-plain' && 'newman-tls-config.json' || '' }}
         docker-compose-file: ".github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml"
-    - name: Run local nifi with 2.x version
-      shell: bash
-      run: |
-        echo "Starting containers..."
-        docker compose -f .github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml --env-file ./docker.env up -d
-    - name: Wait for nifi-registry container to start (plain)
-      if: ${{ inputs.run-mode == 'upgrade-plain' }}
+    - name: Run local nifi with 2.x version and wait for containers to become healthy
       shell: bash
       continue-on-error: true
       run: |
         . .github/workflows/sh/nifi-lib.sh
-        wait_nifi_reg_container "localhost" "18080" ".github/docker/plain/docker-compose.yaml" "false" \
-          "5" "40" "${{ inputs.run-mode }}"
-    - name: Wait for nifi-registry container to start (TLS)
-      if: ${{ inputs.run-mode != 'upgrade-plain' }}
-      shell: bash
-      continue-on-error: true
-      run: |
-        . .github/workflows/sh/nifi-lib.sh
-        NIFI_CLIENT_PASSWORD=$(cat ./temp-vol/tls-cert/nifi/CN=admin_OU=NIFI.password)
-        wait_nifi_reg_container "localhost" "18080" ".github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml" "true" \
-          "5" "80" "${{ inputs.run-mode }}" "./temp-vol/tls-cert/nifi/nifi-cert.pem" \
-          "./temp-vol/tls-cert/nifi/CN=admin_OU=NIFI.p12" "$NIFI_CLIENT_PASSWORD"
+        start_containers_and_wait ".github/docker/${{ steps.prepare-env.outputs.RUN_MODE }}/docker-compose.yaml" \
+          "${{ inputs.run-mode }}" "180"
     - name: Run nifi registry after upgrade API tests
       continue-on-error: true
       uses: ./.github/actions/run-newman-tests

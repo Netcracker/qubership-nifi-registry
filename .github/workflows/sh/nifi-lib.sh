@@ -1,78 +1,5 @@
 #!/bin/bash -e
 
-wait_for_service() {
-    local serviceHost="$1"
-    local servicePort="$2"
-    local apiUrlToCheck="$3"
-    local timeout="$4"
-    local isTls="$5"
-    local tlsAdditionalCAs="$6"
-    local tlsClientKeystore="$7"
-    local tlsClientPassword="$8"
-
-    if [ -z "$timeout" ]; then
-        echo "Using default timeout = 180 seconds"
-        timeout=180
-    fi
-    if [ -z "$serviceHost" ]; then
-        echo "Using default host = 127.0.0.1"
-        serviceHost="127.0.0.1"
-    fi
-    if [ -z "$servicePort" ]; then
-        echo "Using default port = 8080"
-        servicePort="8080"
-    fi
-    if [ -z "$apiUrlToCheck" ]; then
-        echo "Using default apiUrlToCheck = /nifi-api/controller/config"
-        apiUrlToCheck='/nifi-api/controller/config'
-    fi
-
-    serviceUrl=""
-    tlsArgs=""
-    if [ "${isTls}" == "true" ]; then
-        echo "Using TLS mode..."
-        echo "Waiting for service to be available on port 8080 with timeout = $timeout"
-        serviceUrl="https://$serviceHost:$servicePort$apiUrlToCheck"
-        echo "Client keystore: $tlsClientKeystore (p12), ca cert = $tlsAdditionalCAs"
-        tlsArgs=" --cert '$tlsClientKeystore:$tlsClientPassword' --cert-type P12 --cacert $tlsAdditionalCAs"
-    else
-        echo "Using plain mode..."
-        echo "Waiting for service to be available on port 8080 with timeout = $timeout"
-        serviceUrl="http://$serviceHost:$servicePort$apiUrlToCheck"
-    fi
-
-    startTime=$(date +%s)
-    endTime=$((startTime + timeout))
-    remainingTime="$timeout"
-    res=1
-    while [ "$res" != "0" ]; do
-        echo "Waiting for service to be available under URL = $serviceUrl, remaining time = $remainingTime"
-        res=0
-        resp_code=""
-        resp_code=$(eval curl -sS -w '%{response_code}' -o ./temp-resp.json --connect-timeout 5 --max-time 10 "$tlsArgs" "$serviceUrl") || {
-            res="$?"
-            echo "Failed to call service API, continue waiting..."
-        }
-        if [ "$res" == "0" ]; then
-            if [ "$resp_code" != '200' ]; then
-                echo "Got response with code = $resp_code and body: "
-                cat ./temp-resp.json
-                res="$resp_code"
-                echo "Continue waiting..."
-            fi
-        fi
-        echo ""
-        currentTime=$(date +%s)
-        remainingTime=$((endTime - currentTime))
-        if ((currentTime > endTime)); then
-            echo "ERROR: timeout reached; failed to wait"
-            return 1
-        fi
-        sleep 2
-    done
-    echo "Wait finished successfully. Service is available."
-}
-
 generate_random_hex_password() {
     #args -- letters, numbers
     echo "$(tr -dc A-F </dev/urandom | head -c "$1")""$(tr -dc 0-9 </dev/urandom | head -c "$2")" | fold -w 1 | shuf | tr -d '\n'
@@ -164,65 +91,38 @@ prepare_results_dir() {
     mkdir -p "./test-results/$resultsDir/"
 }
 
-wait_nifi_container() {
-    local initialWait="$1"
-    local waitTimeout="$2"
-    local hostName="$3"
-    local portNum="$4"
-    local useTls="$5"
-    local containerName="$6"
-    local resultsDir="$7"
-    local caCert="$8"
-    local clientKeystore="$9"
-    local clientPassword="${10}"
-    local apiUrl="/nifi-api/controller/config"
-    echo "Sleep for $initialWait seconds..."
-    sleep "$initialWait"
-    echo "Waiting for nifi on $hostName:$portNum (TLS = $useTls, container = $containerName, apiUrl=$apiUrl) to start..."
-    wait_success="1"
-    wait_for_service "$hostName" "$portNum" "$apiUrl" "$waitTimeout" "$useTls" \
-        "$caCert" "$clientKeystore" "$clientPassword" || wait_success="0"
-    if [ "$wait_success" == '0' ]; then
-        echo "Wait failed, nifi not available. Last 500 lines of logs for container:"
-        echo "resultsDir=$resultsDir"
-        docker logs -n 500 "$containerName" >./nifi_log_tmp.lst
-        cat ./nifi_log_tmp.lst
-        echo "Wait failed, nifi not available" >"./test-results/$resultsDir/failed_nifi_wait.lst"
-        mv ./nifi_log_tmp.lst "./test-results/$resultsDir/nifi_log_after_wait.log"
+start_containers_and_wait() {
+    local composeFile="$1"
+    local resultsDir="$2"
+    local waitTimeout="$3"
+    local extraComposeFile="$4"
+    if [ -z "$waitTimeout" ]; then
+        echo "Using default timeout = 180 seconds"
+        waitTimeout=180
     fi
-}
-
-wait_nifi_reg_container() {
-    local hostName="$1"
-    local portNum="$2"
-    local composeFile="$3"
-    local useTls="$4"
-    local initialWait="$5"
-    local waitTimeout="$6"
-    local resultsDir="$7"
-    local caCert="$8"
-    local clientKeystore="$9"
-    local clientPassword="${10}"
-    local apiUrl='/nifi-registry-api/config'
-    echo "Sleep for $initialWait seconds..."
-    sleep "$initialWait"
-    echo "Waiting for nifi registry on $hostName:$portNum (TLS = $useTls, url = $apiUrl) to start..."
+    local composeArgs=(-f "$composeFile")
+    if [ -n "$extraComposeFile" ]; then
+        echo "Using additional compose file: $extraComposeFile"
+        composeArgs+=(-f "$extraComposeFile")
+    fi
+    composeArgs+=(--env-file ./docker.env)
+    echo "Starting containers from $composeFile and waiting up to $waitTimeout seconds for them to become healthy..."
     wait_success="1"
-    wait_for_service "$hostName" "$portNum" "$apiUrl" "$waitTimeout" "$useTls" \
-        "$caCert" "$clientKeystore" "$clientPassword" || wait_success="0"
+    docker compose "${composeArgs[@]}" up -d --wait --wait-timeout "$waitTimeout" || wait_success="0"
     summaryFileName=$(get_next_summary_file_name "$resultsDir")
     if [ "$wait_success" == '0' ]; then
         echo "List of containers:"
         docker ps -a
         echo "Wait failed, nifi registry not available. Last 500 lines of logs for compose $composeFile"
         echo "resultsDir=$resultsDir"
-        docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 >./nifi_registry_log_tmp.lst
+        docker compose "${composeArgs[@]}" logs -n 500 >./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
         echo "Wait failed, nifi registry not available" >"./test-results/$resultsDir/failed_nifi_registry_wait.lst"
         mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
         echo "| Wait for container start                       | Failed :x:                 |" >"./test-results/$resultsDir/$summaryFileName"
         return 1
     fi
+    echo "Wait finished successfully. All containers are up and healthy."
     echo "| Wait for container start                       | Success :white_check_mark: |" >"./test-results/$resultsDir/$summaryFileName"
     return 0
 }
