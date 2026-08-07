@@ -4,7 +4,7 @@ services:
     image: apache/nifi-toolkit:1.28.1
     depends_on:
       consul:
-        condition: service_started
+        condition: service_healthy
     container_name: nifi-toolkit
     entrypoint: /bin/bash
     command: /tmp/tls-scripts/nifi-gen-certs.sh
@@ -24,7 +24,9 @@ services:
       nifi-toolkit:
         condition: service_completed_successfully
       postgresql:
-        condition: service_started
+        condition: service_healthy
+      consul:
+        condition: service_healthy
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
@@ -48,8 +50,19 @@ services:
       - CONSUL_URL=consul:8500
       - NIFI_CONSUL_INT_FRAMEWORK=spring
       - CONSUL_ACL_TOKEN=${CONSUL_TOKEN}
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry
     hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
   consul:
     image: hashicorp/consul:1.20
     volumes:
@@ -57,6 +70,14 @@ services:
     ports:
       - 127.0.0.1:8500:8500
     hostname: consul
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "wget -q -O - http://127.0.0.1:8500/v1/status/leader | grep -q ':'"
+      start_period: 10s
+      interval: 5s
+      timeout: 3s
+      retries: 12
   postgresql:
     image: postgres:16.8
     volumes:
@@ -66,6 +87,14 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     container_name: postgresql
     hostname: postgresql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U postgres -d postgres"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
 volumes:
   tls-scripts:
     driver: local

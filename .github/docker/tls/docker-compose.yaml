@@ -17,6 +17,8 @@ services:
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
+      consul:
+        condition: service_healthy
     volumes:
       - nifi-reg-db:/opt/nifi-registry/nifi-registry-current/database
       - nifi-reg-flow:/opt/nifi-registry/nifi-registry-current/flow_storage
@@ -37,13 +39,32 @@ services:
       - CONSUL_ENABLED=true
       - CONSUL_URL=consul:8500
       - NIFI_CONSUL_INT_FRAMEWORK=spring
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry
     hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
   consul:
     image: hashicorp/consul:1.20
     ports:
       - 127.0.0.1:8500:8500
     hostname: consul
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "wget -q -O - http://127.0.0.1:8500/v1/status/leader | grep -q ':'"
+      start_period: 10s
+      interval: 5s
+      timeout: 3s
+      retries: 12
 volumes:
   tls-scripts:
     driver: local

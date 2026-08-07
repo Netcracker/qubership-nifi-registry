@@ -18,7 +18,7 @@ services:
       nifi-toolkit:
         condition: service_completed_successfully
       postgresql:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
@@ -38,8 +38,19 @@ services:
       - NIFI_REG_DB_URL=jdbc:postgresql://postgresql:5432/postgres
       - NIFI_REG_DB_USERNAME=postgres
       - NIFI_REG_DB_PASSWORD=${DB_PASSWORD}
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry-tls-db
     hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
   postgresql:
     image: postgres:16.8
     volumes:
@@ -49,6 +60,14 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     container_name: postgresql
     hostname: postgresql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U postgres -d postgres"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
 volumes:
   tls-scripts:
     driver: local

@@ -34,6 +34,18 @@ services:
       - TRUSTSTORE_TYPE=PKCS12
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
       - INITIAL_ADMIN_IDENTITY=CN=admin, OU=NIFI
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
+    hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
 volumes:
   tls-scripts:
     driver: local

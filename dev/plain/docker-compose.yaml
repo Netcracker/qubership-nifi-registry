@@ -9,6 +9,18 @@ services:
       - 127.0.0.1:18080:18080
     environment:
       - AUTH=none
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
+    hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
 volumes:
   nifi-reg-db:
     driver: local

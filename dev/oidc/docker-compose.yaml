@@ -19,11 +19,11 @@ services:
       nifi-toolkit:
         condition: service_completed_successfully
       postgresql:
-        condition: service_started
+        condition: service_healthy
       postgresql-init:
         condition: service_completed_successfully
       keycloak:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - tls-cert-reg:/tmp/tls-certs
     ports:
@@ -46,8 +46,19 @@ services:
       - OIDC_CLIENT_ID=frontend
       - OIDC_CLIENT_SECRET=frontend
       - "OIDC_DISCOVERY_URL_NEW=http://keycloak:8080/realms/nifi-test-realm/.well-known/openid-configuration"
+      - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry-oidc
     hostname: nifi-registry
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/opt/nifi-registry/scripts/ready.sh"
+      start_period: 90s
+      start_interval: 2s
+      interval: 15s
+      timeout: 5s
+      retries: 3
   postgresql:
     image: postgres:16.8
     volumes:
@@ -57,12 +68,20 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     container_name: postgresql
     hostname: postgresql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U postgres -d postgres"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
   postgresql-init:
     image: postgres:16.8
-    restart: on-failure:30
+    restart: on-failure:3
     depends_on:
       postgresql:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - pg-init-db:/tmp/init-scripts/
     environment:
@@ -75,7 +94,7 @@ services:
     restart: on-failure:3
     depends_on:
       postgresql:
-        condition: service_started
+        condition: service_healthy
       postgresql-init:
         condition: service_completed_successfully
     volumes:
@@ -96,6 +115,19 @@ services:
       - "http://localhost:28080"
       - "--hostname-backchannel-dynamic"
       - "true"
+    # probe the listener: Quarkus opens it once the boot sequence,
+    # including the realm import, has completed.
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "exec 3<>/dev/tcp/127.0.0.1/8080"
+      start_period: 30s
+      start_interval: 2s
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   tls-scripts:
     driver: local
