@@ -54,8 +54,6 @@ services:
       - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry
     hostname: nifi-registry
-    labels:
-      - "autoheal=true" # Label for autoheal to monitor
     healthcheck:
       test:
         - "CMD"
@@ -155,13 +153,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  autoheal:
-    restart: always
-    image: willfarrell/autoheal:latest
-    environment:
-      - AUTOHEAL_CONTAINER_LABEL=autoheal
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 volumes:
   tls-scripts:
     driver: local
