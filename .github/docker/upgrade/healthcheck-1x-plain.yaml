@@ -1,8 +1,8 @@
 ---
-#Healthcheck override for the before-upgrade phase, where nifi-registry runs the 1.x image.
-#That image ships neither ready.sh nor curl, so probe the API with busybox wget instead.
-#Plain mode is unsecured, so an unauthenticated call to /nifi-registry-api/config returns 200.
-#Address the registry by its hostname: it binds to that interface rather than to localhost.
+# Healthcheck override for the before-upgrade phase, where nifi-registry runs the 1.x image.
+# That image ships neither ready.sh nor curl, so probe the API with busybox wget instead.
+# Plain mode is unsecured, so an unauthenticated call to /nifi-registry-api/config returns 200.
+# Address the registry by its hostname: it binds to that interface rather than to localhost.
 services:
   nifi-registry:
     healthcheck:

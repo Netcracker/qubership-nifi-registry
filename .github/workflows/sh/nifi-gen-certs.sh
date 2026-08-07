@@ -65,6 +65,16 @@ create_newman_cert_config(){
 generate_consul_token() {
     local consulHostname=${CONSUL_HOSTNAME}
     echo "Generating consul token for NiFi-Registry..."
+    #Consul keeps its ACL state across compose runs, and the upgrade scenario starts the same
+    #compose file twice. If the token from the first run is still there, there is nothing to do:
+    #bootstrap would be refused with 403 and fail this container.
+    resp_code=$(curl --request GET -sS -w '%{response_code}' -o ./self-token-resp.json \
+        -H "X-Consul-Token: ${CONSUL_TOKEN}" --connect-timeout 5 --max-time 10 \
+        "http://$consulHostname:8500/v1/acl/token/self")
+    if [ "$resp_code" == '200' ]; then
+        echo "ACL token for NiFi-Registry already exists, skipping bootstrap"
+        return 0
+    fi
     #Consul is already healthy at this point: this container depends on it with condition: service_healthy
     echo "Bootstrapping Consul ACL"
     resp_code=$(eval curl --request PUT -sS -w '%{response_code}' -o ./bootstrap-token-resp.json \

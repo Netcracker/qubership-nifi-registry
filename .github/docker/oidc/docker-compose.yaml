@@ -141,9 +141,9 @@ services:
       - "https://localhost:28443"
       - "--hostname-backchannel-dynamic"
       - "true"
-    #the management interface inherits the TLS settings of the main one, so /health/ready
-    #is only reachable over HTTPS. Probe the listener instead: Quarkus opens it once the
-    #boot sequence, including the realm import, has completed.
+    # the management interface inherits the TLS settings of the main one, so /health/ready
+    # is only reachable over HTTPS. Probe the listener instead: Quarkus opens it once the
+    # boot sequence, including the realm import, has completed.
     healthcheck:
       test:
         - "CMD"

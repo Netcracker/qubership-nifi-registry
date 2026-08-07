@@ -115,8 +115,8 @@ services:
       - "http://localhost:28080"
       - "--hostname-backchannel-dynamic"
       - "true"
-    #probe the listener: Quarkus opens it once the boot sequence,
-    #including the realm import, has completed.
+    # probe the listener: Quarkus opens it once the boot sequence,
+    # including the realm import, has completed.
     healthcheck:
       test:
         - "CMD"

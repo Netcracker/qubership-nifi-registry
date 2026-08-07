@@ -39,7 +39,7 @@ services:
       - NIFI_REG_TRUSTSTORE_PASSWORD_PATH=/tmp/cert-pwd/truststore.pass
       - INITIAL_ADMIN_IDENTITY=admin
       - CONSUL_ENABLED=true
-      #default NIFI_CONSUL_INT_FRAMEWORK = quarkus
+      # default NIFI_CONSUL_INT_FRAMEWORK = quarkus
       - CONSUL_URL=http://consul:8500
       - NIFI_REGISTRY_CHECK_HOST=nifi-registry
     container_name: local-nifi-registry

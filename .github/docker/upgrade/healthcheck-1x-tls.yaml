@@ -1,10 +1,10 @@
 ---
-#Healthcheck override for the before-upgrade phase, where nifi-registry runs the 1.x image.
-#That image ships neither ready.sh nor curl. Busybox wget cannot tell 401 apart from a
-#transport failure, and a secured registry may legitimately answer 401 without a client
-#certificate, so probe the listener instead. Jetty starts its connectors last, so an open
-#port means the web application has been deployed. Busybox sh has no /dev/tcp, hence bash.
-#Address the registry by its hostname: it binds to that interface rather than to localhost.
+# Healthcheck override for the before-upgrade phase, where nifi-registry runs the 1.x image.
+# That image ships neither ready.sh nor curl. Busybox wget cannot tell 401 apart from a
+# transport failure, and a secured registry may legitimately answer 401 without a client
+# certificate, so probe the listener instead. Jetty starts its connectors last, so an open
+# port means the web application has been deployed. Busybox sh has no /dev/tcp, hence bash.
+# Address the registry by its hostname: it binds to that interface rather than to localhost.
 services:
   nifi-registry:
     healthcheck:
