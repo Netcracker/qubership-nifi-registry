@@ -51,9 +51,9 @@ COPY --chown=1000:1000 qubership-nifi-registry-deps/target/lib/json-smart-*.jar 
 WORKDIR /tmp-upd
 RUN zip -d spring-web-5.3.39.jar 'org/springframework/remoting/httpinvoker/*' \
     && mv spring-web-5.3.39.jar WEB-INF/lib/spring-web-5.3.39-1.jar \
-    && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39-1.jar \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39-1.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39.jar \
-    && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.1.jar \
     && rm -rf WEB-INF/lib/json-smart-2.5.2.jar
 
