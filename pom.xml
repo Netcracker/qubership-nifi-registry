@@ -72,13 +72,15 @@
         <commons-io.version>2.14.0</commons-io.version>
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <nifi.version>1.28.1</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <mockito.version>4.11.0</mockito.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <json.smart.version>2.5.2</json.smart.version>
         <spring-framework.version>6.2.11</spring-framework.version>
         <logback.version>1.5.19</logback.version>
+        <byte-buddy.version>1.17.8</byte-buddy.version>
     </properties>
 
     <profiles>
@@ -187,7 +189,14 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -269,12 +278,12 @@
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-java</artifactId>
-                        <version>7.10.0</version>
+                        <version>7.22.0</version>
                     </dependency>
                     <dependency>
                         <groupId>net.sourceforge.pmd</groupId>
                         <artifactId>pmd-core</artifactId>
-                        <version>7.10.0</version>
+                        <version>7.22.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
