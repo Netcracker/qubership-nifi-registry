@@ -1,8 +1,9 @@
 # Installation Guide
 
-qubership-nifi-registry service can be started in docker (or compatible) container runtime with support of `docker compose` command.
+qubership-nifi-registry service can be started in Docker (or compatible) container runtime with support of `docker compose` command.
 
 Sections below describe typical startup configurations:
+
 1. plain - service without any authentication with plain (HTTP) communications and file-based storage
 2. tls - service with mTLS authentication with encrypted (HTTPS) communications and file-based storage
 3. db - service with mTLS authentication, encrypted (HTTPS) communications and PostgreSQL storage
@@ -13,11 +14,12 @@ Sections below describe typical startup configurations:
 ### Plain
 
 Execute the following steps, to run service:
+
 1. Set up environment parameters [`docker.env`](../dev/plain/docker.env)
 
-| Parameter | Required | Default | Description                                                                                                                                                                                                                              |
-|-----------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BASE_DIR  | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<ul><li>temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)</li><li>temp-vol/nifi-reg/flow-storage/ - for storing flow versions</li></ul> |
+| Parameter | Required | Default | Description                                                                                                                                                                                                               |
+|-----------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BASE_DIR  | Y        | .       | Defines directory, where local volumes will be located. Subdirectories include:<br>- temp-vol/nifi-reg/database/ - for storing metadata (buckets, flows)<br>- temp-vol/nifi-reg/flow-storage/ - for storing flow versions |
 
 2. Change image in docker compose [`docker-compose.yaml`](../dev/plain/docker-compose.yaml), if needed. By default, `ghcr.io/netcracker/nifi-registry:latest` is used
 3. Start docker compose
