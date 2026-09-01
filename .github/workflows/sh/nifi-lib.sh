@@ -285,6 +285,7 @@ setup_env_before_tests() {
     fi
     mkdir -p ./temp-vol/tls-cert/
     mkdir -p ./temp-vol/tls-cert/nifi-registry/
+    mkdir -p ./temp-vol/tls-cert/pwd/
     if [[ "$runMode" == "oidc" ]]; then
         mkdir -p ./temp-vol/tls-cert/ca/
     fi
