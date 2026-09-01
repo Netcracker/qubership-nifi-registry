@@ -13,8 +13,8 @@
 # limitations under the License.
 
 
-ARG BASE_IMAGE_VERSION='21-alpine-2.3.3'
-ARG BASE_IMAGE_VERSION_SHA256='sha256:4c17f37e13bc57e01c70cde41af64a067969d301b92c53c4d7d22ff88abff61d'
+ARG BASE_IMAGE_VERSION='25-alpine-2.3.7'
+ARG BASE_IMAGE_VERSION_SHA256='sha256:577def182c22d770bba27ed663b14fff4621cf1ad99979fa3bf415e2ae756fac'
 FROM ghcr.io/netcracker/qubership-java-base:$BASE_IMAGE_VERSION@$BASE_IMAGE_VERSION_SHA256 as base
 LABEL org.opencontainers.image.authors="qubership.org"
 
@@ -51,9 +51,9 @@ COPY --chown=1000:1000 qubership-nifi-registry-deps/target/lib/json-smart-*.jar 
 WORKDIR /tmp-upd
 RUN zip -d spring-web-5.3.39.jar 'org/springframework/remoting/httpinvoker/*' \
     && mv spring-web-5.3.39.jar WEB-INF/lib/spring-web-5.3.39-1.jar \
-    && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39-1.jar \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39-1.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/spring-web-5.3.39.jar \
-    && jar -uf nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
+    && zip nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.2.jar \
     && zip -d nifi-registry-web-api-1.28.1.war WEB-INF/lib/json-smart-2.5.1.jar \
     && rm -rf WEB-INF/lib/json-smart-2.5.2.jar
 
