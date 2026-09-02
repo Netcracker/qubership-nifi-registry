@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>Netcracker/renovate-config:base",
+    "github>Netcracker/renovate-config:github-actions",
+    "github>Netcracker/renovate-config:maven-groupid",
+    "github>Netcracker/renovate-config:netcracker-dependencies",
+    "github>Netcracker/renovate-config:apm"
+  ],
+  "packageRules": [
+    {
+      "description": [
+        "Each Dockerfile pins its base image through a version ARG and a separate digest ARG, which Renovate cannot update as one dependency.",
+        "Base images are upgraded by hand together with the NiFi version."
+      ],
+      "matchManagers": ["dockerfile"],
+      "enabled": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "description": [
+      "Repeat the rules above for security updates. A packageRule that disables a dependency does not reliably stop a vulnerability alert PR, and none of these updates can be applied as Renovate proposes them."
+    ],
+    "packageRules": [
+      {
+        "matchManagers": ["dockerfile"],
+        "enabled": false
+      }
+    ]
+  }
+}
