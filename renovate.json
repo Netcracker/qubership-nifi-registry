@@ -9,21 +9,38 @@
   ],
   "packageRules": [
     {
-      "description": [
-        "Each Dockerfile pins its base image through a version ARG and a separate digest ARG, which Renovate cannot update as one dependency.",
-        "Base images are upgraded by hand together with the NiFi version."
-      ],
+      "description": "Base images pin version and digest in separate ARGs, which Renovate cannot update as one dependency. Upgraded by hand with NiFi.",
       "matchManagers": ["dockerfile"],
+      "enabled": false
+    },
+    {
+      "description": "NiFi Registry libraries need code adaptation. Upgraded by hand with NiFi.",
+      "matchDatasources": ["maven"],
+      "matchPackageNames": ["org.apache.nifi:*", "org.apache.nifi.registry:*"],
+      "enabled": false
+    },
+    {
+      "description": "Autotests generate certificates with nifi-toolkit 1.28.1. Newer versions do not work.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["apache/nifi-toolkit"],
       "enabled": false
     }
   ],
   "vulnerabilityAlerts": {
-    "description": [
-      "Repeat the rules above for security updates. A packageRule that disables a dependency does not reliably stop a vulnerability alert PR, and none of these updates can be applied as Renovate proposes them."
-    ],
+    "description": "Repeat the rules above: a disabled dependency does not reliably stop a vulnerability alert PR, and none of these updates can be applied as Renovate proposes them.",
     "packageRules": [
       {
         "matchManagers": ["dockerfile"],
+        "enabled": false
+      },
+      {
+        "matchDatasources": ["maven"],
+        "matchPackageNames": ["org.apache.nifi:*", "org.apache.nifi.registry:*"],
+        "enabled": false
+      },
+      {
+        "matchDatasources": ["docker"],
+        "matchPackageNames": ["apache/nifi-toolkit"],
         "enabled": false
       }
     ]
