@@ -1,7 +1,7 @@
 ---
 services:
   nifi-toolkit:
-    image: apache/nifi-toolkit:1.28.1
+    image: apache/nifi-toolkit:1.28.1@sha256:7a43836dcc7ac37c5243dd11792da3aaff1b28a1c0e06b41c23cb16118c42652
     container_name: nifi-toolkit
     entrypoint: /bin/bash
     command: /tmp/tls-scripts/nifi-gen-certs.sh
@@ -52,7 +52,7 @@ services:
       timeout: 5s
       retries: 3
   postgresql:
-    image: postgres:16.8
+    image: postgres:16.8@sha256:301bcb60b8a3ee4ab7e147932723e3abd1cef53516ce5210b39fd9fe5e3602ae
     volumes:
       - pg-db:/var/lib/postgresql/data/pgdata
     environment:
