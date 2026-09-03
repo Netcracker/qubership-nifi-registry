@@ -78,7 +78,7 @@
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
         <jackson.databind.version>2.21.5</jackson.databind.version>
-        <spring-framework.version>7.0.7</spring-framework.version>
+        <spring-framework.version>7.0.9</spring-framework.version>
         <!--test libraries versions-->
         <testcontainers.version>1.20.4</testcontainers.version>
         <junit.jupiter.version>5.11.1</junit.jupiter.version>
