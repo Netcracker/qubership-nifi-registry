@@ -1,7 +1,7 @@
 ---
 services:
   nifi-toolkit:
-    image: apache/nifi-toolkit:1.28.1
+    image: apache/nifi-toolkit:1.28.1@sha256:7a43836dcc7ac37c5243dd11792da3aaff1b28a1c0e06b41c23cb16118c42652
     container_name: nifi-toolkit
     entrypoint: /bin/bash
     command: /tmp/tls-scripts/nifi-gen-certs.sh
@@ -60,7 +60,7 @@ services:
       timeout: 5s
       retries: 3
   postgresql:
-    image: postgres:16.8
+    image: postgres:16.8@sha256:301bcb60b8a3ee4ab7e147932723e3abd1cef53516ce5210b39fd9fe5e3602ae
     volumes:
       - pg-db:/var/lib/postgresql/data/pgdata
     environment:
@@ -77,7 +77,7 @@ services:
       timeout: 5s
       retries: 20
   postgresql-init:
-    image: postgres:16.8
+    image: postgres:16.8@sha256:301bcb60b8a3ee4ab7e147932723e3abd1cef53516ce5210b39fd9fe5e3602ae
     restart: on-failure:3
     depends_on:
       postgresql:
@@ -89,7 +89,7 @@ services:
     entrypoint: psql
     command: "-h postgresql -p 5432 -U postgres -f /tmp/init-scripts/init.sql"
   keycloak:
-    image: keycloak/keycloak:26.1.4
+    image: keycloak/keycloak:26.1.4@sha256:044a457e04987e1fff756be3d2fa325a4ef420fa356b7034ecc9f1b693c32761
     hostname: keycloak
     restart: on-failure:3
     depends_on:
