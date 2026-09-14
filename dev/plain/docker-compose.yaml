@@ -1,7 +1,7 @@
 ---
 services:
   nifi-registry:
-    image: ghcr.io/netcracker/nifi-registry:latest
+    image: ghcr.io/netcracker/nifi-registry:latest@sha256:912d749d59e962e7c1da1d3fe9d918ef5c626628998abcc4069debcc375dc69c
     volumes:
       - nifi-reg-db:/opt/nifi-registry/nifi-registry-current/database
       - nifi-reg-flow:/opt/nifi-registry/nifi-registry-current/flow_storage
