@@ -24,6 +24,86 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["apache/nifi-toolkit"],
       "enabled": false
+    },
+    {
+      "description": "Spring Boot, Spring Framework, and Spring Cloud majors break APIs, so they are upgraded by hand after dashboard approval.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.springframework*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Each Spring Boot minor needs a new Spring Cloud release train, which Renovate treats as a major, so Boot minors wait for approval too.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.springframework.boot:*"],
+      "matchUpdateTypes": ["minor"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Quarkus majors break extensions and configuration. The Netcracker Quarkus BOM, the Netcracker Quarkus extensions, and SmallRye move together with the Quarkus platform.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": [
+        "io.quarkus*",
+        "io.smallrye*",
+        "com.netcracker.cloud:core-quarkus-*",
+        "com.netcracker.cloud.quarkus:*"
+      ],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Jackson 3 changes package names and group IDs, so Jackson majors are upgraded by hand.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["com.fasterxml.jackson*", "tools.jackson*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "SLF4J majors change how bindings are found, so the SLF4J API, Logback, and the JBoss LogManager binding move together.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.slf4j:*", "ch.qos.logback:*", "org.jboss.slf4j:*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Testcontainers 2 renames artifacts, JUnit 6 raises the Java baseline, and Mockito 5 changes the default mock maker, so test framework majors are upgraded by hand.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.testcontainers:*", "org.junit*", "org.mockito:*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "HikariCP, JGit, and PostgreSQL JDBC majors change APIs or the minimum Java version of the utilities that bundle them.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["com.zaxxer:HikariCP", "org.eclipse.jgit:*", "org.postgresql:*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Code quality tool majors add or change rules and can fail the build, so their findings are fixed by hand during the upgrade.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": [
+        "com.puppycrawl.tools:checkstyle",
+        "net.sourceforge.pmd:*",
+        "org.apache.maven.plugins:maven-checkstyle-plugin",
+        "org.apache.maven.plugins:maven-pmd-plugin"
+      ],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Netty majors change the runtime APIs used by the Quarkus consul module.",
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["io.netty:*"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Majors of third-party images in the compose files, such as PostgreSQL, Keycloak, and Consul, can change data formats and configuration, so they are upgraded by hand. Renovate rejects ** combined with other patterns, so Netcracker images are not excluded here.",
+      "matchManagers": ["docker-compose"],
+      "matchPackageNames": ["**"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
     }
   ],
   "vulnerabilityAlerts": {
