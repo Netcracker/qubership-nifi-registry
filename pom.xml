@@ -73,7 +73,7 @@
         <!--libraries versions-->
         <postgresql.jdbc.version>42.7.13</postgresql.jdbc.version>
         <commons-io.version>2.14.0</commons-io.version>
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.48</lombok.version>
         <nifi.version>2.10.0</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.5.2</json.smart.version>
