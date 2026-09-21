@@ -13,7 +13,7 @@ services:
       - KEYSTORE_PASSWORD_NIFI_REG=${KEYSTORE_PASSWORD}
       - TRUSTSTORE_PASSWORD=${TRUSTSTORE_PASSWORD}
   nifi-registry:
-    image: ghcr.io/netcracker/qubership-nifi-registry:latest
+    image: ghcr.io/netcracker/qubership-nifi-registry:latest@sha256:1c17370cd0dce821625e353bd569130b13b39c60397edbea86fce7d7a3f3a0ab
     depends_on:
       nifi-toolkit:
         condition: service_completed_successfully
