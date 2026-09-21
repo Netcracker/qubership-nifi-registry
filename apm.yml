@@ -10,4 +10,4 @@ dependencies:
     - Netcracker/qubership-ai-packages/agent-packages/javadoc-authoring#0e384f374d05bf6dc1900f518312db62e71b71f4 #main
     - Netcracker/qubership-ai-packages/agent-packages/final-review#0e384f374d05bf6dc1900f518312db62e71b71f4 #main
     - Netcracker/qubership-ai-packages/agent-packages/test-authoring#0e384f374d05bf6dc1900f518312db62e71b71f4 #main
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#15d75b39fb1100040af34781c49de3d3fd96b8b0 #2.6.3
+    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#e85cf5a7dae3eb4bade570c91026f73a96e6c1d4 # 2.8.4
