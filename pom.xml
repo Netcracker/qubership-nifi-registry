@@ -74,7 +74,7 @@
         <postgresql.jdbc.version>42.7.13</postgresql.jdbc.version>
         <commons-io.version>2.22.0</commons-io.version>
         <lombok.version>1.18.48</lombok.version>
-        <nifi.version>2.11.0</nifi.version>
+        <nifi.version>2.12.0</nifi.version>
         <hikari.cp.version>5.1.0</hikari.cp.version>
         <json.smart.version>2.6.0</json.smart.version>
         <jackson.databind.version>2.22.3</jackson.databind.version>
