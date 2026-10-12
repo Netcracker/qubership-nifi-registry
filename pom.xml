@@ -80,7 +80,7 @@
         <jackson.databind.version>2.22.3</jackson.databind.version>
         <spring-framework.version>7.0.9</spring-framework.version>
         <!--test libraries versions-->
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <junit.jupiter.version>5.14.4</junit.jupiter.version>
         <mockito.version>4.11.0</mockito.version>
         <jgit.version>7.8.0.202609011348-r</jgit.version>
