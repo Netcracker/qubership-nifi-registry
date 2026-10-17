@@ -71,7 +71,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--libraries versions-->
-        <postgresql.jdbc.version>42.7.13</postgresql.jdbc.version>
+        <postgresql.jdbc.version>42.7.14</postgresql.jdbc.version>
         <commons-io.version>2.22.0</commons-io.version>
         <lombok.version>1.18.48</lombok.version>
         <nifi.version>2.12.0</nifi.version>
