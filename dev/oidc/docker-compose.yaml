@@ -60,7 +60,7 @@ services:
       timeout: 5s
       retries: 3
   postgresql:
-    image: postgres:16.15@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
+    image: postgres:16.15@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d
     volumes:
       - pg-db:/var/lib/postgresql/data/pgdata
     environment:
@@ -77,7 +77,7 @@ services:
       timeout: 5s
       retries: 20
   postgresql-init:
-    image: postgres:16.15@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
+    image: postgres:16.15@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d
     restart: on-failure:3
     depends_on:
       postgresql:
