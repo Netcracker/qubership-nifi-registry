@@ -9,6 +9,15 @@
             "command": "python \".codex/hooks/qubership-nifi-linters/.apm/hooks/lint_changed_file.py\""
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \".codex/hooks/qubership-nifi-linters/.apm/hooks/lint_changed_file.py\""
+          }
+        ]
       }
     ]
   }
