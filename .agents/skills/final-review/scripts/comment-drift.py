@@ -53,7 +53,8 @@ def run(*args):
 def nul_split(out):
     r"""The paths of a NUL-delimited git listing.
 
-    Git quotes a path outside ASCII in its default output.
+    Git quotes a path outside ASCII in its default output, so a file named "Пример.java" comes back
+    as "\320\237...\321\200.java" — trailing quote and all — and drops out of the extension filter.
     A -z listing is unquoted, so the path arrives verbatim."""
     return [p for p in out.split("\0") if p]
 
