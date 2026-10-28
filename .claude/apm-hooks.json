@@ -9,6 +9,26 @@
         }
       ],
       "_apm_source": "qubership-nifi-linters"
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "python \".claude/hooks/qubership-nifi-lint-hook/.apm/hooks/lint_changed_file.py\""
+        }
+      ],
+      "_apm_source": "qubership-nifi-lint-hook"
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/qubership-nifi-lint-hook-claude/.apm/hooks/lint_changed_file.py\""
+        }
+      ],
+      "_apm_source": "qubership-nifi-lint-hook-claude"
     }
   ]
 }
