@@ -68,7 +68,7 @@
         <pmd.version>3.28.0</pmd.version>
         <jacoco.version>0.8.15</jacoco.version>
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
-        <surefire-plugin.version>3.6.0</surefire-plugin.version>
+        <surefire-plugin.version>3.6.1</surefire-plugin.version>
         <!--skipUnitTests default value-->
         <skipUnitTests>false</skipUnitTests>
     </properties>
@@ -240,7 +240,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
