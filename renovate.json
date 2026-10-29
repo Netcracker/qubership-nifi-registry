@@ -5,9 +5,15 @@
     "github>Netcracker/renovate-config:github-actions",
     "github>Netcracker/renovate-config:maven-groupid",
     "github>Netcracker/renovate-config:netcracker-dependencies",
+    "github>Netcracker/renovate-config:automerge",
     "github>Netcracker/renovate-config:apm"
   ],
   "packageRules": [
+    {
+      "description": "Major updates wait for review. The automerge preset also merges majors of the actions under actions/* and github/*, but some of them run only in the release and dispatch-only workflows, which no pull request check runs.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
     {
       "description": "Base images pin version and digest in separate ARGs, which Renovate cannot update as one dependency. Upgraded by hand with NiFi.",
       "matchManagers": ["dockerfile"],
