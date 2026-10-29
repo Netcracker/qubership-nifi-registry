@@ -20,6 +20,18 @@
       "enabled": false
     },
     {
+      "description": "These are modules of this repository, and the release plugin sets their versions, so Renovate has nothing to update.",
+      "matchDatasources": ["maven"],
+      "matchPackageNames": ["org.qubership.nifi:qubership-nifi-registry", "org.qubership.nifi:qubership-nifi-registry-*"],
+      "enabled": false
+    },
+    {
+      "description": "The repositories in pom.xml include a URL that is not a Maven repository, a snapshots-only repository, and GitHub Packages, which needs credentials Renovate lacks. Third-party artifacts are looked up in Maven Central only, which cuts wasted requests and the rate limiting they cause.",
+      "matchDatasources": ["maven"],
+      "matchPackageNames": ["!/^com\\.netcracker[.:]/", "!/^org\\.qubership[.:]/"],
+      "registryUrls": ["https://repo.maven.apache.org/maven2"]
+    },
+    {
       "description": "Autotests generate certificates with nifi-toolkit 1.28.1. Newer versions do not work.",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["apache/nifi-toolkit"],
@@ -128,6 +140,11 @@
       {
         "matchDatasources": ["maven"],
         "matchPackageNames": ["org.apache.nifi:*", "org.apache.nifi.registry:*"],
+        "enabled": false
+      },
+      {
+        "matchDatasources": ["maven"],
+        "matchPackageNames": ["org.qubership.nifi:qubership-nifi-registry", "org.qubership.nifi:qubership-nifi-registry-*"],
         "enabled": false
       },
       {
