@@ -6,10 +6,10 @@ targets:
   - codex
 dependencies:
   apm:
-    - Netcracker/qubership-ai-packages/agent-packages/qubership-repo-essentials#19056c1d07fd6bbe8163f28a222a7d29cfd47007 #main
-    - Netcracker/qubership-ai-packages/agent-packages/javadoc-authoring#0e384f374d05bf6dc1900f518312db62e71b71f4 #main
-    - Netcracker/qubership-ai-packages/agent-packages/final-review#0e384f374d05bf6dc1900f518312db62e71b71f4 #main
-    - Netcracker/qubership-ai-packages/agent-packages/test-authoring#f35ad41ca673086fd76d353fcf8246c9a9e54fcd #main
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b #2.9.1
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b #2.9.1
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook-claude#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b #2.9.1
+    - Netcracker/qubership-ai-packages/agent-packages/qubership-repo-essentials#19056c1d07fd6bbe8163f28a222a7d29cfd47007 # main
+    - Netcracker/qubership-ai-packages/agent-packages/javadoc-authoring#0e384f374d05bf6dc1900f518312db62e71b71f4 # main
+    - Netcracker/qubership-ai-packages/agent-packages/final-review#0e384f374d05bf6dc1900f518312db62e71b71f4 # main
+    - Netcracker/qubership-ai-packages/agent-packages/test-authoring#f35ad41ca673086fd76d353fcf8246c9a9e54fcd # main
+    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b # v2.9.1
+    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b # v2.9.1
+    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook-claude#bb46660cb0a2fb4ec1bbe30786c6ef09105fc20b # v2.9.1
