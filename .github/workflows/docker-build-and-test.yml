@@ -28,7 +28,7 @@ on:
       - '.github/workflows/sh/**'
   # No path filter here: a workflow skipped by one never reports CI Gate, and a pull request that requires it stays
   # blocked. The changes job reads the paths instead.
-  pull_request:
+  pull_request: null
   workflow_dispatch:
     inputs:
       java-version:
@@ -93,16 +93,16 @@ jobs:
       fail-fast: false
       matrix:
         run-mode:
-        - 'plain'
-        - 'tls'
-        - 'tls-db'
-        - 'tls-quarkus'
-        - 'tls-db-quarkus'
-        - 'tls-db-std'
-        - 'oidc'
-        - 'upgrade-plain'
-        - 'upgrade-tls-db'
-        - 'upgrade-tls-db-std'
+          - 'plain'
+          - 'tls'
+          - 'tls-db'
+          - 'tls-quarkus'
+          - 'tls-db-quarkus'
+          - 'tls-db-std'
+          - 'oidc'
+          - 'upgrade-plain'
+          - 'upgrade-tls-db'
+          - 'upgrade-tls-db-std'
     needs: [ mvn ]
     runs-on: ubuntu-latest
     steps:
