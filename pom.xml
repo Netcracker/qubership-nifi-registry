@@ -86,8 +86,8 @@
         <jgit.version>7.8.0.202609011348-r</jgit.version>
         <!--plugin versions-->
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
-        <surefire-plugin.version>3.6.0</surefire-plugin.version>
-        <failsafe-plugin.version>3.6.0</failsafe-plugin.version>
+        <surefire-plugin.version>3.6.1</surefire-plugin.version>
+        <failsafe-plugin.version>3.6.1</failsafe-plugin.version>
         <compiler-plugin.version>3.16.0</compiler-plugin.version>
         <pmd.version>3.28.0</pmd.version>
         <jacoco.version>0.8.15</jacoco.version>
@@ -256,7 +256,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
