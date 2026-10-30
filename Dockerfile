@@ -23,7 +23,7 @@ LABEL org.opencontainers.image.authors="qubership.org"
 USER root
 #add jq:
 RUN apk add --no-cache \
-    jq=1.8.1-r0
+    jq=1.8.2-r0
 
 ENV NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
 ENV NIFI_REGISTRY_HOME=$NIFI_REGISTRY_BASE_DIR/nifi-registry-current
