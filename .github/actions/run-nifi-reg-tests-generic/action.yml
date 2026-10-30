@@ -50,6 +50,15 @@ runs:
         tls-ca-certs: "nifi/nifi-cert.pem"
         tls-client-certs-config: "newman-tls-config.json"
         docker-compose-file: ".github/docker/${{ inputs.run-mode }}/docker-compose.yaml"
+    - name: Restart nifi registry and wait for it to become healthy
+      shell: bash
+      continue-on-error: true
+      env:
+        RUN_MODE: ${{ inputs.run-mode }}
+      run: |
+        . .github/workflows/sh/nifi-lib.sh
+        restart_container_and_wait ".github/docker/$RUN_MODE/docker-compose.yaml" \
+          "$RUN_MODE" "180"
     - name: Run nifi registry main API tests
       continue-on-error: true
       uses: ./.github/actions/run-newman-tests
