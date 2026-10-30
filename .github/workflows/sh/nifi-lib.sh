@@ -96,6 +96,9 @@ start_containers_and_wait() {
     local resultsDir="$2"
     local waitTimeout="$3"
     local extraComposeFile="$4"
+    #the restart flow passes its own values, so that its failures differ from a failed first start:
+    local waitName="${5:-start}"
+    local artifactName="${6:-wait}"
     if [ -z "$waitTimeout" ]; then
         echo "Using default timeout = 180 seconds"
         waitTimeout=180
@@ -117,14 +120,32 @@ start_containers_and_wait() {
         echo "resultsDir=$resultsDir"
         docker compose "${composeArgs[@]}" logs -n 500 >./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
-        echo "Wait failed, nifi registry not available" >"./test-results/$resultsDir/failed_nifi_registry_wait.lst"
-        mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
-        echo "| Wait for container start                       | Failed :x:                 |" >"./test-results/$resultsDir/$summaryFileName"
+        echo "Wait failed, nifi registry not available" >"./test-results/$resultsDir/failed_nifi_registry_$artifactName.lst"
+        mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_$artifactName.log"
+        printf '| %-46s | Failed :x:                 |\n' "Wait for container $waitName" >"./test-results/$resultsDir/$summaryFileName"
         return 1
     fi
     echo "Wait finished successfully. All containers are up and healthy."
-    echo "| Wait for container start                       | Success :white_check_mark: |" >"./test-results/$resultsDir/$summaryFileName"
+    printf '| %-46s | Success :white_check_mark: |\n' "Wait for container $waitName" >"./test-results/$resultsDir/$summaryFileName"
     return 0
+}
+
+restart_container_and_wait() {
+    local composeFile="$1"
+    local resultsDir="$2"
+    local waitTimeout="$3"
+    #restart keeps the container filesystem, including /tmp, unlike a recreated container (issue #233).
+    #It does not wait for the healthcheck, so the wait below is still needed.
+    echo "Restarting nifi-registry container from $composeFile..."
+    if ! docker compose -f "$composeFile" --env-file ./docker.env restart --no-deps nifi-registry; then
+        echo "Failed to restart nifi-registry container"
+        echo "Failed to restart nifi registry container" >"./test-results/$resultsDir/failed_nifi_registry_restart.lst"
+        docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 >"./test-results/$resultsDir/nifi_registry_log_after_restart.log"
+        summaryFileName=$(get_next_summary_file_name "$resultsDir")
+        printf '| %-46s | Failed :x:                 |\n' "Restart container" >"./test-results/$resultsDir/$summaryFileName"
+        return 1
+    fi
+    start_containers_and_wait "$composeFile" "$resultsDir" "$waitTimeout" "" "restart" "restart"
 }
 
 generate_tls_passwords() {

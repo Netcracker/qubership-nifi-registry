@@ -37,6 +37,8 @@ cp "${NIFI_REGISTRY_HOME}"/conf-template/* "${NIFI_REGISTRY_HOME}"/conf/
 cp "${NIFI_REGISTRY_HOME}"/conf-template-custom/* "${NIFI_REGISTRY_HOME}"/conf/
 
 if [ "${CONSUL_ENABLED}" = 'true' ]; then
+    #Remove the completion file, if it's left by the previous run
+    rm -rf "/tmp/initial-config-completed.txt"
     #Prepare nifi-registry.properties:
     #Prepare logging config:
     . "${scripts_dir}/start_consul_app.sh"
