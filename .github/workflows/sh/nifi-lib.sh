@@ -201,6 +201,9 @@ wait_nifi_reg_container() {
     local caCert="$8"
     local clientKeystore="$9"
     local clientPassword="${10}"
+    #the restart flow passes its own values, so that its failures differ from a failed first start:
+    local waitName="${11:-start}"
+    local artifactName="${12:-wait}"
     local apiUrl='/nifi-registry-api/config'
     echo "Sleep for $initialWait seconds..."
     sleep "$initialWait"
@@ -216,13 +219,39 @@ wait_nifi_reg_container() {
         echo "resultsDir=$resultsDir"
         docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 >./nifi_registry_log_tmp.lst
         cat ./nifi_registry_log_tmp.lst
-        echo "Wait failed, nifi registry not available" >"./test-results/$resultsDir/failed_nifi_registry_wait.lst"
-        mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_wait.log"
-        echo "| Wait for container start                       | Failed :x:                 |" >"./test-results/$resultsDir/$summaryFileName"
+        echo "Wait failed, nifi registry not available" >"./test-results/$resultsDir/failed_nifi_registry_$artifactName.lst"
+        mv ./nifi_registry_log_tmp.lst "./test-results/$resultsDir/nifi_registry_log_after_$artifactName.log"
+        printf '| %-46s | Failed :x:                 |\n' "Wait for container $waitName" >"./test-results/$resultsDir/$summaryFileName"
         return 1
     fi
-    echo "| Wait for container start                       | Success :white_check_mark: |" >"./test-results/$resultsDir/$summaryFileName"
+    printf '| %-46s | Success :white_check_mark: |\n' "Wait for container $waitName" >"./test-results/$resultsDir/$summaryFileName"
     return 0
+}
+
+restart_container_and_wait() {
+    local hostName="$1"
+    local portNum="$2"
+    local composeFile="$3"
+    local useTls="$4"
+    local initialWait="$5"
+    local waitTimeout="$6"
+    local resultsDir="$7"
+    local caCert="$8"
+    local clientKeystore="$9"
+    local clientPassword="${10}"
+    #restart keeps the container filesystem, including /tmp, unlike a recreated container (issue #233).
+    #It does not wait for the API to become available, so the wait below is still needed.
+    echo "Restarting nifi-registry container from $composeFile..."
+    if ! docker compose -f "$composeFile" --env-file ./docker.env restart --no-deps nifi-registry; then
+        echo "Failed to restart nifi-registry container"
+        echo "Failed to restart nifi registry container" >"./test-results/$resultsDir/failed_nifi_registry_restart.lst"
+        docker compose -f "$composeFile" --env-file ./docker.env logs -n 500 >"./test-results/$resultsDir/nifi_registry_log_after_restart.log"
+        summaryFileName=$(get_next_summary_file_name "$resultsDir")
+        printf '| %-46s | Failed :x:                 |\n' "Restart container" >"./test-results/$resultsDir/$summaryFileName"
+        return 1
+    fi
+    wait_nifi_reg_container "$hostName" "$portNum" "$composeFile" "$useTls" "$initialWait" "$waitTimeout" "$resultsDir" \
+        "$caCert" "$clientKeystore" "$clientPassword" "restart" "restart"
 }
 
 generate_tls_passwords() {
