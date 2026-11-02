@@ -47,6 +47,7 @@ jobs:
         path: "${{ github.workspace }}/config"
         include-hidden-files: true
   run-lint:
+    name: "Lint Code Base"
     needs: [prepare-configs]
     runs-on: ubuntu-latest
     permissions:
