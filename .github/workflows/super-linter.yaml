@@ -47,6 +47,7 @@ jobs:
         path: "${{ github.workspace }}/config"
         include-hidden-files: true
   run-lint:
+    name: "Lint Code Base"
     needs: [prepare-configs]
     runs-on: ubuntu-latest
     permissions:
@@ -88,7 +89,7 @@ jobs:
           grep "\S" /tmp/linter-config/linters/super-linter.env | grep -v "^#" >> $GITHUB_ENV
         fi
 
-    - name: Lint Code Base
+    - name: "Lint Code Base"
       uses: super-linter/super-linter/slim@61abc07d755095a68f4987d1c2c3d1d64408f1f9 # v8.5.0
       env:
         VALIDATE_ALL_CODEBASE: ${{ inputs.full_scan || false }}
