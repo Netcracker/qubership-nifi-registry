@@ -25,6 +25,7 @@ on:
       - '.github/collections/**'
       - '.github/docker/**'
       - '.github/configuration/**'
+      - '.github/linters/sun_checks.xml'
       - '.github/workflows/sh/**'
   # No path filter here: a workflow skipped by one never reports CI Gate, and a pull request that requires it stays
   # blocked. The changes job reads the paths instead.
@@ -66,7 +67,7 @@ jobs:
           fi
           # The paths of the push trigger above. Keep the two lists in sync.
           pattern='^(\.github/workflows/(docker-build-and-test\.yml|maven-build\.yaml|sh/.*)'
-          pattern+='|\.github/(actions|collections|docker|configuration)/'
+          pattern+='|\.github/(actions|collections|docker|configuration)/|\.github/linters/sun_checks\.xml$'
           pattern+='|nifi-registry-(db-util|migration-util|util|assembly)/|qubership-cached-providers/'
           pattern+='|qubership-nifi-registry-(spring-consul|quarkus-consul|consul-common|consul-templates)/'
           pattern+='|qubership-nifi-registry-(openapi-enricher|deps)/'
