@@ -11,5 +11,11 @@ dependencies:
     - Netcracker/qubership-ai-packages/agent-packages/final-review#8b8cb2de530a978099960a95565b39de2d16abfc # main
     - Netcracker/qubership-ai-packages/agent-packages/test-authoring#8b8cb2de530a978099960a95565b39de2d16abfc # main
     - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#346d23ea0d60bc1b76433c11a9b2ac1e36997f7f # v2.10.0
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook#346d23ea0d60bc1b76433c11a9b2ac1e36997f7f # v2.10.0
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-lint-hook-claude#346d23ea0d60bc1b76433c11a9b2ac1e36997f7f # v2.10.0
+    - git: Netcracker/qubership-nifi
+      path: agent-packages/qubership-nifi-lint-hook
+      ref: 5a829cc30dd739ceb64ae6dad9be460ddd74dc43 # main
+      targets: [codex, cursor]      
+    - git: Netcracker/qubership-nifi
+      path: agent-packages/qubership-nifi-lint-hook-claude
+      ref: 51ea4b1e6e8eaaf7a1a279cdaa42332b255c57bf # main
+      targets: [claude]
