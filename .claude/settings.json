@@ -6,15 +6,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \".claude/hooks/qubership-nifi-lint-hook/.apm/hooks/lint_changed_file.py\""
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
             "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/qubership-nifi-lint-hook-claude/.apm/hooks/lint_changed_file.py\""
           }
         ]
