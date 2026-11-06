@@ -141,6 +141,22 @@
       "matchPackageNames": ["**"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "description": [
+        "This BOM is not on Maven Central, and Renovate has no credentials for GitHub Packages, so the lookup cannot succeed. The BOM is upgraded by hand together with the Quarkus platform."
+      ],
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["com.netcracker.cloud:core-quarkus-external-bom"],
+      "enabled": false
+    },
+    {
+      "description": [
+        "qubership-nifi-consul-common is not on Maven Central, and Renovate has no credentials for GitHub Packages, so the lookup cannot succeed. The version is upgraded by hand."
+      ],
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.qubership.nifi:qubership-nifi-consul-common"],
+      "enabled": false
     }
   ],
   "vulnerabilityAlerts": {
