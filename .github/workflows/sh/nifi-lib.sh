@@ -78,6 +78,48 @@ test_log_level() {
     fi
 }
 
+check_read_only_root_fs() {
+    local resultsDir="$1"
+    shift
+    resultsPath="./test-results/$resultsDir"
+    logFile="$resultsPath/read_only_root_fs.log"
+    probeFile='/opt/nifi-registry/nifi-registry-current/read-only-probe'
+    echo "Checking that containers $* run with a read-only root filesystem..."
+    res="0"
+    : >"$logFile"
+    for containerName in "$@"; do
+        state=$(docker inspect -f '{{.State.Running}} {{.HostConfig.ReadonlyRootfs}}' "$containerName" 2>&1) || true
+        if [ "$state" != "true true" ]; then
+            echo "Container $containerName: State.Running HostConfig.ReadonlyRootfs = $state, expected true true" >>"$logFile"
+            res="1"
+            continue
+        fi
+        if probeOutput=$(docker exec "$containerName" touch "$probeFile" 2>&1); then
+            echo "Container $containerName: created $probeFile, expected a read-only file system error" >>"$logFile"
+            docker exec "$containerName" rm -f "$probeFile" >>"$logFile" 2>&1
+            res="1"
+            continue
+        fi
+        echo "$probeOutput" >>"$logFile"
+        if [[ "$probeOutput" != *"Read-only file system"* ]]; then
+            echo "Container $containerName: touch $probeFile failed for a reason other than a read-only file system" >>"$logFile"
+            res="1"
+            continue
+        fi
+        echo "Container $containerName: root filesystem is read-only" >>"$logFile"
+    done
+    cat "$logFile"
+    summaryFileName=$(get_next_summary_file_name "$resultsDir")
+    if [ "$res" == "0" ]; then
+        echo "Root filesystem is read-only"
+        echo "| Read-only root filesystem check                | Success :white_check_mark: |" >"$resultsPath/$summaryFileName"
+    else
+        echo "Root filesystem check failed"
+        echo "Read-only root filesystem check failed" >"$resultsPath/failed_read_only_root_fs.lst"
+        echo "| Read-only root filesystem check                | Failed :x:                 |" >"$resultsPath/$summaryFileName"
+    fi
+}
+
 prepare_sens_key() {
     echo "Generating temporary sensitive key..."
     NIFI_SENSITIVE_KEY=$(generate_random_hex_password 12 4)
@@ -213,6 +255,7 @@ setup_env_before_tests() {
     else
         mkdir -p ./temp-vol/pg-db/
     fi
+    mkdir -p ./temp-vol/nifi-reg/extension-bundles/
     mkdir -p ./temp-vol/tls-cert/
     mkdir -p ./temp-vol/tls-cert/nifi-registry/
     mkdir -p ./temp-vol/tls-cert/pwd/
