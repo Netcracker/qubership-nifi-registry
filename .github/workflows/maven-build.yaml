@@ -15,6 +15,7 @@ on:
       - 'qubership-nifi-registry-consul-templates/**'
       - 'qubership-nifi-registry-openapi-enricher/**'
       - 'docs/openapi/**'
+      - '.github/linters/sun_checks.xml'
       - 'pom.xml'
   pull_request:
     paths:
@@ -29,6 +30,7 @@ on:
       - 'qubership-nifi-registry-consul-templates/**'
       - 'qubership-nifi-registry-openapi-enricher/**'
       - 'docs/openapi/**'
+      - '.github/linters/sun_checks.xml'
       - 'pom.xml'
   workflow_dispatch:
     inputs:
@@ -113,6 +115,15 @@ jobs:
           server-id: github
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
+      # Fails when sun_checks.xml names a module or property that the checkstyle version in pom.xml does not have.
+      # Violations do not fail the step, because the code does not pass every check yet.
+      - name: Validate checkstyle configuration
+        run: >
+          mvn --batch-mode --no-transfer-progress checkstyle:check
+          -Dcheckstyle.failOnViolation=false -Dcheckstyle.console=false
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run local maven build with sonar
         #skip if explicit skip is set or when SONAR_HOST_URL or SONAR_TOKEN are empty
         if: ${{ !inputs.skip-sonar && vars.SONAR_HOST_URL && env.SONAR_TOKEN }}
