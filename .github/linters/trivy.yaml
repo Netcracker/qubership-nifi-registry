@@ -1,0 +1,10 @@
+# Overrides the shared netcracker/.github config/linters/trivy.yaml; keep its severity list in sync.
+severity:
+  - HIGH
+  - CRITICAL
+scan:
+  # Since Trivy 0.71.0, a 429 from Maven Central while fetching remote POMs fails the scan,
+  # and GitHub runners hit that rate limit often. Offline mode resolves only the POMs in the
+  # repository, so versions managed by remote parents and BOMs, and transitive dependencies,
+  # are not scanned.
+  offline: true
