@@ -14,7 +14,7 @@ dependencies:
     - git: Netcracker/qubership-nifi
       path: agent-packages/qubership-nifi-lint-hook
       ref: 5a829cc30dd739ceb64ae6dad9be460ddd74dc43 # main
-      targets: [codex, cursor]      
+      targets: [codex, cursor]
     - git: Netcracker/qubership-nifi
       path: agent-packages/qubership-nifi-lint-hook-claude
       ref: 51ea4b1e6e8eaaf7a1a279cdaa42332b255c57bf # main
