@@ -81,8 +81,8 @@ runs:
         COMPOSE_RUN_MODE: ${{ steps.prepare-env.outputs.RUN_MODE }}
       run: |
         . .github/workflows/sh/nifi-lib.sh
-        #compose reuses the anonymous volumes of the 1.x container, such as conf, /tmp, and
-        #persistent_data, so the 2.x container starts on the state that 1.x left in them:
+        #compose reuses the anonymous volumes of the 1.x container, such as conf and /tmp,
+        #so the 2.x container starts on the state that 1.x left in them:
         start_containers_and_wait ".github/docker/$COMPOSE_RUN_MODE/docker-compose.yaml" \
           "$RUN_MODE" "180"
     - name: Check read-only root filesystem after upgrade

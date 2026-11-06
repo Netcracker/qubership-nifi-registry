@@ -28,7 +28,7 @@ services:
       consul:
         condition: service_healthy
     # The root filesystem is read-only, as with readOnlyRootFilesystem in Kubernetes.
-    # The volumes list every path NiFi Registry writes to, including the ones the image
+    # The volumes list every path NiFi Registry needs to write to, including the ones the image
     # declares as volumes itself. /tmp is a volume rather than a tmpfs so that a restart
     # keeps its files, as an emptyDir does; the restart test for issue #233 relies on that.
     read_only: ${NIFI_REG_READ_ONLY_ROOT_FS:-true}
@@ -42,7 +42,6 @@ services:
       - /opt/nifi-registry/nifi-registry-current/logs
       - /opt/nifi-registry/nifi-registry-current/run
       - /opt/nifi-registry/nifi-registry-current/work
-      - /opt/nifi-registry/nifi-registry-current/persistent_data
       - nifi-reg-ext-bundles:/opt/nifi-registry/nifi-registry-current/extension_bundles
     ports:
       - 127.0.0.1:18080:18080
