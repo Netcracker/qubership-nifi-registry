@@ -45,6 +45,24 @@
       "registryUrls": ["https://repo.maven.apache.org/maven2"]
     },
     {
+      "description": [
+        "The jackson-databind version in pom.xml and the jackson-bom version in the Quarkus consul module come from the same Jackson 2 release, so one PR updates both properties. Jackson 3 (tools.jackson) is a separate release line and stays out of the group."
+      ],
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["com.fasterxml.jackson*"],
+      "groupName": "Jackson"
+    },
+    {
+      "description": [
+        "Spring Framework and Spring Cloud patches follow the same Spring Boot line and are released days apart, so one PR updates both.",
+        "Only patches are grouped: a new Spring Cloud release train needs a newer Spring Boot, which waits for dashboard approval, and would hold back the Spring Framework patch in the same PR."
+      ],
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.springframework:*", "org.springframework.cloud:*"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "Spring"
+    },
+    {
       "description": "Autotests generate certificates with nifi-toolkit 1.28.1. Newer versions do not work.",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["apache/nifi-toolkit"],
