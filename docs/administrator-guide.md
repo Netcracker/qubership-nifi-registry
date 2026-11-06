@@ -72,11 +72,36 @@ The table below provides a list of volumes and directories and their description
 | Run                        | Volume    | /opt/nifi-registry/nifi-registry-current/run             | Contains current nifi registry pid and status file.                                                                                                                      |
 | Work                       | Volume    | /opt/nifi-registry/nifi-registry-current/work            | Contains some data used by nifi registry in runtime.                                                                                                                     |
 | TLS certificates           | Directory | /tmp/tls-certs                                           | Contains TLS keystore (keystore.p12) and truststore (truststore.p12). Required for startup with AUTH = oidc, tls, ldap.                                                  |
-| Configuration data         | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains metadata database and flow storage, if NIFI_REG_USE_PGDB != `true`.                                                                                             |
+| Configuration data         | Directory | /opt/nifi-registry/nifi-registry-current/persistent_data | Contains users and authorizations files, if AUTH = tls or oidc. Without PostgreSQL, the metadata database and flow storage are in `database` and `flow_storage`.         |
 | Cached providers extension | Directory | /opt/nifi-registry/nifi-registry-current/ext-cached      | Extension for cached access policy and user group providers. See also environment property `NIFI_REG_DB_FLOW_AUTHORIZERS` and section below dedicated to this extension. |
 | Key password               | File      | `$NIFI_REG_KEY_PASSWORD_PATH`                            | Contains the key password for secret key stored in the keystore. File-based alternative to `KEY_PASSWORD`. Used only if `KEY_PASSWORD` is not set.                       |
 | Keystore password          | File      | `$NIFI_REG_KEYSTORE_PASSWORD_PATH`                       | Contains the keystore password. File-based alternative to `KEYSTORE_PASSWORD`. Used only if `KEYSTORE_PASSWORD` is not set.                                              |
 | Truststore password        | File      | `$NIFI_REG_TRUSTSTORE_PASSWORD_PATH`                     | Contains the truststore password. File-based alternative to `TRUSTSTORE_PASSWORD`. Used only if `TRUSTSTORE_PASSWORD` is not set.                                        |
+
+### Read-only root filesystem
+
+Qubership-nifi-registry can run with a read-only root filesystem, as with `readOnlyRootFilesystem: true` in Kubernetes,
+if every path in the table below is a writable volume.
+The volumes may start empty, as an `emptyDir` does. The container may also run with an arbitrary user ID, as on
+OpenShift, if group 0 can write to the volumes.
+
+| Path                                                       | Required                         | Description                                                                                       |
+|------------------------------------------------------------|----------------------------------|---------------------------------------------------------------------------------------------------|
+| /tmp                                                       | Always                           | Temporary files of NiFi Registry, Java, and the Consul integration.                               |
+| /opt/nifi-registry/nifi-registry-current/conf              | Always                           | Configuration files generated at startup.                                                         |
+| /opt/nifi-registry/nifi-registry-current/logs              | Always                           | Log files.                                                                                        |
+| /opt/nifi-registry/nifi-registry-current/run               | Always                           | Current nifi registry pid and status file.                                                        |
+| /opt/nifi-registry/nifi-registry-current/work              | Always                           | Data used by nifi registry in runtime.                                                            |
+| /opt/nifi-registry/nifi-registry-current/persistent_data   | Always                           | Users and authorizations files.                                                                   |
+| /opt/nifi-registry/nifi-registry-current/extension_bundles | Always                           | Extension bundles storage.                                                                        |
+| /opt/nifi-registry/nifi-registry-current/database          | If NIFI_REG_USE_PGDB != `true`   | Metadata database.                                                                                |
+| /opt/nifi-registry/nifi-registry-current/flow_storage      | If NIFI_REG_USE_PGDB != `true`   | Flow storage.                                                                                     |
+| /etc/ssl/certs                                             | Always                           | CA certificates and Java truststore, which the entrypoint updates at startup.                     |
+| /usr/local/share/ca-certificates                           | Always                           | Additional CA certificates, which the entrypoint installs at startup.                             |
+| /app/nss                                                   | If the UID has no passwd entry   | `passwd` file for the user ID the container runs with, such as an arbitrary user ID on OpenShift. |
+
+If `extension_bundles` is not writable, startup fails with
+`/opt/nifi-registry/nifi-registry-current/./extension_bundles directory does not have read/write privilege`.
 
 ## Changing logging levels
 

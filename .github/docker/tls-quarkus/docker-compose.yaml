@@ -19,11 +19,26 @@ services:
         condition: service_completed_successfully
       consul:
         condition: service_healthy
+    # The root filesystem is read-only, as with readOnlyRootFilesystem in Kubernetes.
+    # The volumes list every path NiFi Registry writes to, including the ones the image
+    # declares as volumes itself. /tmp is a volume rather than a tmpfs so that a restart
+    # keeps its files, as an emptyDir does; the restart test for issue #233 relies on that.
+    read_only: ${NIFI_REG_READ_ONLY_ROOT_FS:-true}
     volumes:
+      - /tmp
       - nifi-reg-db:/opt/nifi-registry/nifi-registry-current/database
       - nifi-reg-flow:/opt/nifi-registry/nifi-registry-current/flow_storage
       - tls-cert-reg:/tmp/tls-certs
       - tls-cert-pwd:/tmp/cert-pwd
+      - /app/nss
+      - /etc/ssl/certs
+      - /usr/local/share/ca-certificates
+      - /opt/nifi-registry/nifi-registry-current/conf
+      - /opt/nifi-registry/nifi-registry-current/logs
+      - /opt/nifi-registry/nifi-registry-current/run
+      - /opt/nifi-registry/nifi-registry-current/work
+      - /opt/nifi-registry/nifi-registry-current/persistent_data
+      - nifi-reg-ext-bundles:/opt/nifi-registry/nifi-registry-current/extension_bundles
     ports:
       - 127.0.0.1:18080:18080
     environment:
@@ -92,6 +107,12 @@ volumes:
       o: bind
       type: none
       device: $BASE_DIR/temp-vol/tls-cert/pwd/
+  nifi-reg-ext-bundles:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $BASE_DIR/temp-vol/nifi-reg/extension-bundles/
   nifi-reg-db:
     driver: local
     driver_opts:
