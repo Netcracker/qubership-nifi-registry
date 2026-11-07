@@ -89,7 +89,7 @@ services:
     entrypoint: psql
     command: "-h postgresql -p 5432 -U postgres -f /tmp/init-scripts/init.sql"
   keycloak:
-    image: keycloak/keycloak:26.8.1@sha256:a78d6b79572168cb25886b80a8b5b8d4ed4390743e3eecb810538683e209dd6b
+    image: keycloak/keycloak:26.8.1@sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332
     hostname: keycloak
     restart: on-failure:3
     depends_on:
