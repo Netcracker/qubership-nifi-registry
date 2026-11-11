@@ -15,7 +15,7 @@
 ARG NIFI_REGISTRY_VERSION='2.12.0'
 ARG NIFI_REGISTRY_VERSION_SHA256='sha256:12436f3d4ec44c8f1ac739b37481489fb584fa481f586951fa7a6fbd4cd8eab2'
 
-FROM ghcr.io/netcracker/qubership-java-base:25-alpine-2.5.12@sha256:46fc43ba4aa3265790ad7aa13c6a959d8872630b805e0fa523b43dba97521210 AS base
+FROM ghcr.io/netcracker/qubership-java-base:25-alpine-2.5.13@sha256:f64223849fb62c82caa684721fef7fa1b9b5ff64e2c0c2b7a622ecc2b60eb1a0 AS base
 LABEL org.opencontainers.image.authors="qubership.org"
 
 USER root
