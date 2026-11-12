@@ -13,9 +13,9 @@ import org.qubership.cloud.nifi.registry.quarkus.config.InjectConsulContainer;
 import org.testcontainers.consul.ConsulContainer;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +35,12 @@ class NifiRegistryPropertiesApplicationTest {
         try {
             Files.createDirectories(Paths.get(".", "conf"));
             Files.createDirectories(Paths.get(".", "tmp"));
+            // Remove output left by an aborted run, so the wait sees only files this run writes.
+            Files.deleteIfExists(Paths.get(".", "conf", "nifi-registry.properties"));
+            Files.deleteIfExists(Paths.get(".", "conf", "logback.xml"));
+            Files.deleteIfExists(Paths.get(".", "tmp", "initial-config-completed.txt"));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create test dir", e);
+            throw new RuntimeException("Failed to prepare test dirs", e);
         }
     }
 
@@ -46,14 +50,16 @@ class NifiRegistryPropertiesApplicationTest {
     void testPropertiesLoadOnStart(QuarkusMainLauncher launcher) {
         mainThread = new Thread(launcher::launch);
         mainThread.start();
-        //wait for logback.xml file creation:
-        File logbackConfig = new File("./conf/logback.xml");
-        Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).
-                until(logbackConfig::exists);
-        Assertions.assertTrue(logbackConfig.exists(), "logback.xml should exist");
-        File nifiRegistryPropsConfig = new File("./conf/nifi-registry.properties");
-        Assertions.assertTrue(nifiRegistryPropsConfig.exists(), "nifi-registry.properties should exist");
-        Assertions.assertTrue(Files.exists(Paths.get(".", "tmp", "initial-config-completed.txt")));
+        // The application writes the completion file after both config files.
+        Path completionFile = Paths.get(".", "tmp", "initial-config-completed.txt");
+        Awaitility.await("completion file " + completionFile)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> Files.exists(completionFile));
+        Assertions.assertAll(
+                () -> Assertions.assertTrue(Files.exists(Paths.get(".", "conf", "logback.xml")),
+                        "conf/logback.xml exists"),
+                () -> Assertions.assertTrue(Files.exists(Paths.get(".", "conf", "nifi-registry.properties")),
+                        "conf/nifi-registry.properties exists"));
     }
 
     @AfterEach
