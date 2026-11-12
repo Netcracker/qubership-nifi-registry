@@ -83,7 +83,7 @@
         <testcontainers.version>1.21.4</testcontainers.version>
         <junit.jupiter.version>5.14.4</junit.jupiter.version>
         <mockito.version>4.11.0</mockito.version>
-        <jgit.version>7.8.0.202609011348-r</jgit.version>
+        <jgit.version>7.8.1.202611041320-r</jgit.version>
         <!--plugin versions-->
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <surefire-plugin.version>3.6.1</surefire-plugin.version>
