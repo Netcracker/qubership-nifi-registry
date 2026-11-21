@@ -6,11 +6,11 @@ targets:
   - codex
 dependencies:
   apm:
-    - Netcracker/qubership-ai-packages/agent-packages/qubership-repo-essentials#9a65906821d195690bd148a2cd476b9bcd949042 # main
-    - Netcracker/qubership-ai-packages/agent-packages/javadoc-authoring#9a65906821d195690bd148a2cd476b9bcd949042 # main
-    - Netcracker/qubership-ai-packages/agent-packages/final-review#9a65906821d195690bd148a2cd476b9bcd949042 # main
-    - Netcracker/qubership-ai-packages/agent-packages/test-authoring#9a65906821d195690bd148a2cd476b9bcd949042 # main
-    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#346d23ea0d60bc1b76433c11a9b2ac1e36997f7f # v2.10.0
+    - Netcracker/qubership-ai-packages/agent-packages/qubership-repo-essentials#4ef2cb63d201fe0254135dcac04456a1305ccf1b # main
+    - Netcracker/qubership-ai-packages/agent-packages/javadoc-authoring#4ef2cb63d201fe0254135dcac04456a1305ccf1b # main
+    - Netcracker/qubership-ai-packages/agent-packages/final-review#4ef2cb63d201fe0254135dcac04456a1305ccf1b # main
+    - Netcracker/qubership-ai-packages/agent-packages/test-authoring#4ef2cb63d201fe0254135dcac04456a1305ccf1b # main
+    - Netcracker/qubership-nifi/agent-packages/qubership-nifi-linters#2cd47af71ca4f67758dda9b6e927b9989a59387e # v2.10.1
     - git: Netcracker/qubership-nifi
       path: agent-packages/qubership-nifi-lint-hook
       ref: 5a829cc30dd739ceb64ae6dad9be460ddd74dc43 # main
